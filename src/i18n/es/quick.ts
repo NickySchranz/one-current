@@ -30,16 +30,15 @@ export const quick: Record<string, string> = {
     "El hilo ha comenzado. Su línea acaba de dibujarse en la línea de tiempo: se abrió en tu pasado y llega hasta Ahora.",
   "Return to timeline": "Volver a la línea de tiempo",
   "Explore what it carries": "Explorar lo que lleva dentro",
-  "Wait on this": "Dejarlo en espera",
   "Add one action": "Añadir una acción",
 
   // ---- RecurrenceCheck ----
-  "This resembles a thread you brought back before.": "Se parece a un hilo que ya recogiste.",
-  "Brought back {date} · returned {n} time before": "Recogido {date} · volvió {n} vez antes",
-  "Brought back {date} · returned {n} times before": "Recogido {date} · volvió {n} veces antes",
+  "This resembles a thread you integrated before.": "Se parece a un hilo que ya integraste.",
+  "Integrated {date} · returned {n} time before": "Integrado {date} · volvió {n} vez antes",
+  "Integrated {date} · returned {n} times before": "Integrado {date} · volvió {n} veces antes",
   earlier: "antes",
-  "Returning does not mean it was brought back too soon. Something new may be asking for attention.":
-    "Que vuelva no significa que lo recogieras demasiado pronto. Puede que algo nuevo esté pidiendo atención.",
+  "Returning does not mean it was integrated too soon. Something new may be asking for attention.":
+    "Que vuelva no significa que lo integraras demasiado pronto. Puede que algo nuevo esté pidiendo atención.",
   "What is different now?": "¿Qué es distinto ahora?",
   "New real event": "Un hecho real nuevo",
   "Same issue, stronger body depletion": "Lo mismo, pero el cuerpo está más agotado",
@@ -56,10 +55,9 @@ export const quick: Record<string, string> = {
   "What does this thread need from you now?": "¿Qué necesita este hilo de ti ahora?",
   Act: "Actuar",
   "Take one small step.": "Da un paso pequeño.",
-  Wait: "Esperar",
-  "Stop carrying what cannot move yet.": "Deja de cargar con lo que aún no puede moverse.",
-  "Bring back": "Recoger",
-  "Bring back what still matters.": "Recoge lo que aún importa.",
+  "Integrate": "Integrar",
+  "Fold what it gave you back into your one line.":
+    "Devuelve a tu única línea lo que te ha dado.",
   Note: "Anotar",
   "Add what just happened.": "Añade lo que acaba de pasar.",
   "Can't do anything about it now": "Ahora no se puede hacer nada",
@@ -94,25 +92,7 @@ export const quick: Record<string, string> = {
   "Place it on today": "Ponerlo en hoy",
   "Action added to your main line.": "Acción añadida a tu línea principal.",
 
-  // ---- QuickWait ----
-  "What are you waiting for?": "¿Qué estás esperando?",
-  "What have you already done?": "¿Qué has hecho ya?",
-  "When will you check again?": "¿Cuándo lo revisarás de nuevo?",
-  "Set stronger boundaries (optional)": "Poner límites más firmes (opcional)",
-  "What remains outside your control?": "¿Qué queda fuera de tu control?",
-  "What new information would justify reopening earlier?":
-    "¿Qué información nueva justificaría retomarlo antes?",
-  "e.g. a new request arrives, the deadline passes":
-    "p. ej. llega una nueva petición, pasa la fecha límite",
-  "What will you continue living in the meantime?": "¿Qué seguirás viviendo mientras tanto?",
-  "e.g. work, training, the relationship": "p. ej. el trabajo, el entrenamiento, la relación",
-  "Which qualities come back to you now, ahead of the outcome?":
-    "¿Qué cualidades vuelven a ti ahora, antes del resultado?",
-  "Begin waiting": "Empezar la espera",
-  "Nothing further is required from you until the review point.":
-    "No se te pide nada más hasta el punto de revisión.",
-
-  // ---- QuickMerge (bring back) ----
+  // ---- QuickMerge (integrate) ----
   "What is true about this thread now?": "¿Qué es verdad sobre este hilo ahora?",
   "It is resolved": "Está resuelto",
   "It can end here and come back with you.": "Puede terminar aquí y volver contigo.",
@@ -131,6 +111,19 @@ export const quick: Record<string, string> = {
   "Became real work: {name}": "Se convirtió en trabajo real: {name}",
   "Lives in: {place}": "Vive en: {place}",
   "First task: {task}": "Primera tarea: {task}",
+
+  // ---- ActionsPanel ----
+  "Your threads today": "Tus hilos hoy",
+  "Still undecided today": "Aún sin decidir hoy",
+  "Decide what it needs — even that nothing can be done.":
+    "Decide qué necesita — aunque sea que no se puede hacer nada.",
+  "Decided today": "Decidido hoy",
+  "You chose rest — nothing can be done for now.": "Elegiste descansar — no se puede hacer nada por ahora.",
+  "You decided what this needs today.": "Decidiste qué necesita hoy.",
+  "A step you chose for “{title}”.": "Un paso que elegiste para “{title}”.",
+  "A step you chose.": "Un paso que elegiste.",
+  "done today": "hecho hoy",
+  Done: "Hecho",
 
   // ---- QuickNote ----
   "What happened, in a few words": "Qué ha pasado, en pocas palabras",

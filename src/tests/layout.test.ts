@@ -113,8 +113,9 @@ describe("line style", () => {
 
   it("status maps to distinct, non-colour indicators", () => {
     expect(statusToLineStyle("active").animated).toBe(true);
-    expect(statusToLineStyle("waiting-with-boundaries").dashArray).toBeTruthy();
-    expect(statusToLineStyle("waiting-with-boundaries").animated).toBe(false);
+    // legacy status renders as a normal open line
+    expect(statusToLineStyle("waiting-with-boundaries").dashArray).toBeFalsy();
+    expect(statusToLineStyle("waiting-with-boundaries").animated).toBe(true);
     expect(statusToLineStyle("merged").curvesToMain).toBe(true);
     expect(statusToLineStyle("merged").opacity).toBeLessThan(statusToLineStyle("active").opacity);
     expect(statusToLineStyle("activated").emphasized).toBe(true);
@@ -219,14 +220,14 @@ describe("screen reader descriptions", () => {
     expect(text).toContain("Career uncertainty began in June 2026 and has pull level three.");
   });
 
-  it("mentions waiting and merged branches", () => {
+  it("counts legacy waiting branches as active and mentions merged ones", () => {
     const branches = [
       mk({ id: "w1", title: "Permit", status: "waiting-with-boundaries" }),
       mk({ id: "m1", title: "Old grief", status: "merged", mergeDate: "2026-01-01" }),
     ];
     const text = describeTimeline(branches, { start: "2025-01-01", end: "2026-08-04" });
-    expect(text).toContain("One thread is in deliberate waiting.");
-    expect(text).toContain("One thread has been brought back");
+    expect(text).toContain("One active thread reaches today.");
+    expect(text).toContain("One thread has been integrated");
   });
 
   it("describes a single branch without technical language", () => {

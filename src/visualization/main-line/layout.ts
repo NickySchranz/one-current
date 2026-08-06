@@ -27,15 +27,19 @@ export type LayoutOptions = {
   window?: TimeWindow;
   /** Compact metrics stack lanes closer together on small screens. */
   compact?: boolean;
-  /** Vertical zoom: scales the space between lanes (1 = default). */
-  yZoom?: number;
   now?: Date;
 };
 
-const MIN_LANE_GAP = 34;
-const MAX_LANE_GAP = 110;
-const TOP_PAD = 36; // room for labels above the top lane and the Now label
-const BOTTOM_PAD = 40; // room for the axis labels
+// Every thread stays visible: lanes squeeze as far as needed rather than
+// letting any line fall outside the stage. They never spread to fill it
+// either — the band stays compact around the main line, air above and below.
+const MIN_LANE_GAP = 18;
+const MAX_LANE_GAP = 56;
+const TOP_PAD = 58; // clear of the wholeness chip, with room for the Now label
+const BOTTOM_PAD = 48; // room for the axis labels
+// When a sheet squeezes the stage, padding gives way before any thread does.
+const MIN_TOP_PAD = 24;
+const MIN_BOTTOM_PAD = 20;
 
 /** Pure composition of the whole timeline scene: lanes, geometry, heights. */
 export function buildTimelineLayout(
@@ -59,27 +63,30 @@ export function buildTimelineLayout(
 
   let laneGap = options.compact ? 40 : 52;
   let height: number;
+  let topPad = TOP_PAD;
+  let bottomPad = BOTTOM_PAD;
 
   if (options.height && options.height > 0) {
-    // Fill the available space: lanes spread out to occupy it.
+    // Fit the available space: lanes squeeze first, then the padding gives
+    // way, so every thread stays on stage even above an open sheet.
     height = options.height;
     laneGap = Math.min(
       MAX_LANE_GAP,
-      Math.max(MIN_LANE_GAP, Math.floor((height - TOP_PAD - BOTTOM_PAD) / Math.max(total, 2))),
+      Math.max(MIN_LANE_GAP, Math.floor((height - topPad - bottomPad) / Math.max(total, 2))),
     );
+    const overflow = topPad + total * laneGap + bottomPad - height;
+    if (overflow > 0) {
+      const shaveTop = Math.min(TOP_PAD - MIN_TOP_PAD, Math.ceil(overflow / 2));
+      topPad -= shaveTop;
+      bottomPad -= Math.min(BOTTOM_PAD - MIN_BOTTOM_PAD, overflow - shaveTop);
+    }
   } else {
-    height = Math.max(TOP_PAD + total * laneGap + BOTTOM_PAD, options.compact ? 200 : 260);
-  }
-
-  // Vertical zoom: squeeze many lanes into view, or spread a few apart.
-  const yZoom = options.yZoom ?? 1;
-  if (yZoom !== 1) {
-    laneGap = Math.min(160, Math.max(14, Math.round(laneGap * yZoom)));
+    height = Math.max(topPad + total * laneGap + bottomPad, options.compact ? 200 : 260);
   }
 
   // Center the whole band of lanes; with no branches the main line sits mid-stage.
-  const spare = Math.max(0, height - TOP_PAD - BOTTOM_PAD - total * laneGap);
-  const mainY = Math.round(TOP_PAD + above * laneGap + spare / 2);
+  const spare = Math.max(0, height - topPad - bottomPad - total * laneGap);
+  const mainY = Math.round(topPad + above * laneGap + spare / 2);
 
   const metrics: TimelineMetrics = {
     width,

@@ -50,7 +50,7 @@ export const inspection: Record<string, string> = {
   "What does this thread need from you now?": "¿Qué necesita de ti este hilo ahora?",
   Act: "Actuar",
   Wait: "Esperar",
-  "Bring back": "Recoger",
+  "Integrate": "Integrar",
   Note: "Anotar",
   "Marked as carried with support. Bringing this to someone you trust is a form of action, not a failure of the thread.":
     "Marcado como llevado con apoyo. Llevárselo a alguien de confianza es una forma de acción, no un fallo del hilo.",
@@ -125,7 +125,7 @@ export const inspection: Record<string, string> = {
 
   // ---- Bring-back wizard (MergeWizard) ----
   "These threads are no longer available.": "Estos hilos ya no están disponibles.",
-  "Bring it back to Now": "Recógelo en Ahora",
+  "Integrate it into Now": "Recógelo en Ahora",
   "{n} threads entering the present together": "{n} hilos entrando juntos en el presente",
   "This thread is complete for now.": "Este hilo está completo por ahora.",
   "These threads are complete for now.": "Estos hilos están completos por ahora.",
@@ -137,13 +137,13 @@ export const inspection: Record<string, string> = {
   "Some of these pulls ask for opposite things. Decide what the present must honour.":
     "Algunos de estos tirones piden cosas opuestas. Decide qué debe honrar el presente.",
   "What returns with you": "Qué vuelve contigo",
-  "What quiets down when you bring it back (optional)":
-    "Qué se calma cuando lo recoges (opcional)",
+  "What quiets down when you integrate it (optional)":
+    "Qué se calma cuando lo integras (opcional)",
   "Mental processes that can stop running now": "Procesos mentales que ya pueden detenerse",
   "In your own words, what did this time away give you?":
     "En tus propias palabras, ¿qué te dio este tiempo aparte?",
   "One small step to carry it (optional)": "Un pequeño paso para llevarlo (opcional)",
-  "Only part of it comes back for now — the rest stays with less pull":
+  "Only part of it integrates for now — the rest stays with less pull":
     "Solo una parte vuelve por ahora — el resto se queda con menos tirón",
   "Set aside for now": "Dejar a un lado por ahora",
   "1 conflict to settle first": "1 conflicto por resolver antes",

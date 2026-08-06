@@ -140,7 +140,7 @@ export const BranchLine = memo(function BranchLine({
             onSelectMergePoint();
           }}
         >
-          <title>{t("Brought back: {title}", { title: branch.title })}</title>
+          <title>{t("Integrated: {title}", { title: branch.title })}</title>
         </circle>
       ) : (
         <>
@@ -183,7 +183,6 @@ export const BranchLine = memo(function BranchLine({
           onClick={onSelect}
         >
           {label}
-          {branch.status === "waiting-with-boundaries" ? t(" · waiting") : ""}
           {branch.recurrenceCount > 0 ? t(" · returned") : ""}
           {acted ? t(" · decided today") : ""}
         </text>

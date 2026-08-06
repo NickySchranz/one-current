@@ -1,5 +1,5 @@
 import type { PsychologicalBranch } from "@/domain/branches/types";
-import { isOpen, isWaiting, isClosed, mostActivated } from "@/domain/branches/logic";
+import { isOpen, isClosed, mostActivated } from "@/domain/branches/logic";
 import type { TimeWindow } from "../zoom/time-scale";
 
 /** Translator shape: English source string in, translated sentence out. */
@@ -33,8 +33,7 @@ export function describeTimeline(
   window: TimeWindow,
   t: Translate = fallbackT,
 ): string {
-  const open = branches.filter((b) => isOpen(b) && !isWaiting(b));
-  const waiting = branches.filter(isWaiting);
+  const open = branches.filter(isOpen);
   const merged = branches.filter(isClosed);
 
   const parts: string[] = [
@@ -63,18 +62,11 @@ export function describeTimeline(
   if (top && open.length > 1) {
     parts.push(t("{title} is currently the most activated thread.", { title: top.title }));
   }
-  if (waiting.length > 0) {
-    parts.push(
-      waiting.length === 1
-        ? t("One thread is in deliberate waiting.")
-        : t("{n} threads are in deliberate waiting.", { n: t(numberWord(waiting.length)) }),
-    );
-  }
   if (merged.length > 0) {
     parts.push(
       merged.length === 1
-        ? t("One thread has been brought back and remains part of your history.")
-        : t("{n} threads have been brought back and remain part of your history.", {
+        ? t("One thread has been integrated and remains part of your history.")
+        : t("{n} threads have been integrated and remain part of your history.", {
             n: t(numberWord(merged.length)),
           }),
     );
@@ -108,12 +100,12 @@ function statusText(branch: PsychologicalBranch, t: Translate): string {
     case "active": return t("Active thread reaching today");
     case "activated": return t("Currently activated thread");
     case "explored": return t("Explored thread, still active");
-    case "ready-to-merge": return t("Ready to bring back into Now");
+    case "ready-to-merge": return t("Ready to integrate into Now");
     case "merge-conflict": return t("In tension with another thread");
-    case "waiting-with-boundaries": return t("Waiting with boundaries");
+    case "waiting-with-boundaries": return t("Active thread reaching today"); // legacy status
     case "converted-to-project": return t("Handed off to real work");
     case "partly-integrated": return t("Partly integrated");
-    case "merged": return t("Brought back into your life");
+    case "merged": return t("Integrated into your life");
     case "archived": return t("Archived");
     case "needs-support": return t("May need outside support");
   }

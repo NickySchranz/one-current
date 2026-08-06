@@ -12,7 +12,6 @@ beforeEach(async () => {
     ready: false,
     branches: [],
     merges: [],
-    waiting: [],
     actions: [],
     mergeDraft: undefined,
     view: { kind: "now" },

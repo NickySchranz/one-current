@@ -350,8 +350,24 @@ textarea { min-height: 5rem; resize: vertical; }
   font: inherit;
   color: inherit;
   text-align: left;
+  box-shadow: 0 1px 4px rgb(38 37 31 / 0.1);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.fragmentation-indicator:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line-soft));
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
 }
 .fragmentation-indicator[aria-expanded="true"] { background: var(--bg-raised); }
+.frag-chevron {
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  transition: transform 0.2s ease;
+}
+.fragmentation-indicator[aria-expanded="true"] .frag-chevron { transform: rotate(180deg); }
 .wholeness-panel {
   position: absolute;
   top: calc(100% + 0.4rem);
@@ -384,9 +400,50 @@ textarea { min-height: 5rem; resize: vertical; }
 .wholeness-suggestion:hover { background: var(--bg-raised); }
 .wholeness-suggestion .hint { margin: 0; }
 .frag-base { stroke: var(--line-main); stroke-width: 2; fill: none; }
-.frag-strand { stroke: var(--ink-soft); stroke-width: 1.6; fill: none; opacity: 0.9; }
+/* the strands breathe with the day: slow and small when gathered, quicker and
+   wider the more scattered you are */
+.frag-strand {
+  --sway: 1.1px;
+  stroke: var(--ink-soft);
+  stroke-width: 1.6;
+  fill: none;
+  opacity: 0.9;
+  animation: strand-sway 7s ease-in-out infinite;
+}
+/* neighbouring strands drift out of phase, like water */
+.frag-strand:nth-of-type(2n) { animation-delay: -2.6s; }
+.frag-strand:nth-of-type(3n) { animation-delay: -1.2s; }
+@keyframes strand-sway {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--sway, 1.1px)); }
+}
 .frag-strand.settled { stroke: var(--accent); opacity: 0.5; }
-.fragmentation-indicator.low .frag-strand { stroke: var(--danger); opacity: 0.75; }
+.fragmentation-indicator.mid .frag-strand { --sway: 1.8px; animation-duration: 3.6s; }
+.fragmentation-indicator.low .frag-strand {
+  --sway: 2.6px;
+  animation-duration: 1.8s;
+  stroke: var(--danger);
+  opacity: 0.75;
+}
+/* highly fragmented: the whole chip carries a quiet, insistent pulse */
+.fragmentation-indicator.low {
+  border-color: color-mix(in srgb, var(--danger) 30%, var(--bg-sunken));
+  animation: frag-urgent 1.8s ease-in-out infinite;
+}
+@keyframes frag-urgent {
+  0%, 100% {
+    box-shadow: 0 1px 4px rgb(38 37 31 / 0.1);
+    border-color: color-mix(in srgb, var(--danger) 25%, var(--bg-sunken));
+  }
+  50% {
+    box-shadow: 0 0 9px color-mix(in srgb, var(--danger) 30%, transparent);
+    border-color: color-mix(in srgb, var(--danger) 55%, var(--bg-sunken));
+  }
+}
+[data-reduced-motion="true"] .frag-strand,
+[data-reduced-motion="true"] .fragmentation-indicator.low {
+  animation: none;
+}
 .frag-meta {
   display: flex;
   flex-direction: column;
@@ -444,37 +501,84 @@ textarea { min-height: 5rem; resize: vertical; }
   animation: none;
 }
 
-/* waiting lines: a still stretch to the review point; nothing required until then */
-.waiting-extension {
-  stroke-width: 1.5;
-  stroke-dasharray: 2 7;
-  opacity: 0.45;
-  fill: none;
-}
-.review-dot {
-  fill: var(--bg);
-  stroke-width: 1.75;
-}
-.review-label {
-  fill: var(--ink-faint);
-  font-size: 10px;
-  letter-spacing: 0.03em;
-}
-
-/* today's open action continues the main line past Now */
+/* the day's decisions continue the main line past Now — a calm record, not a
+   to-do list; tapping the cluster opens the actions panel */
+.action-continuation { cursor: pointer; }
+.action-hit { fill: transparent; pointer-events: all; }
 .action-continuation-line {
   stroke: var(--accent);
-  stroke-width: 3.25;
+  stroke-width: 2.5;
   fill: none;
   stroke-linecap: round;
-  opacity: 0.8;
+  opacity: 0.55;
 }
 .action-continuation-label {
   fill: var(--ink-soft);
   font-size: 11px;
-  font-style: italic;
+  letter-spacing: 0.01em;
+  transition: fill 0.15s ease;
 }
-.action-bullet { opacity: 0.8; }
+.action-continuation:hover .action-continuation-label { fill: var(--ink); }
+.action-bullet { opacity: 0.55; }
+/* settled decisions rest quietly, already part of the line */
+.action-done .action-continuation-label { fill: var(--ink-faint); }
+.action-done .action-bullet { opacity: 0.35; }
+
+/* the actions panel: the day, thread by thread */
+.actions-section {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.actions-row.done .actions-row-main { opacity: 0.6; }
+/* a decision taken is something gained: a quiet accent edge */
+.actions-row.decided .actions-row-main {
+  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface-soft));
+}
+.actions-row.decided .actions-row-main:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-soft) 70%, var(--surface-soft));
+}
+/* still undecided: a slightly urgent edge asking for one decision */
+.actions-row.undecided .actions-row-main {
+  border-color: color-mix(in srgb, var(--danger) 26%, var(--bg-sunken));
+  border-left: 3px solid color-mix(in srgb, var(--danger) 55%, transparent);
+}
+.actions-row.undecided .actions-row-main .hint {
+  color: color-mix(in srgb, var(--danger) 60%, var(--ink-faint));
+}
+.actions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.actions-row-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid var(--bg-sunken);
+  background: var(--surface-soft);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.actions-row-main:hover:not(:disabled) { background: var(--bg-raised); }
+.actions-row-main:disabled { cursor: default; }
+.actions-row-main .hint { margin: 0; }
 
 /* where the day's energy went: main-line share first, then each open line's draw */
 .energy-review { display: flex; flex-direction: column; gap: 0.4rem; }
@@ -790,6 +894,14 @@ textarea { min-height: 5rem; resize: vertical; }
 }
 .tag button { min-height: 0; padding: 0 0.15rem; color: var(--ink-soft); }
 .tag.quality { background: var(--accent-soft); border-color: transparent; }
+/* Chips that act as choices (Today / This week / …) show what is chosen. */
+button.tag { cursor: pointer; }
+button.tag:hover { border-color: var(--ink-faint); }
+.tag[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--ink);
+}
 
 .diff-item {
   padding: 0.45rem 0.6rem;
@@ -932,6 +1044,26 @@ textarea { min-height: 5rem; resize: vertical; }
   backdrop-filter: blur(8px);
   padding: 0.25rem 0.25rem calc(0.25rem + env(safe-area-inset-bottom));
 }
+/* the one obvious control, in the middle of the bar and half a step above it */
+.nav-plus {
+  width: 50px;
+  height: 50px;
+  margin: -20px 0.35rem 0;
+  border-radius: 50%;
+  border: none;
+  flex: none;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 12px rgb(38 37 31 / 0.28);
+}
+.nav-plus:hover { filter: brightness(1.07); }
+.nav-plus:active { transform: scale(0.96); }
 .nav-bottom .nav-tab {
   flex: 1;
   display: flex;
@@ -1380,6 +1512,8 @@ textarea { min-height: 5rem; resize: vertical; }
 @media (max-width: 760px) {
   .nav-tabs { display: none; }
   .nav-bottom { display: flex; }
+  /* the + lives in the middle of the bar here — no second one on the water */
+  .timeline-fab { display: none; }
   .branch-row { flex-wrap: wrap; }
   .branch-row-actions { width: 100%; justify-content: flex-end; }
 }

@@ -32,13 +32,13 @@ export function TimelineHelp() {
             <strong>{t("Reading the lines")}</strong>
             <br />
             {t(
-              "solid = active · dotted = waiting · curved back = brought back · thicker = stronger pull · faint ✓ = decided today",
+              "solid = active · curved back = integrated · thicker = stronger pull · faint ✓ = decided today",
             )}
           </p>
           <p className="hint" style={{ margin: 0 }}>
             <strong>{t("Moving around")}</strong>
             <br />
-            {t("drag = pan · pinch sideways = zoom time · pinch upward = spread the lines")}
+            {t("drag or scroll sideways = move through time · along the dates = move faster")}
           </p>
         </div>
       )}

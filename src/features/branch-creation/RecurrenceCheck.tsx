@@ -10,7 +10,7 @@ import {
 
 type Props = { matchedBranchId: string; pending: CreateBranchInput };
 
-/** A new concern resembles a thread brought back before. Recurrence is not failure. */
+/** A new concern resembles a thread integrated before. Recurrence is not failure. */
 export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
   const branches = useAppStore((s) => s.branches);
   const createBranchNow = useAppStore((s) => s.createBranchNow);
@@ -46,7 +46,7 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
         }),
       });
       setOperation({ kind: "quick-touch", branchId: matched.id });
-    } else if (rec === "reopen-waiting") {
+    } else if (rec === "reopen") {
       await updateBranch(matched.id, { status: "active", lastActivatedAt: new Date().toISOString() });
       setOperation({ kind: "quick-touch", branchId: matched.id });
     } else if (rec === "new-conflict") {
@@ -60,21 +60,21 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
 
   return (
     <div className="panel">
-      <p className="prompt">{t("This resembles a thread you brought back before.")}</p>
+      <p className="prompt">{t("This resembles a thread you integrated before.")}</p>
       <div className="card sunken">
         <strong>{matched.title}</strong>
         <p className="hint">
           {t(
             matched.recurrenceCount === 1
-              ? "Brought back {date} · returned {n} time before"
-              : "Brought back {date} · returned {n} times before",
+              ? "Integrated {date} · returned {n} time before"
+              : "Integrated {date} · returned {n} times before",
             { date: matched.mergeDate ?? t("earlier"), n: matched.recurrenceCount },
           )}
         </p>
       </div>
       <p className="calm-note">
         {t(
-          "Returning does not mean it was brought back too soon. Something new may be asking for attention.",
+          "Returning does not mean it was integrated too soon. Something new may be asking for attention.",
         )}
       </p>
       <p className="prompt">{t("What is different now?")}</p>

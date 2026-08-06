@@ -25,8 +25,7 @@ export const history: Record<string, string> = {
   Everything: "Todo",
   Threads: "Hilos",
   Actions: "Acciones",
-  Waiting: "En espera",
-  "Brought back": "Recogido",
+  "Integrated": "Integrado",
   Recurring: "Recurrentes",
 
   // --- History: the day's record ---
@@ -41,40 +40,33 @@ export const history: Record<string, string> = {
   "Nothing was recorded on this day. It simply passed.":
     "No se registró nada este día. Simplemente pasó.",
 
-  // --- History: waiting ---
-  "Waiting calmly": "Esperando con calma",
-  Review: "Revisar",
-  "Review is due: {awaiting}": "Toca revisar: {awaiting}",
-  "Nothing further is required until {date} or until: {conditions}":
-    "No se necesita nada más hasta {date} o hasta que: {conditions}",
-
-  // --- History: threads brought back ---
-  "Threads brought back": "Hilos recogidos",
-  "Nothing brought back yet. Threads you bring back stay visible here and on the timeline.":
-    "Todavía no has recogido nada. Los hilos que recoges siguen visibles aquí y en la línea de tiempo.",
+  // --- History: threads integrated ---
+  "Integrated threads": "Hilos integrados",
+  "Nothing integrated yet. Threads you integrate stay visible here and on the timeline.":
+    "Todavía no has integrado nada. Los hilos que integras siguen visibles aquí y en la línea de tiempo.",
   "Began {date}": "Se abrió {date}",
-  "brought back {date}": "recogido {date}",
+  "integrated {date}": "integrado {date}",
   "partly integrated": "integrado en parte",
   "reclaimed: {list}": "recuperado: {list}",
   "What was integrated": "Qué se integró",
 
   // --- History: patterns ---
   Patterns: "Patrones",
-  "Threads that returned. Returning does not undo bringing something back — it usually points at a need that keeps asking.":
-    "Hilos que volvieron. Volver no deshace lo recogido — suele señalar una necesidad que sigue pidiendo.",
+  "Threads that returned. Returning does not undo integrating something — it usually points at a need that keeps asking.":
+    "Hilos que volvieron. Volver no deshace lo integrado — suele señalar una necesidad que sigue pidiendo.",
   "Returned 1 time": "Volvió 1 vez",
   "Returned {n} times": "Volvió {n} veces",
   "needs: {list}": "necesidades: {list}",
   "no needs recorded": "sin necesidades registradas",
 
-  // --- History: everything brought back ---
-  "Everything brought back": "Todo lo recogido",
-  "Nothing has been brought back yet.": "Todavía no se ha recogido nada.",
+  // --- History: everything integrated ---
+  "Everything integrated": "Todo lo integrado",
+  "Nothing has been integrated yet.": "Todavía no se ha integrado nada.",
   "1 thread": "1 hilo",
   "{n} threads": "{n} hilos",
   "reclaimed {list}": "recuperado {list}",
   // result statuses, shown as everyday phrases
-  "brought back": "recogido",
+  "integrated": "integrado",
   waiting: "en espera",
   "converted to project": "convertido en proyecto",
   "needs support": "necesita apoyo",
@@ -140,8 +132,8 @@ export const history: Record<string, string> = {
   "Reduce motion (no line movement or pulsing)":
     "Reducir el movimiento (sin desplazamiento ni pulsos en las líneas)",
   Explore: "Explorar",
-  "See what a lived-in timeline looks like: nine example threads — drifting, waiting, resting, brought back — plus today's actions. You can delete them any time.":
-    "Mira cómo se ve una línea de tiempo vivida: nueve hilos de ejemplo — a la deriva, en espera, en reposo, recogidos — más las acciones de hoy. Puedes borrarlos cuando quieras.",
+  "See what a lived-in timeline looks like: nine example threads — drifting, resting, integrated — plus today's actions. You can delete them any time.":
+    "Mira cómo se ve una línea de tiempo vivida: nueve hilos de ejemplo — a la deriva, en reposo, integrados — más las acciones de hoy. Puedes borrarlos cuando quieras.",
   "Load example threads": "Cargar hilos de ejemplo",
   Privacy: "Privacidad",
   "Everything you write stays in this browser, stored locally on your device. Nothing is sent anywhere. Export a copy before switching devices.":
@@ -150,8 +142,8 @@ export const history: Record<string, string> = {
   Import: "Importar",
   "Import a One Current export file": "Importar un archivo exportado de One Current",
   "Delete everything": "Borrar todo",
-  "Delete all threads, everything brought back, and your whole history? This cannot be undone.":
-    "¿Borrar todos los hilos, todo lo recogido y toda tu historia? Esto no se puede deshacer.",
+  "Delete all threads, everything integrated, and your whole history? This cannot be undone.":
+    "¿Borrar todos los hilos, todo lo integrado y toda tu historia? Esto no se puede deshacer.",
   "Yes, delete": "Sí, borrar",
   "Keep it": "Consérvalo",
   "All data deleted.": "Todos los datos borrados.",

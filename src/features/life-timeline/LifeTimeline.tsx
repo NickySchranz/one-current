@@ -3,7 +3,7 @@ import { filterBranches, useAppStore } from "@/stores/app-store";
 import { buildTimelineLayout } from "@/visualization/main-line/layout";
 import { generateTicks, dateToX } from "@/visualization/zoom/time-scale";
 import { describeTimeline, describeBranch } from "@/visualization/a11y/describe";
-import { isClosed, isWaiting, mostActivated } from "@/domain/branches/logic";
+import { isClosed, mostActivated } from "@/domain/branches/logic";
 import type { PsychologicalBranch } from "@/domain/branches/types";
 import { BranchLine } from "./BranchLine";
 import { TimelineHelp } from "@/features/timeline-help/TimelineHelp";
@@ -28,7 +28,6 @@ export function LifeTimeline() {
   const statusFilter = useAppStore((s) => s.statusFilter);
   const setView = useAppStore((s) => s.setView);
   const setOperation = useAppStore((s) => s.setOperation);
-  const zoomBy = useAppStore((s) => s.zoomBy);
   const panBy = useAppStore((s) => s.panBy);
   const returnToNow = useAppStore((s) => s.returnToNow);
   const theme = useAppStore((s) => s.theme);
@@ -39,7 +38,6 @@ export function LifeTimeline() {
   const clearBorn = useAppStore((s) => s.clearBorn);
   const reducedMotion = useAppStore((s) => s.reducedMotion);
   const actions = useAppStore((s) => s.actions);
-  const waiting = useAppStore((s) => s.waiting);
   const language = useAppStore((s) => s.language);
   const t = useT();
 
@@ -72,12 +70,38 @@ export function LifeTimeline() {
   // up into the space that remains — the selected line and Now stay visible
   // together, never hidden behind the panel.
   const [bottomInset, setBottomInset] = useState(0);
-  const insetRef = useRef(0);
+  const insetRef = useRef(0); // the value currently on screen (mid-tween)
+  const insetTargetRef = useRef(0); // where the tween is heading
+  const insetTweenRef = useRef(0);
   useEffect(() => {
-    const raf = requestAnimationFrame(() => {
+    // The lanes glide up to their new place rather than jumping — an eased
+    // scroll of about a third of a second. Instant when motion is reduced.
+    const animateTo = (target: number) => {
+      insetTargetRef.current = target;
+      cancelAnimationFrame(insetTweenRef.current);
+      if (reducedMotion) {
+        insetRef.current = target;
+        setBottomInset(target);
+        return;
+      }
+      const from = insetRef.current;
+      const t0 = performance.now();
+      const duration = 300;
+      const step = (now: number) => {
+        const p = Math.min(1, (now - t0) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        insetRef.current = from + (target - from) * eased;
+        setBottomInset(insetRef.current);
+        if (p < 1) insetTweenRef.current = requestAnimationFrame(step);
+      };
+      insetTweenRef.current = requestAnimationFrame(step);
+    };
+    const measure = () => {
       let next = 0;
       const stage = stageRef.current;
-      const tray = document.querySelector(".quick-tray");
+      // Quick trays and focused sheets alike: whichever panel is up, the
+      // thread it concerns must stay in view above it.
+      const tray = document.querySelector(".quick-tray, .touch-sheet");
       if (stage && tray) {
         const stageRect = stage.getBoundingClientRect();
         const trayRect = tray.getBoundingClientRect();
@@ -86,52 +110,52 @@ export function LifeTimeline() {
         const overlapY = Math.max(0, stageRect.bottom - trayRect.top);
         // Only the bottom sheet counts; the desktop side panel leaves Now clear.
         if (overlapX > stageRect.width * 0.55 && overlapY > 0) {
-          next = Math.min(overlapY, stageRect.height * 0.6);
+          next = Math.min(overlapY, stageRect.height - 130);
         }
       }
-      if (next !== insetRef.current) {
-        insetRef.current = next;
-        setBottomInset(next);
-      }
-    });
-    return () => cancelAnimationFrame(raf);
-  }, [operation, size]);
+      if (next !== insetTargetRef.current) animateTo(next);
+    };
+    const raf = requestAnimationFrame(measure);
+    // The tray changes size within one operation (a form becomes a confirmation,
+    // a step expands): keep following it so the lanes always fit what remains.
+    const tray = document.querySelector(".quick-tray, .touch-sheet");
+    let ro: ResizeObserver | undefined;
+    if (tray) {
+      ro = new ResizeObserver(measure);
+      ro.observe(tray);
+      // The sheet slides up over ~0.2s; its resting position is only known
+      // once that entrance finishes, so measure again then.
+      tray.addEventListener("animationend", measure);
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      cancelAnimationFrame(insetTweenRef.current);
+      ro?.disconnect();
+      tray?.removeEventListener("animationend", measure);
+    };
+  }, [operation, size, reducedMotion]);
   const [focusIndex, setFocusIndex] = useState(-1);
-  // Vertical zoom: spread a few lines apart, or squeeze many into view.
-  const [yZoom, setYZoom] = useState(1);
   const dragRef = useRef<{ x: number; moved: boolean } | null>(null);
-  // Active touches; two at once become a pinch (horizontal = time, vertical = lanes).
-  const pointersRef = useRef(new Map<number, { x: number; y: number }>());
-  const pinchRef = useRef<{ dx: number; dy: number } | null>(null);
+  const pointersRef = useRef(new Set<number>());
 
-  // Wheel / trackpad: scrolling moves you closer to or further from the branches
-  // (vertical zoom — scroll down to step back and see them all), pinch or
-  // shift-scroll zooms time around the cursor, sideways scroll pans. Attached
-  // natively so we can preventDefault (React registers wheel listeners as passive).
+  // Wheel / trackpad: sideways scrolling moves through time — faster down by
+  // the date labels, where a scrub is clearly about time. The lanes themselves
+  // never zoom: every thread always fits the stage. Attached natively so we
+  // can preventDefault (React registers wheel listeners as passive).
   useEffect(() => {
     const el = svgRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (e.ctrlKey || e.shiftKey) {
-        // ctrl+wheel is a trackpad pinch
-        const rect = el.getBoundingClientRect();
-        const focal = Math.max(0, Math.min(1, (e.clientX - rect.left) / Math.max(1, rect.width)));
-        const speed = e.ctrlKey ? 0.008 : 0.0022;
-        const delta = e.shiftKey && e.deltaY === 0 ? e.deltaX : e.deltaY;
-        zoomBy(Math.exp(delta * speed), focal);
-        return;
-      }
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        panBy(e.deltaX / Math.max(1, el.clientWidth));
-        return;
-      }
-      // Scroll down = zoom out: lanes squeeze together and the branches recede.
-      setYZoom((z) => Math.min(3, Math.max(0.4, z * Math.exp(-e.deltaY * 0.002))));
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0;
+      if (delta === 0) return;
+      const rect = el.getBoundingClientRect();
+      const nearDates = e.clientY > rect.bottom - 56;
+      panBy((delta / Math.max(1, el.clientWidth)) * (nearDates ? 4 : 1));
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [zoomBy, panBy]);
+  }, [panBy]);
 
   useEffect(() => {
     const el = stageRef.current;
@@ -157,12 +181,13 @@ export function LifeTimeline() {
     () =>
       buildTimelineLayout(visible, {
         width: size.width,
-        height: Math.max(220, size.height - bottomInset),
+        // Whatever space the open panel leaves is what the lanes fit into —
+        // even the lowest thread stays visible above the sheet.
+        height: Math.max(130, size.height - bottomInset),
         window: window_,
         compact,
-        yZoom,
       }),
-    [visible, size, window_, compact, yZoom, bottomInset],
+    [visible, size, window_, compact, bottomInset],
   );
 
   const ticks = useMemo(() => generateTicks(layout.window), [layout.window]);
@@ -189,21 +214,39 @@ export function LifeTimeline() {
 
   const todayX = dateToX(today, layout.window, layout.metrics.width);
 
-  // Every decided, still-open action gathers around the main line past Now —
-  // one place, not scattered across lanes. Actions of merged lines leave with
-  // them; actions of lines left for today are withdrawn by that decision.
-  const futureActions = useMemo(() => {
-    return actions.filter((a) => {
-      if (a.completedAt) return false;
-      const owner = a.branchesIntegrated[0]?.branchId;
-      if (!owner) return true;
-      const b = branches.find((x) => x.id === owner);
-      return !!b && !isClosed(b);
-    });
-  }, [actions, branches]);
+  // Every decision gathers around the main line past Now — steps still ahead,
+  // steps already done today (✓), and even "nothing can be done", which is a
+  // decision too. Decisions of integrated lines leave with them.
+  const futureItems = useMemo(() => {
+    const items: { id: string; label: string; done: boolean; color: string }[] = [];
+    const short = (s: string, n = 26) => (s.length > n ? s.slice(0, n - 2) + "…" : s);
+    for (const a of actions) {
+      const owner = branches.find((b) => b.id === a.branchesIntegrated[0]?.branchId);
+      if (owner && isClosed(owner)) continue;
+      const doneToday = a.completedAt?.slice(0, 10) === today;
+      if (a.completedAt && !doneToday) continue;
+      items.push({
+        id: a.id,
+        label: doneToday ? `✓ ${short(a.title)}` : short(a.title),
+        done: !!doneToday,
+        color: owner ? branchColor(owner, theme) : "var(--accent)",
+      });
+    }
+    for (const b of branches) {
+      if (isClosed(b) || b.leftOn !== today) continue;
+      items.push({
+        id: b.id,
+        label: `✓ ${t("resting · {title}", { title: short(b.title, 22) })}`,
+        done: true,
+        color: branchColor(b, theme, "muted"),
+      });
+    }
+    return items;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
+  }, [actions, branches, theme, today, language]);
 
   // How split the present is: open lines pull apart, decisions gather them.
-  const activeLines = visible.filter((b) => !isClosed(b) && !isWaiting(b));
+  const activeLines = visible.filter((b) => !isClosed(b));
 
   function onKeyDown(e: React.KeyboardEvent) {
     if (isEditableTarget(e)) return;
@@ -220,10 +263,6 @@ export function LifeTimeline() {
     } else if ((e.key === "Enter" || e.key === " ") && focusIndex >= 0 && ordered[focusIndex]) {
       e.preventDefault();
       setOperation({ kind: "quick-touch", branchId: ordered[focusIndex].id });
-    } else if (e.key === "+" || e.key === "=") {
-      zoomBy(0.7);
-    } else if (e.key === "-") {
-      zoomBy(1.4);
     } else if (e.key === "n" || e.key === "N") {
       e.preventDefault();
       setOperation({ kind: "creating-branch" });
@@ -233,49 +272,26 @@ export function LifeTimeline() {
   }
 
   function onPointerDown(e: React.PointerEvent) {
-    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointersRef.current.size === 2) {
-      const [a, b] = [...pointersRef.current.values()];
-      pinchRef.current = { dx: Math.abs(a.x - b.x), dy: Math.abs(a.y - b.y) };
-      dragRef.current = null;
-    } else {
-      dragRef.current = { x: e.clientX, moved: false };
-    }
+    pointersRef.current.add(e.pointerId);
+    // One finger drags through time; a second finger simply pauses the drag.
+    dragRef.current = pointersRef.current.size === 1 ? { x: e.clientX, moved: false } : null;
   }
   function onPointerMove(e: React.PointerEvent) {
-    if (pointersRef.current.has(e.pointerId)) {
-      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    }
-    // Two fingers: horizontal spread zooms time, vertical spread spreads lanes.
-    if (pointersRef.current.size === 2 && pinchRef.current) {
-      const [a, b] = [...pointersRef.current.values()];
-      const dx = Math.abs(a.x - b.x);
-      const dy = Math.abs(a.y - b.y);
-      const prev = pinchRef.current;
-      if (prev.dx > 40 && dx > 40) {
-        const rect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
-        const mid = (a.x + b.x) / 2;
-        const focal = Math.max(0, Math.min(1, (mid - rect.left) / Math.max(1, rect.width)));
-        zoomBy(prev.dx / dx, focal);
-      }
-      if (prev.dy > 40 && dy > 40) {
-        setYZoom((z) => Math.min(3, Math.max(0.4, z * (dy / prev.dy))));
-      }
-      pinchRef.current = { dx, dy };
-      return;
-    }
+    if (pointersRef.current.size !== 1) return;
     const d = dragRef.current;
     if (!d) return;
     const dx = e.clientX - d.x;
     if (Math.abs(dx) > 6) {
       d.moved = true;
       d.x = e.clientX;
-      panBy(-dx / Math.max(1, layout.metrics.width));
+      // Dragging along the date labels scrubs faster than dragging the lanes.
+      const rect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
+      const nearDates = e.clientY > rect.bottom - 56;
+      panBy((-dx / Math.max(1, layout.metrics.width)) * (nearDates ? 4 : 1));
     }
   }
   function onPointerUp(e: React.PointerEvent) {
     pointersRef.current.delete(e.pointerId);
-    if (pointersRef.current.size < 2) pinchRef.current = null;
     dragRef.current = null;
   }
 
@@ -372,54 +388,21 @@ export function LifeTimeline() {
           </g>
           )}
 
-          {/* waiting lines carry their review point: until then, nothing is required */}
-          {waiting
-            .filter((w) => !w.closedAt)
-            .map((w) => {
-              const g = layout.geometries.find((x) => x.branchId === w.branchId);
-              const branch = byId.get(w.branchId);
-              if (!g || !branch || !isWaiting(branch) || !g.inWindow) return null;
-              const x = dateToX(w.reviewDate, layout.window, layout.metrics.width);
-              const reviewLabel = new Date(w.reviewDate + "T00:00:00").toLocaleDateString(
-                undefined,
-                { month: "short", day: "numeric" },
-              );
-              return (
-                <g key={w.id} className="review-marker" aria-hidden="true">
-                  {/* the still stretch between Now and the review, if it lies ahead */}
-                  {x > g.endX + 8 && (
-                    <line
-                      className="waiting-extension"
-                      x1={g.endX}
-                      y1={g.laneY}
-                      x2={x}
-                      y2={g.laneY}
-                      stroke={branchColor(branch, theme, "muted")}
-                    />
-                  )}
-                  <circle
-                    className="review-dot"
-                    cx={x}
-                    cy={g.laneY}
-                    r={4}
-                    stroke={branchColor(branch, theme)}
-                  />
-                  <text className="review-label" x={x} y={g.laneY - 9} textAnchor="middle">
-                    {t("review · {date}", { date: reviewLabel })}
-                  </text>
-                  <title>
-                    {t("Review on {date}. Nothing further is required from you until then.", {
-                      date: reviewLabel,
-                    })}
-                  </title>
-                </g>
-              );
-            })}
-
-          {/* decided actions gather around the main line past Now: one place
-              where everything you chose to do next can be read together */}
-          {futureActions.length > 0 && layout.fullWidth - layout.nowX > 40 && (
-            <g className="action-continuation" aria-hidden="true">
+          {/* every decision gathers around the main line past Now — a calm
+              record of the day. Tapping it opens the actions panel. */}
+          {futureItems.length > 0 && layout.fullWidth - layout.nowX > 40 && (
+            <g
+              className="action-continuation"
+              aria-hidden="true"
+              onClick={() => setOperation({ kind: "viewing-actions" })}
+            >
+              <rect
+                className="action-hit"
+                x={layout.nowX + 4}
+                y={layout.mainY + 2}
+                width={170}
+                height={futureItems.length * 16 + 16}
+              />
               <path
                 className="action-continuation-line"
                 d={`M ${layout.nowX} ${layout.mainY} L ${Math.min(
@@ -427,22 +410,19 @@ export function LifeTimeline() {
                   layout.fullWidth - 6,
                 )} ${layout.mainY}`}
               />
-              {futureActions.map((a, i) => {
-                const owner = branches.find(
-                  (b) => b.id === a.branchesIntegrated[0]?.branchId,
-                );
+              {futureItems.map((it, i) => {
                 const y = layout.mainY + 16 + i * 16;
                 return (
-                  <g key={a.id}>
+                  <g key={it.id} className={it.done ? "action-done" : undefined}>
                     <circle
                       className="action-bullet"
                       cx={layout.nowX + 16}
                       cy={y - 4}
                       r={3}
-                      fill={owner ? branchColor(owner, theme) : "var(--accent)"}
+                      fill={it.color}
                     />
                     <text className="action-continuation-label" x={layout.nowX + 24} y={y}>
-                      {a.title.length > 26 ? a.title.slice(0, 24) + "…" : a.title}
+                      {it.label}
                     </text>
                   </g>
                 );
@@ -524,7 +504,7 @@ export function LifeTimeline() {
             <p className="prompt">{t("Your life continues on one main line.")}</p>
             <p className="hint">
               {t(
-                "When something begins pulling part of your attention away from the present, add it as a thread with the + button. You can bring it back when it has given you what it carries.",
+                "When something begins pulling part of your attention away from the present, add it as a thread with the + button. You can integrate it when it has given you what it carries.",
               )}
             </p>
           </div>

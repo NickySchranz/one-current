@@ -6,7 +6,7 @@ import { decidedToday, energySplit } from "@/domain/feelings/logic";
 import { useT } from "@/i18n/i18n";
 
 type Props = {
-  /** Open, non-waiting lines currently on the timeline. */
+  /** Open lines currently on the timeline. */
   activeLines: PsychologicalBranch[];
 };
 
@@ -104,6 +104,9 @@ export function WholenessIndicator({ activeLines }: Props) {
           <span className="frag-track">
             <span className="frag-fill" style={{ width: `${Math.round(wholeness * 100)}%` }} />
           </span>
+        </span>
+        <span className="frag-chevron" aria-hidden="true">
+          ▾
         </span>
       </button>
 

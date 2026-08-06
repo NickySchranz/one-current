@@ -9,9 +9,9 @@ import { CreateBranch } from "@/features/branch-creation/CreateBranch";
 import { RecurrenceCheck } from "@/features/branch-creation/RecurrenceCheck";
 import { QuickBranchMenu } from "@/features/branch-quick-actions/QuickBranchMenu";
 import { QuickAct } from "@/features/branch-quick-actions/QuickAct";
-import { QuickWait } from "@/features/branch-quick-actions/QuickWait";
 import { QuickMerge } from "@/features/branch-quick-actions/QuickMerge";
 import { QuickNote } from "@/features/branch-quick-actions/QuickNote";
+import { ActionsPanel } from "@/features/branch-quick-actions/ActionsPanel";
 import { SupportPanel } from "@/features/branch-quick-actions/SupportPanel";
 import { BranchView } from "@/features/branch-inspection/BranchView";
 import { MergeWizard } from "@/features/branch-merge/MergeWizard";
@@ -41,16 +41,16 @@ function trayLabel(op: TimelineOperation): string {
       return "This thread";
     case "quick-act":
       return "One small step";
-    case "quick-wait":
-      return "Deliberate waiting";
     case "quick-merge":
       return "What is true now";
     case "quick-note":
       return "A note";
+    case "viewing-actions":
+      return "Actions";
     case "understanding":
       return "Understand this thread";
     case "confirming-merge":
-      return "Bring back into Now";
+      return "Integrate into Now";
     case "seeking-support":
       return "More support";
     default:
@@ -78,20 +78,20 @@ function operationSummary(
       });
     case "quick-act":
       return t("Choosing one small step for “{title}”.", { title: title(op.branchId) });
-    case "quick-wait":
-      return t("Placing “{title}” in deliberate waiting.", { title: title(op.branchId) });
     case "quick-merge":
       return t("Deciding what is true about “{title}” now.", { title: title(op.branchId) });
     case "quick-note":
       return t("Adding a note to “{title}”.", { title: title(op.branchId) });
+    case "viewing-actions":
+      return t("Reading your decided actions. The timeline stays interactive.");
     case "understanding":
       return t("Looking deeper into the thread “{title}”. The timeline waits behind this panel.", {
         title: title(op.branchId),
       });
     case "confirming-merge":
       return op.branchIds.length === 1
-        ? t("Bringing “{title}” back into Now.", { title: title(op.branchIds[0]) })
-        : t("Bringing {n} threads back into Now together.", { n: op.branchIds.length });
+        ? t("Integrating “{title}” into Now.", { title: title(op.branchIds[0]) })
+        : t("Integrating {n} threads into Now together.", { n: op.branchIds.length });
     case "seeking-support":
       return t("Considering more support around “{title}”.", { title: title(op.branchId) });
   }
@@ -107,12 +107,12 @@ function operationBody(op: TimelineOperation) {
       return <QuickBranchMenu key={op.branchId} branchId={op.branchId} />;
     case "quick-act":
       return <QuickAct key={op.branchId} branchId={op.branchId} />;
-    case "quick-wait":
-      return <QuickWait key={op.branchId} branchId={op.branchId} />;
     case "quick-merge":
       return <QuickMerge key={op.branchId} branchId={op.branchId} />;
     case "quick-note":
       return <QuickNote key={op.branchId} branchId={op.branchId} />;
+    case "viewing-actions":
+      return <ActionsPanel />;
     case "understanding":
       return <BranchView key={op.branchId} branchId={op.branchId} />;
     case "confirming-merge":

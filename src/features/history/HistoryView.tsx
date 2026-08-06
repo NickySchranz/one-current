@@ -1,26 +1,24 @@
 import { useRef, useState } from "react";
 import { useAppStore } from "@/stores/app-store";
-import { isClosed, isWaiting } from "@/domain/branches/logic";
+import { isClosed } from "@/domain/branches/logic";
 import { energySplit, integrationSummary } from "@/domain/feelings/logic";
-import { nextReviewText } from "@/domain/waiting/logic";
 import { useT } from "@/i18n/i18n";
 
 const DAY = 24 * 60 * 60 * 1000;
 
-type HistoryFilter = "all" | "branches" | "actions" | "waiting" | "merges" | "recurring";
+type HistoryFilter = "all" | "branches" | "actions" | "merges" | "recurring";
 
 const FILTERS: { id: HistoryFilter; label: string }[] = [
   { id: "all", label: "Everything" },
   { id: "branches", label: "Threads" },
   { id: "actions", label: "Actions" },
-  { id: "waiting", label: "Waiting" },
-  { id: "merges", label: "Brought back" },
+  { id: "merges", label: "Integrated" },
   { id: "recurring", label: "Recurring" },
 ];
 
 /** English display phrases for merge result statuses (keys stay untouched in data). */
 const STATUS_PHRASES: Record<string, string> = {
-  merged: "brought back",
+  merged: "integrated",
   "partly merged": "partly integrated",
 };
 
@@ -28,15 +26,13 @@ function dayIso(offset: number): string {
   return new Date(Date.now() + offset * DAY).toISOString().slice(0, 10);
 }
 
-/** Recent days, threads brought back, recurring patterns, and past merges. */
+/** Recent days, threads integrated, recurring patterns, and past merges. */
 export function HistoryView() {
   const t = useT();
   const language = useAppStore((s) => s.language);
   const branches = useAppStore((s) => s.branches);
   const merges = useAppStore((s) => s.merges);
-  const waiting = useAppStore((s) => s.waiting);
   const setView = useAppStore((s) => s.setView);
-  const setOperation = useAppStore((s) => s.setOperation);
   // 0 = today; step back as far as you like.
   const [dayOffset, setDayOffset] = useState(0);
   const [filter, setFilter] = useState<HistoryFilter>("all");
@@ -48,7 +44,6 @@ export function HistoryView() {
     (b) => isClosed(b) || b.status === "partly-integrated",
   );
   const recurring = branches.filter((b) => b.recurrenceCount > 0);
-  const waitingBranches = branches.filter(isWaiting);
 
   const day = dayIso(dayOffset);
   const label =
@@ -232,37 +227,12 @@ export function HistoryView() {
       </div>
       )}
 
-      {show("waiting") && waitingBranches.length > 0 && (
-        <>
-          <h2>{t("Waiting calmly")}</h2>
-          {waitingBranches.map((b) => {
-            const container = waiting.find((w) => w.id === b.waitingContainerId);
-            return (
-              <div key={b.id} className="card sunken">
-                <strong>{b.title}</strong>
-                {container && (
-                  <p className="hint" style={{ margin: 0 }}>
-                    {nextReviewText(container, t)}
-                  </p>
-                )}
-                <button
-                  className="btn btn-quiet"
-                  onClick={() => setOperation({ kind: "quick-touch", branchId: b.id })}
-                >
-                  {t("Review")}
-                </button>
-              </div>
-            );
-          })}
-        </>
-      )}
-
       {show("branches") && (
       <>
-      <h2>{t("Threads brought back")}</h2>
+      <h2>{t("Integrated threads")}</h2>
       {mergedBranches.length === 0 ? (
         <p className="hint">
-          {t("Nothing brought back yet. Threads you bring back stay visible here and on the timeline.")}
+          {t("Nothing integrated yet. Threads you integrate stay visible here and on the timeline.")}
         </p>
       ) : (
         mergedBranches.map((b) => (
@@ -271,7 +241,7 @@ export function HistoryView() {
             <p className="hint" style={{ margin: 0 }}>
               {t("Began {date}", { date: b.forkLabel ?? b.forkDate })}
               {b.mergeDate
-                ? ` · ${t("brought back {date}", { date: b.mergeDate })}`
+                ? ` · ${t("integrated {date}", { date: b.mergeDate })}`
                 : ` · ${t("partly integrated")}`}
               {b.storedQualities.length > 0
                 ? ` · ${t("reclaimed: {list}", { list: b.storedQualities.join(", ") })}`
@@ -298,7 +268,7 @@ export function HistoryView() {
           <h2>{t("Patterns")}</h2>
           <p className="hint">
             {t(
-              "Threads that returned. Returning does not undo bringing something back — it usually points at a need that keeps asking.",
+              "Threads that returned. Returning does not undo integrating something — it usually points at a need that keeps asking.",
             )}
           </p>
           {recurring.map((b) => (
@@ -320,9 +290,9 @@ export function HistoryView() {
 
       {show("merges") && (
       <>
-      <h2>{t("Everything brought back")}</h2>
+      <h2>{t("Everything integrated")}</h2>
       {merges.length === 0 ? (
-        <p className="hint">{t("Nothing has been brought back yet.")}</p>
+        <p className="hint">{t("Nothing has been integrated yet.")}</p>
       ) : (
         [...merges]
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt))

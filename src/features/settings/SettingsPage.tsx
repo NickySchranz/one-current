@@ -107,7 +107,7 @@ export function SettingsSections() {
       <div className="card">
         <p className="hint">
           {t(
-            "See what a lived-in timeline looks like: nine example threads — drifting, waiting, resting, brought back — plus today's actions. You can delete them any time.",
+            "See what a lived-in timeline looks like: nine example threads — drifting, resting, integrated — plus today's actions. You can delete them any time.",
           )}
         </p>
         <button className="btn" onClick={() => void loadExampleData()}>
@@ -145,7 +145,7 @@ export function SettingsSections() {
             <>
               <span>
                 {t(
-                  "Delete all threads, everything brought back, and your whole history? This cannot be undone.",
+                  "Delete all threads, everything integrated, and your whole history? This cannot be undone.",
                 )}
               </span>
               <button

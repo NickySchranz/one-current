@@ -31,8 +31,8 @@ export function statusToLineStyle(status: BranchStatus): LineStyle {
       return { opacity: 0.9, animated: true, emphasized: false, curvesToMain: true, saturation: "normal" };
     case "merge-conflict":
       return { opacity: 1, animated: true, emphasized: true, curvesToMain: true, saturation: "raised" };
-    case "waiting-with-boundaries":
-      return { dashArray: "2 7", opacity: 0.55, animated: false, emphasized: false, curvesToMain: false, saturation: "muted" };
+    case "waiting-with-boundaries": // legacy status: shown as a normal open line
+      return { opacity: 0.95, animated: true, emphasized: false, curvesToMain: false, saturation: "normal" };
     case "converted-to-project":
       return { dashArray: "8 4", opacity: 0.8, animated: false, emphasized: false, curvesToMain: false, saturation: "normal" };
     case "partly-integrated":

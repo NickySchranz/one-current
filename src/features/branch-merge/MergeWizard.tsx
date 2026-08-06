@@ -116,7 +116,7 @@ export function MergeWizard({ branchIds }: Props) {
       const resolution =
         conflicts.map((c) => c.resolution).filter(Boolean).join(" ") ||
         contribution ||
-        "Brought back into the present.";
+        "Integrated into the present.";
       const action =
         canCarryAction && actionInput
           ? composeIntegratedAction({
@@ -142,7 +142,7 @@ export function MergeWizard({ branchIds }: Props) {
 
   return (
     <div className="panel">
-      <h1>{t("Bring it back to Now")}</h1>
+      <h1>{t("Integrate it into Now")}</h1>
       <p className="hint">
         {branches.length === 1
           ? branches[0].title
@@ -192,7 +192,7 @@ export function MergeWizard({ branchIds }: Props) {
       </div>
 
       <details className="optional-details">
-        <summary>{t("What quiets down when you bring it back (optional)")}</summary>
+        <summary>{t("What quiets down when you integrate it (optional)")}</summary>
         <div className="field">
           <TagListEditor
             label={t("Mental processes that can stop running now")}
@@ -231,7 +231,7 @@ export function MergeWizard({ branchIds }: Props) {
           checked={outcome === "partly-merged"}
           onChange={(e) => setOutcome(e.target.checked ? "partly-merged" : "merged")}
         />
-        {t("Only part of it comes back for now — the rest stays with less pull")}
+        {t("Only part of it integrates for now — the rest stays with less pull")}
       </label>
 
       <div className="stage-nav">
@@ -250,7 +250,7 @@ export function MergeWizard({ branchIds }: Props) {
                   : "{n} conflicts to settle first",
                 { n: open.length },
               )
-            : t("Bring it back to Now")}
+            : t("Integrate it into Now")}
         </button>
       </div>
     </div>

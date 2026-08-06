@@ -52,7 +52,6 @@ type Props = { branchId: string };
 export function BranchView({ branchId }: Props) {
   const t = useT();
   const branches = useAppStore((s) => s.branches);
-  const setOperation = useAppStore((s) => s.setOperation);
   const updateBranch = useAppStore((s) => s.updateBranch);
   const createTodayAction = useAppStore((s) => s.createTodayAction);
   const branch = useMemo(
@@ -353,34 +352,6 @@ export function BranchView({ branchId }: Props) {
             )}
           </div>
         </details>
-
-        <p className="prompt">{t("What does this thread need from you now?")}</p>
-        <div className="tag-row">
-          <button
-            className="btn"
-            onClick={() => setOperation({ kind: "quick-act", branchId: branch.id })}
-          >
-            {t("Act")}
-          </button>
-          <button
-            className="btn"
-            onClick={() => setOperation({ kind: "quick-wait", branchId: branch.id })}
-          >
-            {t("Wait")}
-          </button>
-          <button
-            className="btn"
-            onClick={() => setOperation({ kind: "quick-merge", branchId: branch.id })}
-          >
-            {t("Bring back")}
-          </button>
-          <button
-            className="btn"
-            onClick={() => setOperation({ kind: "quick-note", branchId: branch.id })}
-          >
-            {t("Note")}
-          </button>
-        </div>
 
         {branch.status === "needs-support" && (
           <p className="calm-note">

@@ -46,7 +46,7 @@ function moment(
 
 /**
  * A believable in-use timeline: lines of every kind at different distances
- * from Now — drifting, resting, waiting, merged, converted. Every open line
+ * from Now — drifting, resting, merged, converted. Every open line
  * names the anxieties it stirs and the feelings those hold, so the
  * energy split and the integration summary have something real to show.
  */
@@ -74,12 +74,11 @@ export function buildExampleData(): {
     moment(father.id, daysAgo(10), "He texted first", "relief", "lighter"),
   ];
 
-  // Parked with boundaries: the follow-up scan is booked, the date is set.
+  // Outside her control, but decided: the scan is booked, the date is set.
   const scan = branch({
     title: "Waiting for the scan results",
     type: "waiting",
     orientation: "outside-control",
-    status: "waiting-with-boundaries",
     forkDate: daysAgo(18),
     pull: 4,
     controllability: "outside-control",

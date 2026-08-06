@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { useT } from "@/i18n/i18n";
-import type { PsychologicalBranch } from "@/domain/branches/types";
 import type { ForkPeriodChoice, Pull } from "@/domain/branches/types";
 import { ANXIETIES, suggestLockedFeelings } from "@/domain/feelings/logic";
 import { FeelingPicker } from "@/features/branch-touch/FeelingPicker";
@@ -40,7 +39,6 @@ export function CreateBranch() {
   const [periodYear, setPeriodYear] = useState("");
   const [anxieties, setAnxieties] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
-  const [branch, setBranch] = useState<PsychologicalBranch | null>(null);
 
   function resolvedPeriod(): ForkPeriodChoice | null {
     if (whenId === "today") return { kind: "today" };
@@ -72,45 +70,12 @@ export function CreateBranch() {
         occupies: anxieties.length > 0 ? suggestLockedFeelings(anxieties) : undefined,
       });
       // On recurrence the tray content switches to the recurrence check.
-      if (result.branch) setBranch(result.branch);
+      // Otherwise the new line stays in focus and its quick menu opens:
+      // the same actions every thread has, right away.
+      if (result.branch) setOperation({ kind: "quick-touch", branchId: result.branch.id });
     } finally {
       setBusy(false);
     }
-  }
-
-  if (branch) {
-    return (
-      <div className="panel">
-        <p className="calm-note">
-          {t(
-            "Thread started. Its line just drew itself onto the timeline — it begins in your past and reaches Now.",
-          )}
-        </p>
-        <div className="stack">
-          <button className="btn btn-primary" onClick={() => setOperation({ kind: "idle" })}>
-            {t("Return to timeline")}
-          </button>
-          <button
-            className="btn"
-            onClick={() => setOperation({ kind: "understanding", branchId: branch.id })}
-          >
-            {t("Explore what it carries")}
-          </button>
-          <button
-            className="btn"
-            onClick={() => setOperation({ kind: "quick-wait", branchId: branch.id })}
-          >
-            {t("Wait on this")}
-          </button>
-          <button
-            className="btn"
-            onClick={() => setOperation({ kind: "quick-act", branchId: branch.id })}
-          >
-            {t("Add one action")}
-          </button>
-        </div>
-      </div>
-    );
   }
 
   return (

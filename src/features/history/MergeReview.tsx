@@ -24,7 +24,7 @@ export function MergeReview({ mergeId }: Props) {
 
   return (
     <div className="panel">
-      <h1>{t("Brought back")}</h1>
+      <h1>{t("Integrated")}</h1>
       <p className="hint">
         {new Date(merge.createdAt).toLocaleDateString(language === "es" ? "es" : undefined, {
           weekday: "long",

@@ -12,7 +12,6 @@ beforeEach(async () => {
     ready: false,
     branches: [],
     merges: [],
-    waiting: [],
     actions: [],
     mergeDraft: undefined,
     view: { kind: "now" },
@@ -27,20 +26,82 @@ async function renderReady() {
 }
 
 describe("app flows", () => {
-  it("lands in Now with the timeline and exactly three destinations", async () => {
+  it("lands in Now with the timeline and its destinations", async () => {
     await renderReady();
     expect(useAppStore.getState().view).toEqual({ kind: "now" });
     expect(document.querySelector(".timeline-svg")).toBeTruthy();
-    for (const name of ["Now", "History", "More"]) {
+    for (const name of ["Now", "Actions", "History", "More"]) {
       expect(screen.getAllByRole("button", { name }).length).toBeGreaterThan(0);
     }
     expect(screen.queryByRole("button", { name: "Branches" })).toBeFalsy();
     expect(screen.queryByRole("button", { name: "Settings" })).toBeFalsy();
   });
 
+  it("walks the day thread by thread: undecided prompts, steps, and what settled", async () => {
+    await renderReady();
+    const store = useAppStore.getState();
+    const decided = await store.createBranchNow({
+      title: "Visa decision",
+      kindChoiceId: "feared-future",
+      period: { kind: "today" },
+      pull: 3,
+    });
+    await useAppStore.getState().createTodayAction(decided.id, "Send the one email");
+    const idle = await useAppStore.getState().createBranchNow({
+      title: "The unread letter",
+      kindChoiceId: "feared-future",
+      period: { kind: "today" },
+      pull: 2,
+    });
+
+    // The Actions destination opens the panel over the timeline.
+    fireEvent.click(screen.getAllByRole("button", { name: "Actions" })[0]);
+    expect(useAppStore.getState().operation).toEqual({ kind: "viewing-actions" });
+    expect(await screen.findByText("Your threads today")).toBeTruthy();
+
+    // The thread without a decision asks for one; tapping it opens its menu.
+    expect(screen.getByText("Still undecided today")).toBeTruthy();
+    expect(screen.getByText("The unread letter", { selector: "strong" })).toBeTruthy();
+    // The panel row (not the SVG label) carries the planned step.
+    expect(screen.getByText("Send the one email", { selector: "strong" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Done" }));
+    await waitFor(() =>
+      expect(useAppStore.getState().actions[0].completedAt).toBeTruthy(),
+    );
+    // The step joins the day's record; its thread stays as decided today.
+    expect(screen.getByText(/✓ Send the one email/, { selector: "strong" })).toBeTruthy();
+    expect(screen.getByText("You decided what this needs today.")).toBeTruthy();
+
+    // Prompt rows route into the quick menu.
+    fireEvent.click(screen.getByText("The unread letter", { selector: "strong" }));
+    expect(useAppStore.getState().operation).toEqual({
+      kind: "quick-touch",
+      branchId: idle.id,
+    });
+  });
+
+  it("keeps integrated threads out of the actions panel", async () => {
+    await renderReady();
+    const branch = await useAppStore.getState().createBranchNow({
+      title: "Old worry",
+      kindChoiceId: "feared-future",
+      period: { kind: "today" },
+      pull: 2,
+    });
+    await useAppStore.getState().updateBranch(branch.id, {
+      status: "merged",
+      mergeDate: new Date().toISOString().slice(0, 10),
+    });
+    fireEvent.click(screen.getAllByRole("button", { name: "Actions" })[0]);
+    expect(await screen.findByText("Your threads today")).toBeTruthy();
+    expect(screen.queryByText("Old worry", { selector: "strong" })).toBeFalsy();
+    expect(screen.getByText(/Nothing is open right now/)).toBeTruthy();
+  });
+
   it("creates a thread in one compact screen", async () => {
     await renderReady();
-    fireEvent.click(screen.getByRole("button", { name: "New thread" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "New thread" })[0]);
 
     const input = await screen.findByLabelText("Name the thread");
     fireEvent.change(input, { target: { value: "Career direction" } });
@@ -48,17 +109,22 @@ describe("app flows", () => {
     fireEvent.click(screen.getByRole("button", { name: "Start the thread" }));
 
     await waitFor(() => expect(useAppStore.getState().branches).toHaveLength(1));
-    expect(useAppStore.getState().branches[0].title).toBe("Career direction");
-    expect(await screen.findByText(/Thread started/)).toBeTruthy();
-
-    fireEvent.click(screen.getByRole("button", { name: "Return to timeline" }));
-    expect(useAppStore.getState().operation).toEqual({ kind: "idle" });
+    const created = useAppStore.getState().branches[0];
+    expect(created.title).toBe("Career direction");
+    // No detour: the new thread is focused and its regular quick menu opens.
+    await waitFor(() =>
+      expect(useAppStore.getState().operation).toEqual({
+        kind: "quick-touch",
+        branchId: created.id,
+      }),
+    );
+    expect(await screen.findByText("What does this thread need from you now?")).toBeTruthy();
     expect(useAppStore.getState().view).toEqual({ kind: "now" });
   });
 
   it("derives what a thread draws on from the feelings it invokes", async () => {
     await renderReady();
-    fireEvent.click(screen.getByRole("button", { name: "New thread" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "New thread" })[0]);
     fireEvent.change(await screen.findByLabelText("Name the thread"), {
       target: { value: "The unread letter" },
     });
@@ -74,14 +140,14 @@ describe("app flows", () => {
     expect(created.occupies!.length).toBeGreaterThan(0);
   });
 
-  it("routes from the post-create panel straight into one action", async () => {
+  it("routes from the post-create quick menu straight into one action", async () => {
     await renderReady();
-    fireEvent.click(screen.getByRole("button", { name: "New thread" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "New thread" })[0]);
     fireEvent.change(await screen.findByLabelText("Name the thread"), {
       target: { value: "Visa decision" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Start the thread" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Add one action" }));
+    fireEvent.click(await screen.findByRole("button", { name: /^Act Take one small step/ }));
 
     fireEvent.change(await screen.findByLabelText("The smallest honest step"), {
       target: { value: "Send the one email" },
@@ -150,7 +216,7 @@ describe("app flows", () => {
     );
   });
 
-  it("offers the four decisions plus a quieter understanding", async () => {
+  it("offers the three decisions plus a quieter understanding", async () => {
     await renderReady();
     const branch = await useAppStore.getState().createBranchNow({
       title: "Visa decision",
@@ -160,11 +226,12 @@ describe("app flows", () => {
     useAppStore.getState().setOperation({ kind: "quick-touch", branchId: branch.id });
 
     expect(await screen.findByText("Take one small step.")).toBeTruthy();
-    expect(screen.getByText("Stop carrying what cannot move yet.")).toBeTruthy();
     expect(
-      screen.getByText("Bring back what still matters."),
+      screen.getByText("Fold what it gave you back into your one line."),
     ).toBeTruthy();
     expect(screen.getByText("Add what just happened.")).toBeTruthy();
+    // Waiting is not offered here — the menu stays about what moves things.
+    expect(screen.queryByRole("button", { name: /^Wait/ })).toBeFalsy();
     expect(
       screen.getByRole("button", { name: /Can't do anything about it now/ }),
     ).toBeTruthy();
@@ -179,57 +246,6 @@ describe("app flows", () => {
     );
     expect(document.querySelector("[aria-modal='true']")).toBeTruthy();
     expect(document.querySelector(".sheet-backdrop")).toBeTruthy();
-  });
-
-  it("places a branch in waiting with exactly three inputs", async () => {
-    await renderReady();
-    const branch = await useAppStore.getState().createBranchNow({
-      title: "Waiting for the permit",
-      kindChoiceId: "waiting",
-      period: { kind: "this-week" },
-    });
-    useAppStore.getState().setOperation({ kind: "quick-wait", branchId: branch.id });
-
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-    fireEvent.change(await screen.findByLabelText("What are you waiting for?"), {
-      target: { value: "The permit decision" },
-    });
-    fireEvent.change(screen.getByLabelText("What have you already done?"), {
-      target: { value: "Application submitted" },
-    });
-    fireEvent.change(screen.getByLabelText("When will you check again?"), {
-      target: { value: tomorrow },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Begin waiting" }));
-
-    await waitFor(() => expect(useAppStore.getState().waiting).toHaveLength(1));
-    expect(useAppStore.getState().waiting[0].awaiting).toBe("The permit decision");
-    expect(
-      await screen.findByText("Nothing further is required from you until the review point."),
-    ).toBeTruthy();
-  });
-
-  it("shows a waiting line's review point on the timeline", async () => {
-    await renderReady();
-    const branch = await useAppStore.getState().createBranchNow({
-      title: "Waiting for the permit",
-      kindChoiceId: "waiting",
-      period: { kind: "this-week" },
-    });
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-    await useAppStore.getState().placeInWaiting({
-      branchId: branch.id,
-      awaiting: "The permit decision",
-      actionTaken: "Application submitted",
-      outsideControl: ["institutional timing"],
-      reviewDate: tomorrow,
-      reopenConditions: [],
-      continueMeanwhile: [],
-      reclaimedNow: [],
-    });
-    useAppStore.getState().setOperation({ kind: "idle" });
-    await waitFor(() => expect(document.querySelector(".review-marker")).toBeTruthy());
-    expect(document.querySelector(".review-label")?.textContent).toContain("review");
   });
 
   it("asks what is true about the branch before any merge analysis", async () => {
@@ -424,9 +440,9 @@ describe("app flows", () => {
     await waitFor(() =>
       expect(useAppStore.getState().operation.kind).toBe("quick-touch"),
     );
-    fireEvent.keyDown(window, { key: "w" });
+    fireEvent.keyDown(window, { key: "m" });
     await waitFor(() =>
-      expect(useAppStore.getState().operation.kind).toBe("quick-wait"),
+      expect(useAppStore.getState().operation.kind).toBe("quick-merge"),
     );
     fireEvent.keyDown(window, { key: "Escape" });
     await waitFor(() =>
@@ -488,7 +504,9 @@ describe("app flows", () => {
     expect(screen.queryByText(/solid = active/)).toBeFalsy();
     fireEvent.click(screen.getByRole("button", { name: "Help" }));
     expect(await screen.findByText(/solid = active/)).toBeTruthy();
-    expect(screen.getByText(/pinch sideways = zoom time/)).toBeTruthy();
+    // Time never zooms: moving around is drag/scroll only, faster along the dates.
+    expect(screen.getByText(/drag or scroll sideways = move through time/)).toBeTruthy();
+    expect(screen.queryByText(/zoom/)).toBeFalsy();
     // Phone-only: the keyboard cheatsheet is gone from the legend.
     expect(screen.queryByText(/N = add branch/)).toBeFalsy();
   });
@@ -500,8 +518,8 @@ describe("app flows", () => {
     expect(screen.getByText(/Nothing was recorded on this day/)).toBeTruthy();
 
     // Chips narrow the review to one kind of record; the day header stays.
-    fireEvent.click(screen.getByRole("button", { name: "Brought back" }));
-    expect(await screen.findByText("Everything brought back")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Integrated" }));
+    expect(await screen.findByText("Everything integrated")).toBeTruthy();
     expect(screen.queryByText(/Nothing was recorded on this day/)).toBeFalsy();
     expect(screen.getByRole("group", { name: "Recent days" })).toBeTruthy();
 

@@ -1,19 +1,17 @@
 import { create } from "zustand";
 import type { ForkPeriodChoice, PsychologicalBranch, Pull } from "@/domain/branches/types";
 import type { BranchMerge, MergeDraft } from "@/domain/merges/types";
-import type { WaitingContainer } from "@/domain/waiting/types";
 import type { IntegratedAction } from "@/domain/actions/types";
 import type { BranchCommit } from "@/domain/moments/types";
 import { createBranch, easePull, type CreateBranchInput } from "@/domain/branches/logic";
 import { addMomentToBranch, createMoment, type CreateMomentInput } from "@/domain/moments/logic";
 import { detectRecurrence, recordRecurrence } from "@/domain/branches/recurrence";
 import { applyMergeToBranch, createMerge, type CreateMergeInput } from "@/domain/merges/logic";
-import { applyWaitingToBranch, createWaitingContainer, type CreateWaitingInput } from "@/domain/waiting/logic";
 import { completeAction, composeIntegratedAction } from "@/domain/actions/logic";
 import { heldFeelings } from "@/domain/feelings/logic";
 import { newId } from "@/domain/ids";
 import { repo } from "@/db/repository";
-import { panWindow, weekWindow, zoomWindow, type TimeWindow } from "@/visualization/zoom/time-scale";
+import { panWindow, weekWindow, type TimeWindow } from "@/visualization/zoom/time-scale";
 import { isThemeId, type ThemeId } from "@/visualization/theme";
 
 /**
@@ -37,9 +35,10 @@ export type TimelineOperation =
   /** "What does this branch need from you now?" — the small menu at an endpoint. */
   | { kind: "quick-touch"; branchId: string }
   | { kind: "quick-act"; branchId: string }
-  | { kind: "quick-wait"; branchId: string }
   | { kind: "quick-merge"; branchId: string }
   | { kind: "quick-note"; branchId: string }
+  /** Every decided, still-open action read together in one panel. */
+  | { kind: "viewing-actions" }
   /** Looking deeper into one branch. Focused: the timeline waits behind it. */
   | { kind: "understanding"; branchId: string }
   /** The final, explicit merge confirmation. Focused. */
@@ -61,7 +60,7 @@ export function operationDepth(op: TimelineOperation): "none" | "quick" | "focus
   }
 }
 
-export type StatusFilter = "all" | "active" | "waiting" | "merged" | "recurring";
+export type StatusFilter = "all" | "active" | "merged" | "recurring";
 
 /** A decision just released these feelings back to the main line (drives the timeline animation). */
 export type ReclaimEvent = { key: number; branchId: string; feelings: string[] };
@@ -70,7 +69,6 @@ type AppState = {
   ready: boolean;
   branches: PsychologicalBranch[];
   merges: BranchMerge[];
-  waiting: WaitingContainer[];
   actions: IntegratedAction[];
   mergeDraft?: MergeDraft;
   view: View;
@@ -103,6 +101,8 @@ type AppState = {
   easeBranch(id: string, patch?: Partial<PsychologicalBranch>): Promise<void>;
   /** One small step today for a single branch; eases its pull. */
   createTodayAction(branchId: string, step: string): Promise<void>;
+  /** An action was done: it settles into the past instead of waiting ahead. */
+  markActionDone(actionId: string): Promise<void>;
   /** A folded line came back to mind: it continues as an open line again. */
   reopenBranch(branchId: string): Promise<void>;
   clearReclaim(): void;
@@ -114,13 +114,11 @@ type AppState = {
   cancelMerge(): Promise<void>;
   completeMerge(input: CreateMergeInput): Promise<BranchMerge>;
 
-  placeInWaiting(input: CreateWaitingInput): Promise<WaitingContainer>;
   /** This line is real work now: it leaves your head and lives where your tasks live. */
   handOffBranch(branchId: string): Promise<void>;
   recordRecurrenceOn(branchId: string): Promise<void>;
 
   setWindow(window: TimeWindow): void;
-  zoomBy(factor: number, focal?: number): void;
   panBy(fraction: number): void;
   setTypeFilter(types: Set<PsychologicalBranch["type"]>): void;
   setStatusFilter(f: StatusFilter): void;
@@ -170,7 +168,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   ready: false,
   branches: [],
   merges: [],
-  waiting: [],
   actions: [],
   view: { kind: "now" },
   operation: { kind: "idle" },
@@ -188,7 +185,6 @@ export const useAppStore = create<AppState>((set, get) => ({
       ready: true,
       branches: data.branches,
       merges: data.merges,
-      waiting: data.waiting,
       actions: data.actions,
       mergeDraft: draft,
       window: weekWindow(),
@@ -347,6 +343,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     await get().easeBranch(branchId, { leftOn: undefined });
   },
 
+  async markActionDone(actionId) {
+    const action = get().actions.find((a) => a.id === actionId);
+    if (!action || action.completedAt) return;
+    const done = completeAction(action);
+    await repo.saveAction(done);
+    set((s) => ({ actions: s.actions.map((a) => (a.id === actionId ? done : a)) }));
+  },
+
   async updateMoment(branchId, moment) {
     const branch = get().branches.find((b) => b.id === branchId);
     if (!branch) return;
@@ -408,21 +412,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     return merge;
   },
 
-  async placeInWaiting(input) {
-    const container = createWaitingContainer(input);
-    const branch = get().branches.find((b) => b.id === input.branchId);
-    if (!branch) throw new Error("Branch not found");
-    const next = applyWaitingToBranch(branch, container);
-    await repo.saveWaiting(container);
-    await repo.saveBranch(next);
-    // The tray stays open so the calm confirmation can be read over the timeline.
-    set((s) => ({
-      waiting: [...s.waiting, container],
-      branches: s.branches.map((b) => (b.id === next.id ? next : b)),
-    }));
-    return container;
-  },
-
   async handOffBranch(branchId) {
     const branch = get().branches.find((b) => b.id === branchId);
     if (!branch) return;
@@ -462,11 +451,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   setWindow: (window) => set({ window }),
-  zoomBy(factor, focal = 0.75) {
-    const w = get().window;
-    if (!w) return;
-    set({ window: zoomWindow(w, factor, focal, todayIso()) });
-  },
   panBy(fraction) {
     const w = get().window;
     if (!w) return;
@@ -499,7 +483,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({
       branches: data.branches,
       merges: data.merges,
-      waiting: data.waiting,
       actions: data.actions,
       window: weekWindow(),
     });
@@ -524,7 +507,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({
       branches: [],
       merges: [],
-      waiting: [],
       actions: [],
       mergeDraft: undefined,
       view: { kind: "now" },
@@ -542,9 +524,7 @@ export function matchesStatusFilter(
     case "all":
       return true;
     case "active":
-      return !["merged", "archived", "waiting-with-boundaries"].includes(b.status);
-    case "waiting":
-      return b.status === "waiting-with-boundaries";
+      return !["merged", "archived"].includes(b.status);
     case "merged":
       return ["merged", "partly-integrated", "archived"].includes(b.status);
     case "recurring":

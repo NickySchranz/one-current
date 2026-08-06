@@ -285,7 +285,7 @@ describe("recurrence", () => {
 
   it("recommends sensible paths for each reason", () => {
     expect(recommendForRecurrence("new-event")).toBe("new-branch");
-    expect(recommendForRecurrence("new-information")).toBe("reopen-waiting");
+    expect(recommendForRecurrence("new-information")).toBe("reopen");
     expect(recommendForRecurrence("old-belief-returned")).toBe("add-moment");
     expect(recommendForRecurrence("new-emotional-layer")).toBe("recommend-support");
   });

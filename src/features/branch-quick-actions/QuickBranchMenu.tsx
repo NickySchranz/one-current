@@ -7,13 +7,17 @@ type Props = { branchId: string };
 
 const ACTIONS: {
   key: string;
-  kind: "quick-act" | "quick-wait" | "quick-merge" | "quick-note";
+  kind: "quick-act" | "quick-merge" | "quick-note";
   label: string;
   hint: string;
 }[] = [
   { key: "a", kind: "quick-act", label: "Act", hint: "Take one small step." },
-  { key: "w", kind: "quick-wait", label: "Wait", hint: "Stop carrying what cannot move yet." },
-  { key: "m", kind: "quick-merge", label: "Bring back", hint: "Bring back what still matters." },
+  {
+    key: "m",
+    kind: "quick-merge",
+    label: "Integrate",
+    hint: "Fold what it gave you back into your one line.",
+  },
   { key: "t", kind: "quick-note", label: "Note", hint: "Add what just happened." },
 ];
 
@@ -42,7 +46,7 @@ export function QuickBranchMenu({ branchId }: Props) {
       setEased(true),
     );
 
-  // A / W / M / T / C / U choose directly while the menu is up — never while typing.
+  // A / M / T / C / U choose directly while the menu is up — never while typing.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (isEditableTarget(e) || e.metaKey || e.ctrlKey || e.altKey) return;

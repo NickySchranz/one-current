@@ -18,7 +18,7 @@ export type RecurrenceReasonId = (typeof RECURRENCE_REASONS)[number]["id"];
 export type RecurrenceRecommendation =
   | "add-moment"
   | "new-branch"
-  | "reopen-waiting"
+  | "reopen"
   | "new-conflict"
   | "recommend-support";
 
@@ -28,7 +28,7 @@ export function recommendForRecurrence(reason: RecurrenceReasonId): RecurrenceRe
     case "new-event":
       return "new-branch";
     case "new-information":
-      return "reopen-waiting";
+      return "reopen";
     case "body-depletion":
     case "seeking-reassurance":
     case "old-belief-returned":

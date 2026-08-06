@@ -8,6 +8,12 @@ export function MorePage() {
     <div className="panel">
       <h1>{t("More")}</h1>
       <SettingsSections />
+      <h2>{t("About")}</h2>
+      <div className="card">
+        <p className="hint" style={{ margin: 0 }}>
+          <a href="about/index.html">{t("What One Current is, and how it works")}</a>
+        </p>
+      </div>
     </div>
   );
 }

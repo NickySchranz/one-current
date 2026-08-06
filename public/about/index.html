@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>One Current — one line, one life</title>
+<meta
+  name="description"
+  content="One Current is a calm, private timeline of your life. Everything that pulls on your attention becomes a thread branching off one main line — and every thread can be brought back."
+/>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --bg-raised: #ffffff;
+    --ink: #26251f;
+    --ink-soft: #6b6a61;
+    --accent: #3f6f5f;
+    --accent-soft: #e4ede9;
+    --danger: #9c4a3c;
+    --line: #e3e1d9;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --font-body: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
+      source-sans-pro, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* header */
+  header.site {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .brand svg { display: block; }
+  .btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--radius);
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .btn.quiet {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    align-items: center;
+    padding: 56px 0 72px;
+  }
+  .hero h1 {
+    font-size: clamp(1.9rem, 4.5vw, 2.7rem);
+    line-height: 1.2;
+    margin: 0 0 18px;
+    letter-spacing: -0.01em;
+  }
+  .hero p.lead {
+    font-size: 1.12rem;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .hero .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .hero .note { font-size: 0.85rem; color: var(--ink-soft); margin-top: 14px; }
+  .phone {
+    justify-self: center;
+    width: min(300px, 80vw);
+    border-radius: 28px;
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 60px rgba(38, 37, 31, 0.14);
+    overflow: hidden;
+    background: var(--bg-raised);
+  }
+  .phone img { display: block; width: 100%; height: auto; }
+
+  /* sections */
+  section { padding: 56px 0; }
+  section.alt { background: var(--bg-raised); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+  .sub {
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin: 0 0 36px;
+  }
+
+  /* how it works steps */
+  .step {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    padding: 28px 0;
+  }
+  .step + .step { border-top: 1px solid var(--line); }
+  .step:nth-child(even) .step-media { order: -1; }
+  .step h3 {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .step h3 .num {
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .step p { color: var(--ink-soft); margin: 0 0 10px; }
+  .step-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    box-shadow: 0 12px 32px rgba(38, 37, 31, 0.1);
+  }
+  .caption {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  /* why cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+  }
+  section.alt .card { background: var(--bg); }
+  .card h3 { margin: 0 0 8px; font-size: 1rem; }
+  .card p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+  /* desktop shot */
+  .wide-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    box-shadow: 0 16px 44px rgba(38, 37, 31, 0.12);
+  }
+
+  /* privacy */
+  .privacy {
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .privacy p { color: var(--ink-soft); }
+
+  /* footer */
+  footer {
+    text-align: center;
+    padding: 64px 20px 80px;
+  }
+  footer h2 { margin-bottom: 20px; }
+  footer .small { font-size: 0.82rem; color: var(--ink-soft); margin-top: 24px; }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; padding: 32px 0 48px; gap: 36px; }
+    .step { grid-template-columns: 1fr; gap: 20px; }
+    .step:nth-child(even) .step-media { order: 0; }
+    .step-media { max-width: 420px; margin: 0 auto; width: 100%; }
+    section { padding: 44px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="site">
+    <div class="brand">
+      <svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true">
+        <path d="M2 13 C8 13 8 5 15 5 C22 5 22 13 28 13" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="24" cy="13" r="3" fill="var(--accent)"/>
+      </svg>
+      One Current
+    </div>
+    <a class="btn quiet" href="../">Open the app</a>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Your life is one line.<br />Everything else is a thread that can come back.</h1>
+      <p class="lead">
+        One Current is a calm, private timeline of your life. Whatever pulls at your
+        attention — an unanswered message, a worry, a decision you keep postponing —
+        becomes a visible thread branching off your main line. You see it, you decide
+        what it needs, the line changes, and you return to your life.
+      </p>
+      <div class="cta-row">
+        <a class="btn" href="../">Open One Current</a>
+        <a class="btn quiet" href="#how">How it works</a>
+      </div>
+      <p class="note">Free, no account, nothing leaves your browser.</p>
+    </div>
+    <div class="phone">
+      <img src="img/timeline-mobile.png" alt="One Current on a phone: a dark main line marked Now, with colored threads running alongside it and a small wholeness chip in the corner." />
+    </div>
+  </div>
+</div>
+
+<section class="alt" id="what">
+  <div class="wrap">
+    <p class="kicker">What it is</p>
+    <h2>A picture of where your attention actually is</h2>
+    <p class="sub">
+      Most of what tires you out is not the work in front of you — it is everything
+      running in the background. The argument you keep replaying. The letter you have
+      not answered. The comparison that flares up every time you open your phone.
+      One Current gives each of those a line of its own, so instead of a vague weight
+      you see exactly what is open, how strongly it pulls, and how long it has been
+      running.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <h3>One main line</h3>
+        <p>Your life, moving through Now. Everything on it is where you actually are.</p>
+      </div>
+      <div class="card">
+        <h3>Threads</h3>
+        <p>Anything that split off and keeps pulling — a person, a fear, a task, a season of life. Thicker lines pull harder.</p>
+      </div>
+      <div class="card">
+        <h3>Integration</h3>
+        <p>Threads are not deleted or suppressed. When one has given you what it can, it curves back into your main line and travels with you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <p class="kicker">How it works</p>
+    <h2>The whole loop takes about a minute</h2>
+    <p class="sub">
+      One Current is not a place to spend time. It is a place to make one small,
+      honest decision and leave.
+    </p>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">1</span> Name what is pulling at you</h3>
+        <p>
+          Tap <strong>+</strong> and write it down in your own words. A new thread
+          appears on the timeline immediately — roughly when it started, colored,
+          with the strength of its pull.
+        </p>
+        <p>
+          That alone changes something: the pull now has a shape and a place,
+          instead of circling in your head.
+        </p>
+      </div>
+      <div class="step-media">
+        <img src="img/timeline-desktop.png" alt="The full timeline: several named threads running parallel to the main line, day markers along the bottom, and the Now point where the main line continues into the future." />
+        <p class="caption">Every open thread stays visible until you decide what it needs.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">2</span> Decide what it needs today</h3>
+        <p>
+          Tap any thread and answer one question:
+          <em>what does this thread need from you now?</em>
+        </p>
+        <p>
+          <strong>Act</strong> — take one small step.
+          <strong>Integrate</strong> — bring back what still matters.
+          <strong>Note</strong> — add what just happened.
+          Or say honestly: <strong>nothing can be done about it right now</strong> —
+          and that counts as a decision too.
+        </p>
+      </div>
+      <div class="step-media">
+        <img src="img/quick-menu.png" alt="The quick menu over the timeline for a thread called 'The argument with my father', asking what the thread needs now, with options to act, integrate, note, or accept that nothing can be done." />
+        <p class="caption">Four honest answers. No forms, no scoring.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">3</span> The line changes</h3>
+        <p>
+          Your decisions show up on the timeline itself. Steps you chose appear
+          ahead of Now on your main line. Threads you decided on today are marked.
+          A thread you integrate curves back into the main line and stays part of
+          your history.
+        </p>
+        <p>
+          The <strong>Actions</strong> view gathers it into one glance: which
+          threads still need a decision today, and which are already settled.
+        </p>
+      </div>
+      <div class="step-media">
+        <img src="img/actions.png" alt="The Actions panel below the timeline, listing threads still undecided today and threads already decided, each with a short human sentence." />
+        <p class="caption">Undecided above, decided below — nothing more to track.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">4</span> Go deeper only when you want to</h3>
+        <p>
+          Every thread also has a quieter door: <em>understand this thread</em>.
+          There you can name what from it still belongs to you now — confidence,
+          rest, connection, closure — compare where it began with where you are,
+          and notice what feels less available while it stays open.
+        </p>
+        <p>All of it is optional. Nothing here is required.</p>
+      </div>
+      <div class="step-media">
+        <img src="img/understand.png" alt="The understanding view for a thread: 'What from this still belongs to you now?' with gentle word chips like confidence, rest, closure, and optional deeper sections below." />
+        <p class="caption">Take what is still yours; leave the rest where it happened.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">5</span> See how gathered you are</h3>
+        <p>
+          A small chip in the corner shows your wholeness — how many threads are
+          pulling on you at once. When you are scattered, it tells you plainly,
+          and points at the one decision that would gather you most right now.
+        </p>
+        <p>
+          An action counts. So does deciding that nothing can be done.
+        </p>
+      </div>
+      <div class="step-media">
+        <img src="img/wholeness.png" alt="The wholeness panel open: 'You are scattered. Today can feel foggy and tiring, like living several days at once. One small decision starts bringing you back' — followed by the threads pulling hardest." />
+        <p class="caption">Not a score to optimize — a weather report, and one next step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="why">
+  <div class="wrap">
+    <p class="kicker">Why it helps</p>
+    <h2>Built around a few quiet convictions</h2>
+    <p class="sub">
+      One Current is not a task manager and not a mood tracker. It sits somewhere
+      calmer: a way to stop carrying everything at once.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <h3>Seeing it is half the relief</h3>
+        <p>
+          An open loop you can see is lighter than one you carry blind. The timeline
+          turns background noise into a finite, visible set of lines.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Every decision counts</h3>
+        <p>
+          Taking one small step counts. So does honestly deciding that nothing can be
+          done today. Rest is a decision, not a failure.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Integration, not suppression</h3>
+        <p>
+          Threads are never crossed out or locked away. When one completes for now,
+          you choose what comes back with you — and if it returns later, you meet
+          the new version of it.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Small honest steps</h3>
+        <p>
+          The app never asks for a plan. It asks for the smallest honest step —
+          send one message, read the letter once, say one true sentence.
+        </p>
+      </div>
+      <div class="card">
+        <h3>A minute, not an evening</h3>
+        <p>
+          Every screen has one purpose and a handful of words. You decide, the line
+          changes, and you go back to your life.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Support when it is heavy</h3>
+        <p>
+          Some threads are too heavy to handle alone. One Current says so, plainly,
+          and makes reaching for support one of the normal answers.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="wrap privacy">
+    <p class="kicker">Privacy</p>
+    <h2>Everything stays in your browser</h2>
+    <p>
+      What you write in One Current is stored only on your device, in this browser.
+      There is no account, no server, no analytics. Nothing is sent anywhere.
+      You can export your data as a file whenever you want, and delete everything
+      just as easily.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h2>See your one current.</h2>
+    <a class="btn" href="../">Open One Current</a>
+    <p class="small">Works on your phone and your desktop. No installation, no sign-up.</p>
+  </div>
+</footer>
+
+</body>
+</html>

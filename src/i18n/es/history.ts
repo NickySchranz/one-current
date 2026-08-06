@@ -149,4 +149,6 @@ export const history: Record<string, string> = {
   "All data deleted.": "Todos los datos borrados.",
   "Import complete.": "Importación completada.",
   "Import failed.": "La importación falló.",
+  About: "Acerca de",
+  "What One Current is, and how it works": "Qué es One Current y cómo funciona",
 };

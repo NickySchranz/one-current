@@ -40,3 +40,6 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Pages queues can be slow; wait rather than cancel the deployment.
+          timeout: 1800000

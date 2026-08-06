@@ -9,7 +9,7 @@ type Props = { branchId: string };
 export function WaitingSetup({ branchId }: Props) {
   const branch = useAppStore((s) => s.branches.find((b) => b.id === branchId));
   const placeInWaiting = useAppStore((s) => s.placeInWaiting);
-  const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
 
   const [awaiting, setAwaiting] = useState("");
   const [actionTaken, setActionTaken] = useState("");
@@ -48,7 +48,7 @@ export function WaitingSetup({ branchId }: Props) {
         <p className="calm-note">
           Nothing further is required from you until the review condition occurs.
         </p>
-        <button className="btn btn-primary" onClick={() => setView({ kind: "timeline" })}>
+        <button className="btn btn-primary" onClick={() => setOperation({ kind: "idle" })}>
           Return to Now
         </button>
       </div>
@@ -104,7 +104,7 @@ export function WaitingSetup({ branchId }: Props) {
         variant="quality"
       />
       <div className="stage-nav">
-        <button className="btn btn-quiet" onClick={() => setView({ kind: "branch", branchId, stage: "decide" })}>
+        <button className="btn btn-quiet" onClick={() => setOperation({ kind: "inspecting-branch", branchId, depth: "deep" })}>
           Back
         </button>
         <button className="btn btn-primary" disabled={!valid || busy} onClick={save}>

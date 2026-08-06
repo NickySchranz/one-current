@@ -26,6 +26,7 @@ function toggleIn(list: string[], item: string): string[] {
 export function BranchTouchView({ branchId, sheet = false }: Props) {
   const branches = useAppStore((s) => s.branches);
   const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
   const addMoment = useAppStore((s) => s.addMoment);
   const easeBranch = useAppStore((s) => s.easeBranch);
   const createTodayAction = useAppStore((s) => s.createTodayAction);
@@ -100,7 +101,7 @@ export function BranchTouchView({ branchId, sheet = false }: Props) {
                 See what it returned
               </button>
             )}
-            <button className="btn btn-quiet" onClick={() => setView({ kind: "timeline" })}>
+            <button className="btn btn-quiet" onClick={() => setOperation({ kind: "idle" })}>
               Back
             </button>
           </div>
@@ -169,7 +170,7 @@ export function BranchTouchView({ branchId, sheet = false }: Props) {
               ))}
             </div>
           )}
-          <button className="btn btn-primary" onClick={() => setView({ kind: "timeline" })}>
+          <button className="btn btn-primary" onClick={() => setOperation({ kind: "idle" })}>
             Back to the timeline
           </button>
         </div>
@@ -231,11 +232,11 @@ export function BranchTouchView({ branchId, sheet = false }: Props) {
           <div className="touch-footer">
             <button
               className="btn btn-quiet"
-              onClick={() => setView({ kind: "branch", branchId, stage: "fork" })}
+              onClick={() => setOperation({ kind: "inspecting-branch", branchId, depth: "deep" })}
             >
               Look deeper
             </button>
-            <button className="btn btn-primary" onClick={() => setView({ kind: "timeline" })}>
+            <button className="btn btn-primary" onClick={() => setOperation({ kind: "idle" })}>
               Back to the timeline
             </button>
           </div>
@@ -395,11 +396,11 @@ export function BranchTouchView({ branchId, sheet = false }: Props) {
         <div className="touch-footer">
           <button
             className="btn btn-quiet"
-            onClick={() => setView({ kind: "branch", branchId, stage: "fork" })}
+            onClick={() => setOperation({ kind: "inspecting-branch", branchId, depth: "deep" })}
           >
             Look deeper into this branch
           </button>
-          <button className="btn btn-quiet" onClick={() => setView({ kind: "timeline" })}>
+          <button className="btn btn-quiet" onClick={() => setOperation({ kind: "idle" })}>
             Back
           </button>
         </div>

@@ -17,6 +17,10 @@ type Props = {
   highlighted?: boolean;
   /** Another branch is in focus; this one steps back. */
   dimmed?: boolean;
+  /** Just created: the line draws itself from the fork toward Now. */
+  born?: boolean;
+  /** Selected for Integrate Now: a quiet ring around the endpoint. */
+  selectionRing?: boolean;
   onSelect: () => void;
   onSelectMoment: (momentId: string) => void;
   onSelectMergePoint: () => void;
@@ -31,6 +35,8 @@ export const BranchLine = memo(function BranchLine({
   emphasizedId,
   highlighted = false,
   dimmed = false,
+  born = false,
+  selectionRing = false,
   onSelect,
   onSelectMoment,
   onSelectMergePoint,
@@ -75,19 +81,20 @@ export const BranchLine = memo(function BranchLine({
         />
       )}
 
-      {/* the visible line */}
+      {/* the visible line; a newborn line draws itself from the fork toward Now */}
       <path
-        className="branch-line"
+        className={`branch-line ${born ? "just-born" : ""}`}
         d={g.path}
+        pathLength={born ? 1 : undefined}
         stroke={color}
         strokeWidth={focused || highlighted ? g.thickness + 1.25 : g.thickness}
-        strokeDasharray={g.style.dashArray}
+        strokeDasharray={born ? undefined : g.style.dashArray}
         opacity={g.style.opacity}
         pointerEvents="none"
       />
 
       {/* subtle directional movement toward the present */}
-      {g.style.animated && (
+      {!born && g.style.animated && (
         <path
           className={`branch-flow ${emphasized ? "emphasized" : ""}`}
           d={g.path}
@@ -137,18 +144,30 @@ export const BranchLine = memo(function BranchLine({
           <title>Merged: {branch.title}</title>
         </circle>
       ) : (
-        <circle
-          className={`branch-endpoint ${emphasized ? "pulse" : ""}`}
-          cx={g.endX - 3}
-          cy={g.endY}
-          r={acted ? 6.5 : emphasized ? 6 : 5}
-          fill={color}
-          opacity={acted ? 0.9 : g.style.opacity}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect();
-          }}
-        />
+        <>
+          {selectionRing && (
+            <circle
+              className="selection-ring"
+              cx={g.endX - 3}
+              cy={g.endY}
+              r={10}
+              stroke={color}
+              pointerEvents="none"
+            />
+          )}
+          <circle
+            className={`branch-endpoint ${emphasized ? "pulse" : ""}`}
+            cx={g.endX - 3}
+            cy={g.endY}
+            r={acted ? 6.5 : emphasized ? 6 : 5}
+            fill={color}
+            opacity={acted ? 0.9 : g.style.opacity}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect();
+            }}
+          />
+        </>
       )}
 
       {/* a decision was taken here today: a quiet check at the line's end */}

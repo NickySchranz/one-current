@@ -37,7 +37,7 @@ export function MergeWizard({ branchIds }: Props) {
   const cancelMerge = useAppStore((s) => s.cancelMerge);
   const completeMerge = useAppStore((s) => s.completeMerge);
   const startMerge = useAppStore((s) => s.startMerge);
-  const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
 
   const branches = useMemo(
     () => branchIds.map((id) => allBranches.find((b) => b.id === id)).filter((b): b is PsychologicalBranch => !!b),
@@ -139,7 +139,7 @@ export function MergeWizard({ branchIds }: Props) {
         resultStatus: outcome,
       });
       if (outcome === "waiting") {
-        setView({ kind: "waiting-setup", branchId: branches[0].id });
+        setOperation({ kind: "creating-waiting-container", branchId: branches[0].id });
       }
     } finally {
       setBusy(false);

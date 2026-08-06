@@ -16,7 +16,7 @@ const KIND_LABELS: Record<PsychologicalBranch["type"], string> = {
 };
 
 function BranchRow({ branch }: { branch: PsychologicalBranch }) {
-  const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
   const theme = useAppStore((s) => s.theme);
   const openBranch = isOpen(branch);
 
@@ -41,14 +41,14 @@ function BranchRow({ branch }: { branch: PsychologicalBranch }) {
       <div className="branch-row-actions">
         <button
           className="btn btn-quiet"
-          onClick={() => setView({ kind: "branch", branchId: branch.id, stage: "fork" })}
+          onClick={() => setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "deep" })}
         >
           Inspect
         </button>
         {openBranch && !isWaiting(branch) && (
           <button
             className="btn"
-            onClick={() => setView({ kind: "merge", branchIds: [branch.id] })}
+            onClick={() => setOperation({ kind: "merging-branch", branchIds: [branch.id] })}
           >
             Merge
           </button>
@@ -80,7 +80,7 @@ export function BranchListPage() {
   const branches = useAppStore((s) => s.branches);
   const typeFilter = useAppStore((s) => s.typeFilter);
   const statusFilter = useAppStore((s) => s.statusFilter);
-  const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
   const [query, setQuery] = useState("");
 
   const visible = useMemo(
@@ -115,7 +115,7 @@ export function BranchListPage() {
             When something begins pulling part of your attention away from the present, add it as a
             branch.
           </p>
-          <button className="btn btn-primary" onClick={() => setView({ kind: "create" })}>
+          <button className="btn btn-primary" onClick={() => setOperation({ kind: "creating-branch" })}>
             Add your first branch
           </button>
         </div>

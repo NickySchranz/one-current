@@ -1,23 +1,24 @@
 import { useState } from "react";
-import { useAppStore, type View } from "@/stores/app-store";
+import { useAppStore } from "@/stores/app-store";
+import type { CreateBranchInput } from "@/stores/app-store";
 import {
   RECURRENCE_REASONS,
   recommendForRecurrence,
   type RecurrenceReasonId,
 } from "@/domain/branches/recurrence";
 
-type Props = { view: Extract<View, { kind: "recurrence" }> };
+type Props = { matchedBranchId: string; pending: CreateBranchInput };
 
 /** A new concern resembles a branch merged before. Recurrence is not failure. */
-export function RecurrenceCheck({ view }: Props) {
+export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
   const branches = useAppStore((s) => s.branches);
   const createBranchNow = useAppStore((s) => s.createBranchNow);
   const recordRecurrenceOn = useAppStore((s) => s.recordRecurrenceOn);
   const addMoment = useAppStore((s) => s.addMoment);
   const updateBranch = useAppStore((s) => s.updateBranch);
-  const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
 
-  const matched = branches.find((b) => b.id === view.matchedBranchId);
+  const matched = branches.find((b) => b.id === matchedBranchId);
   const [reason, setReason] = useState<RecurrenceReasonId | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -30,26 +31,26 @@ export function RecurrenceCheck({ view }: Props) {
     const rec = recommendForRecurrence(reason);
 
     if (rec === "new-branch") {
-      const branch = await createBranchNow(view.pending);
-      setView({ kind: "branch", branchId: branch.id, stage: "fork" });
+      const branch = await createBranchNow(pending);
+      setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "deep" });
     } else if (rec === "add-moment") {
       await addMoment({
         branchId: matched.id,
         date: new Date().toISOString().slice(0, 10),
-        title: view.pending.title,
+        title: pending.title,
         type: "intensification",
         description: `Returned: ${RECURRENCE_REASONS.find((r) => r.id === reason)?.label}`,
       });
-      setView({ kind: "branch", branchId: matched.id, stage: "fork" });
+      setOperation({ kind: "inspecting-branch", branchId: matched.id, depth: "deep" });
     } else if (rec === "reopen-waiting") {
       await updateBranch(matched.id, { status: "active", lastActivatedAt: new Date().toISOString() });
-      setView({ kind: "branch", branchId: matched.id, stage: "difference" });
+      setOperation({ kind: "inspecting-branch", branchId: matched.id, depth: "deep" });
     } else if (rec === "new-conflict") {
       await updateBranch(matched.id, { status: "active" });
-      setView({ kind: "merge", branchIds: [matched.id] });
+      setOperation({ kind: "merging-branch", branchIds: [matched.id] });
     } else {
       await updateBranch(matched.id, { status: "needs-support" });
-      setView({ kind: "branch", branchId: matched.id, stage: "decide" });
+      setOperation({ kind: "inspecting-branch", branchId: matched.id, depth: "deep" });
     }
   }
 
@@ -85,8 +86,8 @@ export function RecurrenceCheck({ view }: Props) {
           className="btn btn-quiet"
           onClick={async () => {
             // Treat it as genuinely new anyway.
-            const branch = await createBranchNow(view.pending);
-            setView({ kind: "branch", branchId: branch.id, stage: "fork" });
+            const branch = await createBranchNow(pending);
+            setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "deep" });
           }}
         >
           It is something new

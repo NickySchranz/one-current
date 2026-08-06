@@ -14,7 +14,7 @@ type Props = {
  * Deciding something about a line visibly shrinks its sliver for the day.
  */
 export function EnergyBar({ branches }: Props) {
-  const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
   const theme = useAppStore((s) => s.theme);
 
   const split = useMemo(() => energySplit(branches), [branches]);
@@ -46,7 +46,7 @@ export function EnergyBar({ branches }: Props) {
             style={{ width: pct(share), background: branchColor(branch, theme) }}
             title={`${branch.title} · ${pct(share)}`}
             aria-label={`${branch.title} holds ${pct(share)} of your energy. Select to decide something about it.`}
-            onClick={() => setView({ kind: "touch", branchId: branch.id })}
+            onClick={() => setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "touch" })}
           />
         ))}
       </div>

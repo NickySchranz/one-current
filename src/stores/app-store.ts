@@ -16,25 +16,28 @@ import { repo } from "@/db/repository";
 import { panWindow, weekWindow, zoomWindow, type TimeWindow } from "@/visualization/zoom/time-scale";
 import { isThemeId, type ThemeId } from "@/visualization/theme";
 
-export type InspectStage = "fork" | "difference" | "decide";
-
+/** The tabs. Everything that concerns a line happens over the timeline, not on a page. */
 export type View =
   | { kind: "timeline" }
-  | { kind: "create" }
-  | { kind: "touch"; branchId: string }
-  | { kind: "branch"; branchId: string; stage: InspectStage }
   | { kind: "now" }
-  | { kind: "merge"; branchIds: string[] }
-  | { kind: "waiting-setup"; branchId: string }
-  | {
-      kind: "recurrence";
-      matchedBranchId: string;
-      pending: CreateBranchInput;
-    }
   | { kind: "merge-review"; mergeId: string }
   | { kind: "history" }
   | { kind: "branches" }
   | { kind: "settings" };
+
+/**
+ * What is currently happening ON the timeline. The timeline stays mounted and
+ * visible; the operation renders in an anchored tray over it.
+ */
+export type TimelineOperation =
+  | { kind: "idle" }
+  | { kind: "creating-branch" }
+  | { kind: "checking-recurrence"; matchedBranchId: string; pending: CreateBranchInput }
+  | { kind: "inspecting-branch"; branchId: string; depth: "touch" | "deep" }
+  | { kind: "merging-branch"; branchIds: string[] }
+  | { kind: "creating-waiting-container"; branchId: string }
+  /** Integrate Now: selecting several open lines at their endpoints, then merging them together. */
+  | { kind: "integrating"; branchIds: string[] };
 
 export type StatusFilter = "all" | "active" | "waiting" | "merged" | "recurring";
 
@@ -49,18 +52,25 @@ type AppState = {
   actions: IntegratedAction[];
   mergeDraft?: MergeDraft;
   view: View;
+  operation: TimelineOperation;
   window?: TimeWindow;
   typeFilter: Set<PsychologicalBranch["type"]>;
   statusFilter: StatusFilter;
   reducedMotion: boolean;
   theme: ThemeId;
   reclaim?: ReclaimEvent;
+  /** A branch was just created: its line draws itself onto the timeline. */
+  born?: { key: number; branchId: string };
 
   init(): Promise<void>;
   setView(view: View): void;
+  /** Begin (or end, with idle) an operation over the timeline. Jumps to the timeline shell. */
+  setOperation(operation: TimelineOperation): void;
   returnToNow(): void;
 
-  requestBranch(input: CreateBranchInput): Promise<{ recurrenceOf?: string }>;
+  requestBranch(
+    input: CreateBranchInput,
+  ): Promise<{ recurrenceOf?: string; branch?: PsychologicalBranch }>;
   createBranchNow(input: CreateBranchInput): Promise<PsychologicalBranch>;
   updateBranch(id: string, patch: Partial<PsychologicalBranch>): Promise<void>;
   deleteBranch(id: string): Promise<void>;
@@ -74,6 +84,7 @@ type AppState = {
   /** A folded line came back to mind: it continues as an open line again. */
   reopenBranch(branchId: string): Promise<void>;
   clearReclaim(): void;
+  clearBorn(): void;
   updateMoment(branchId: string, moment: BranchCommit): Promise<void>;
 
   startMerge(branchIds: string[]): Promise<void>;
@@ -124,6 +135,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   waiting: [],
   actions: [],
   view: { kind: "timeline" },
+  operation: { kind: "idle" },
   typeFilter: new Set(),
   statusFilter: "all",
   reducedMotion:
@@ -141,12 +153,22 @@ export const useAppStore = create<AppState>((set, get) => ({
       actions: data.actions,
       mergeDraft: draft,
       window: weekWindow(),
-      // An interrupted merge is restored where it stopped.
-      view: draft ? { kind: "merge", branchIds: draft.branchIds } : { kind: "timeline" },
+      view: { kind: "timeline" },
+      // An interrupted merge is restored where it stopped — over the timeline.
+      operation: draft
+        ? { kind: "merging-branch", branchIds: draft.branchIds }
+        : { kind: "idle" },
     });
   },
 
-  setView: (view) => set({ view }),
+  // Leaving the timeline sets any open operation down.
+  setView: (view) => set({ view, operation: { kind: "idle" } }),
+  // Operations live over the timeline, so starting one returns to it.
+  setOperation: (operation) =>
+    set((s) => ({
+      operation,
+      view: operation.kind === "idle" ? s.view : { kind: "timeline" },
+    })),
   returnToNow: () => {
     set({ view: { kind: "timeline" }, window: weekWindow() });
   },
@@ -154,30 +176,41 @@ export const useAppStore = create<AppState>((set, get) => ({
   async requestBranch(input) {
     const match = detectRecurrence(input.title, get().branches);
     if (match) {
-      set({ view: { kind: "recurrence", matchedBranchId: match.id, pending: input } });
+      set({
+        operation: { kind: "checking-recurrence", matchedBranchId: match.id, pending: input },
+        view: { kind: "timeline" },
+      });
       return { recurrenceOf: match.id };
     }
-    await get().createBranchNow(input);
-    return {};
+    const branch = await get().createBranchNow(input);
+    return { branch };
   },
 
   async createBranchNow(input) {
     const branch = createBranch(input);
     await repo.saveBranch(branch);
+    // The new line draws itself in immediately; whatever tray is open stays open.
     set((s) => ({
       branches: [...s.branches, branch],
       window: weekWindow(),
       view: { kind: "timeline" },
+      born: { key: Date.now(), branchId: branch.id },
     }));
     return branch;
   },
 
   async updateBranch(id, patch) {
-    const branch = get().branches.find((b) => b.id === id);
-    if (!branch) return;
-    const next = { ...branch, ...patch };
-    await repo.saveBranch(next);
-    set((s) => ({ branches: s.branches.map((b) => (b.id === id ? next : b)) }));
+    // Apply to the freshest state synchronously so quick successive edits
+    // (e.g. tapping kind then feelings) don't overwrite each other.
+    let next: PsychologicalBranch | undefined;
+    set((s) => ({
+      branches: s.branches.map((b) => {
+        if (b.id !== id) return b;
+        next = { ...b, ...patch };
+        return next;
+      }),
+    }));
+    if (next) await repo.saveBranch(next);
   },
 
   async deleteBranch(id) {
@@ -185,6 +218,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((s) => ({
       branches: s.branches.filter((b) => b.id !== id),
       view: { kind: "timeline" },
+      operation: { kind: "idle" },
     }));
   },
 
@@ -276,6 +310,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   clearReclaim: () => set({ reclaim: undefined }),
+  clearBorn: () => set({ born: undefined }),
 
   async createTodayAction(branchId, step) {
     const branch = get().branches.find((b) => b.id === branchId);
@@ -314,7 +349,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       partial: {},
     };
     await repo.saveDraft(draft);
-    set({ mergeDraft: draft, view: { kind: "merge", branchIds } });
+    set({
+      mergeDraft: draft,
+      operation: { kind: "merging-branch", branchIds },
+      view: { kind: "timeline" },
+    });
   },
 
   async saveMergeDraft(draft) {
@@ -325,7 +364,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   async cancelMerge() {
     const draft = get().mergeDraft;
     if (draft) await repo.deleteDraft(draft.id);
-    set({ mergeDraft: undefined, view: { kind: "timeline" } });
+    set({ mergeDraft: undefined, view: { kind: "timeline" }, operation: { kind: "idle" } });
   },
 
   async completeMerge(input) {
@@ -342,6 +381,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       branches: s.branches.map((b) => updated.find((u) => u.id === b.id) ?? b),
       mergeDraft: undefined,
       view: { kind: "timeline" },
+      operation: { kind: "idle" },
     }));
     return merge;
   },
@@ -353,10 +393,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     const next = applyWaitingToBranch(branch, container);
     await repo.saveWaiting(container);
     await repo.saveBranch(next);
+    // The tray stays open so the calm confirmation can be read over the timeline.
     set((s) => ({
       waiting: [...s.waiting, container],
       branches: s.branches.map((b) => (b.id === next.id ? next : b)),
-      view: { kind: "timeline" },
     }));
     return container;
   },
@@ -387,6 +427,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       actions: s.actions.map((a) => openActions.find((c) => c.id === a.id) ?? a),
       reclaim: freed.length > 0 ? { key: Date.now(), branchId, feelings: freed } : s.reclaim,
       view: { kind: "timeline" },
+      operation: { kind: "idle" },
     }));
   },
 
@@ -444,6 +485,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       merges: [...s.merges, ...data.merges],
       actions: [...s.actions, ...data.actions],
       view: { kind: "timeline" },
+      operation: { kind: "idle" },
       window: weekWindow(),
     }));
   },
@@ -456,6 +498,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       actions: [],
       mergeDraft: undefined,
       view: { kind: "timeline" },
+      operation: { kind: "idle" },
       window: weekWindow(),
     });
   },

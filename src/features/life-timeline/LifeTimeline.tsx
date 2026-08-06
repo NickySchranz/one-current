@@ -4,12 +4,13 @@ import { buildTimelineLayout } from "@/visualization/main-line/layout";
 import { generateTicks, dateToX } from "@/visualization/zoom/time-scale";
 import { describeTimeline, describeBranch } from "@/visualization/a11y/describe";
 import { isOpen, isWaiting, mostActivated } from "@/domain/branches/logic";
+import { detectConflicts } from "@/domain/conflicts/logic";
 import type { PsychologicalBranch } from "@/domain/branches/types";
 import { BranchLine } from "./BranchLine";
 import { TimelineFilters } from "./TimelineFilters";
 import { EnergyBar } from "./EnergyBar";
-import { BranchTouchView } from "@/features/branch-touch/BranchTouchView";
 import { branchColor } from "@/visualization/branch-lines/style";
+import { mergePreviewPath } from "@/visualization/branch-lines/paths";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -19,17 +20,43 @@ export function LifeTimeline() {
   const typeFilter = useAppStore((s) => s.typeFilter);
   const statusFilter = useAppStore((s) => s.statusFilter);
   const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
   const zoomBy = useAppStore((s) => s.zoomBy);
   const panBy = useAppStore((s) => s.panBy);
   const returnToNow = useAppStore((s) => s.returnToNow);
   const theme = useAppStore((s) => s.theme);
-  const view = useAppStore((s) => s.view);
+  const operation = useAppStore((s) => s.operation);
   const reclaim = useAppStore((s) => s.reclaim);
   const clearReclaim = useAppStore((s) => s.clearReclaim);
+  const born = useAppStore((s) => s.born);
+  const clearBorn = useAppStore((s) => s.clearBorn);
   const reducedMotion = useAppStore((s) => s.reducedMotion);
+  const actions = useAppStore((s) => s.actions);
+  const waiting = useAppStore((s) => s.waiting);
+  const startMerge = useAppStore((s) => s.startMerge);
 
-  // Tapping a line focuses it: the touch sheet opens and everything else steps back.
-  const focusedBranchId = view.kind === "touch" ? view.branchId : undefined;
+  // Integrate Now: several endpoints are selected, then merged together.
+  const integrating = operation.kind === "integrating";
+  const selectedIds = operation.kind === "integrating" ? operation.branchIds : [];
+
+  function toggleIntegration(branchId: string) {
+    if (operation.kind !== "integrating") return;
+    const has = operation.branchIds.includes(branchId);
+    setOperation({
+      kind: "integrating",
+      branchIds: has
+        ? operation.branchIds.filter((id) => id !== branchId)
+        : [...operation.branchIds, branchId],
+    });
+  }
+
+  // The line the current operation concerns stays lit; everything else steps back.
+  const focusedBranchId =
+    operation.kind === "inspecting-branch" || operation.kind === "creating-waiting-container"
+      ? operation.branchId
+      : operation.kind === "merging-branch" && operation.branchIds.length === 1
+        ? operation.branchIds[0]
+        : undefined;
 
   // A decision just released feelings: let them drift home, then forget the event.
   useEffect(() => {
@@ -37,6 +64,13 @@ export function LifeTimeline() {
     const t = setTimeout(clearReclaim, reducedMotion ? 0 : 2200);
     return () => clearTimeout(t);
   }, [reclaim, clearReclaim, reducedMotion]);
+
+  // A just-created line draws itself in, then settles like the others.
+  useEffect(() => {
+    if (!born) return;
+    const t = setTimeout(clearBorn, reducedMotion ? 0 : 1600);
+    return () => clearTimeout(t);
+  }, [born, clearBorn, reducedMotion]);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -118,6 +152,13 @@ export function LifeTimeline() {
   const openCount = visible.filter((b) => isOpen(b) && !isWaiting(b)).length;
   const waitingCount = visible.filter(isWaiting).length;
 
+  // Tensions between the selected lines appear as markers near Now, before the merge.
+  const selectedBranches = selectedIds
+    .map((id) => byId.get(id))
+    .filter((b): b is PsychologicalBranch => !!b);
+  const selectionConflicts =
+    selectedBranches.length > 1 ? detectConflicts(selectedBranches) : [];
+
   const ordered = layout.geometries
     .map((g) => byId.get(g.branchId))
     .filter((b): b is PsychologicalBranch => !!b);
@@ -133,6 +174,11 @@ export function LifeTimeline() {
 
   const todayX = dateToX(today, layout.window, layout.metrics.width);
 
+  // Today's open action continues the main line past Now: life keeps moving.
+  const todayAction = [...actions]
+    .reverse()
+    .find((a) => !a.completedAt && a.createdAt.slice(0, 10) === today);
+
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
@@ -146,12 +192,26 @@ export function LifeTimeline() {
       panBy(0.15);
     } else if ((e.key === "Enter" || e.key === " ") && focusIndex >= 0 && ordered[focusIndex]) {
       e.preventDefault();
-      setView({ kind: "touch", branchId: ordered[focusIndex].id });
+      const target = ordered[focusIndex];
+      if (integrating) {
+        if (isOpen(target)) toggleIntegration(target.id);
+      } else {
+        setOperation({ kind: "inspecting-branch", branchId: target.id, depth: "touch" });
+      }
+    } else if (e.key === "i" || e.key === "I") {
+      e.preventDefault();
+      setOperation(integrating ? { kind: "idle" } : { kind: "integrating", branchIds: [] });
+    } else if ((e.key === "m" || e.key === "M") && integrating && selectedIds.length > 0) {
+      e.preventDefault();
+      void startMerge(selectedIds);
     } else if (e.key === "+" || e.key === "=") {
       zoomBy(0.7);
     } else if (e.key === "-") {
       zoomBy(1.4);
-    } else if (e.key === "Home" || e.key === "n") {
+    } else if (e.key === "n" || e.key === "N") {
+      e.preventDefault();
+      setOperation({ kind: "creating-branch" });
+    } else if (e.key === "Home") {
       returnToNow();
     }
   }
@@ -207,6 +267,17 @@ export function LifeTimeline() {
     <div className="timeline-page">
       <div className="timeline-controls">
         <TimelineFilters variant="popover" />
+        {openCount > 1 && (
+          <button
+            className="btn btn-quiet integrate-toggle"
+            aria-pressed={integrating}
+            onClick={() =>
+              setOperation(integrating ? { kind: "idle" } : { kind: "integrating", branchIds: [] })
+            }
+          >
+            Integrate Now
+          </button>
+        )}
         <span className="hint timeline-counts" aria-hidden="true">
           {openCount} active · {waitingCount} waiting
         </span>
@@ -316,6 +387,66 @@ export function LifeTimeline() {
           </g>
           )}
 
+          {/* waiting lines carry their review point: until then, nothing is required */}
+          {waiting
+            .filter((w) => !w.closedAt)
+            .map((w) => {
+              const g = layout.geometries.find((x) => x.branchId === w.branchId);
+              const branch = byId.get(w.branchId);
+              if (!g || !branch || !isWaiting(branch) || !g.inWindow) return null;
+              const x = dateToX(w.reviewDate, layout.window, layout.metrics.width);
+              const reviewLabel = new Date(w.reviewDate + "T00:00:00").toLocaleDateString(
+                undefined,
+                { month: "short", day: "numeric" },
+              );
+              return (
+                <g key={w.id} className="review-marker" aria-hidden="true">
+                  {/* the still stretch between Now and the review, if it lies ahead */}
+                  {x > g.endX + 8 && (
+                    <line
+                      className="waiting-extension"
+                      x1={g.endX}
+                      y1={g.laneY}
+                      x2={x}
+                      y2={g.laneY}
+                      stroke={branchColor(branch, theme, "muted")}
+                    />
+                  )}
+                  <circle
+                    className="review-dot"
+                    cx={x}
+                    cy={g.laneY}
+                    r={4}
+                    stroke={branchColor(branch, theme)}
+                  />
+                  <text className="review-label" x={x} y={g.laneY - 9} textAnchor="middle">
+                    review · {reviewLabel}
+                  </text>
+                  <title>
+                    Review on {reviewLabel}. Nothing further is required from you until then.
+                  </title>
+                </g>
+              );
+            })}
+
+          {/* today's action continues the main line past Now: life keeps moving */}
+          {todayAction && layout.fullWidth - layout.nowX > 40 && (
+            <g className="action-continuation" aria-hidden="true">
+              <path
+                className="action-continuation-line"
+                d={`M ${layout.nowX} ${layout.mainY} L ${Math.min(
+                  layout.nowX + 150,
+                  layout.fullWidth - 6,
+                )} ${layout.mainY}`}
+              />
+              <text className="action-continuation-label" x={layout.nowX + 14} y={layout.mainY + 16}>
+                {todayAction.title.length > 26
+                  ? todayAction.title.slice(0, 24) + "…"
+                  : todayAction.title}
+              </text>
+            </g>
+          )}
+
           {/* branch lines */}
           {layout.geometries.map((g, i) => {
             const branch = byId.get(g.branchId);
@@ -330,15 +461,73 @@ export function LifeTimeline() {
                 emphasizedId={top?.id}
                 highlighted={branch.id === focusedBranchId}
                 dimmed={!!focusedBranchId && branch.id !== focusedBranchId}
-                onSelect={() => setView({ kind: "touch", branchId: branch.id })}
-                onSelectMoment={() =>
-                  setView({ kind: "touch", branchId: branch.id })
-                }
+                born={!reducedMotion && born?.branchId === branch.id}
+                selectionRing={integrating && selectedIds.includes(branch.id)}
+                onSelect={() => {
+                  if (integrating) {
+                    if (isOpen(branch)) toggleIntegration(branch.id);
+                    return;
+                  }
+                  setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "touch" });
+                }}
+                onSelectMoment={() => {
+                  if (integrating) return;
+                  setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "touch" });
+                }}
                 onSelectMergePoint={() => {
                   const mergeId = branch.mergeIds[branch.mergeIds.length - 1];
                   if (mergeId) setView({ kind: "merge-review", mergeId });
                 }}
               />
+            );
+          })}
+
+          {/* a merge being considered: the lines curve toward Now, reversibly */}
+          {(operation.kind === "merging-branch" || operation.kind === "integrating") && (
+            <g className="merge-preview-layer" aria-hidden="true">
+              {operation.branchIds.map((id) => {
+                const g = layout.geometries.find((x) => x.branchId === id);
+                const branch = byId.get(id);
+                if (!g || !branch || g.endsOnMain || !g.inWindow) return null;
+                return (
+                  <path
+                    key={id}
+                    className="merge-preview"
+                    stroke={branchColor(branch, theme)}
+                    d={mergePreviewPath(g, layout.metrics)}
+                  />
+                );
+              })}
+              {operation.branchIds.length > 0 && (
+                <circle
+                  className="merge-preview-target"
+                  cx={layout.nowX - 2}
+                  cy={layout.mainY}
+                  r={12}
+                />
+              )}
+            </g>
+          )}
+
+          {/* tensions between the selected lines, sitting where they would meet */}
+          {selectionConflicts.map((c) => {
+            const ys = c.branchIds
+              .map((id) => layout.geometries.find((g) => g.branchId === id)?.laneY)
+              .filter((y): y is number => y !== undefined);
+            const y = ys.length > 0 ? ys.reduce((a, b) => a + b, 0) / ys.length : layout.mainY;
+            return (
+              <text
+                key={c.id}
+                className="conflict-marker"
+                x={layout.nowX - 30}
+                y={y + 5}
+                textAnchor="middle"
+              >
+                ✦
+                <title>
+                  {c.demandA} ↔ {c.demandB}
+                </title>
+              </text>
             );
           })}
 
@@ -374,6 +563,32 @@ export function LifeTimeline() {
           <button className="btn return-to-now" onClick={returnToNow}>
             ⇥ Return to Now
           </button>
+        )}
+
+        {/* choosing what can enter the present together */}
+        {integrating && (
+          <div className="integrate-bar" role="status">
+            <span className="hint">
+              {selectedIds.length === 0
+                ? "Touch the endpoint of each line that can enter the present together."
+                : `${selectedIds.length} line${selectedIds.length > 1 ? "s" : ""} selected` +
+                  (selectionConflicts.length > 0
+                    ? ` · ${selectionConflicts.length} tension${
+                        selectionConflicts.length > 1 ? "s" : ""
+                      } to settle (✦)`
+                    : "")}
+            </span>
+            <button className="btn btn-quiet" onClick={() => setOperation({ kind: "idle" })}>
+              Cancel
+            </button>
+            <button
+              className="btn btn-primary"
+              disabled={selectedIds.length === 0}
+              onClick={() => void startMerge(selectedIds)}
+            >
+              Merge into Now
+            </button>
+          </div>
         )}
 
         {branches.length > 0 && (
@@ -414,26 +629,16 @@ export function LifeTimeline() {
 
       </div>
 
-      {/* focus sheet: decide something about the tapped line without leaving the timeline */}
-      {focusedBranchId && (
-        <>
-          <div
-            className="sheet-backdrop"
-            aria-hidden="true"
-            onClick={() => setView({ kind: "timeline" })}
-          />
-          <div className="touch-sheet" role="dialog" aria-modal="true" aria-label="This branch">
-            <BranchTouchView key={focusedBranchId} branchId={focusedBranchId} sheet />
-          </div>
-        </>
-      )}
-
       {/* semantic non-visual equivalent */}
       <nav aria-label="Branches">
         <ul className="visually-hidden">
           {ordered.map((b) => (
             <li key={b.id}>
-              <button onClick={() => setView({ kind: "touch", branchId: b.id })}>
+              <button
+                onClick={() =>
+                  setOperation({ kind: "inspecting-branch", branchId: b.id, depth: "touch" })
+                }
+              >
                 {describeBranch(b)}
               </button>
             </li>

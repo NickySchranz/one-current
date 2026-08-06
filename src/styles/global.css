@@ -364,6 +364,98 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   text-transform: uppercase;
   opacity: 0.8;
 }
+/* Integrate Now: selected endpoints wear a quiet ring; tensions sit near Now as ✦ */
+.selection-ring {
+  fill: none;
+  stroke-width: 1.75;
+  opacity: 0.85;
+}
+.conflict-marker {
+  fill: var(--ink);
+  font-size: 14px;
+  opacity: 0.85;
+  cursor: help;
+}
+.integrate-bar {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  background: var(--bg);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 5;
+  max-width: calc(100% - 1.5rem);
+}
+.integrate-bar .hint { margin: 0; }
+.integrate-toggle[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line-axis));
+  background: var(--accent-soft);
+}
+
+/* a merge being considered: the line leans toward Now until confirmed or set aside */
+.merge-preview {
+  fill: none;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-dasharray: 6 7;
+  opacity: 0.75;
+  animation: merge-flow 1.1s linear infinite;
+}
+@keyframes merge-flow {
+  to { stroke-dashoffset: -26; }
+}
+.merge-preview-target {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  opacity: 0.55;
+  animation: breathe 2.4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+[data-reduced-motion="true"] .merge-preview,
+[data-reduced-motion="true"] .merge-preview-target {
+  animation: none;
+}
+
+/* waiting lines: a still stretch to the review point; nothing required until then */
+.waiting-extension {
+  stroke-width: 1.5;
+  stroke-dasharray: 2 7;
+  opacity: 0.45;
+  fill: none;
+}
+.review-dot {
+  fill: var(--bg);
+  stroke-width: 1.75;
+}
+.review-label {
+  fill: var(--ink-faint);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+}
+
+/* today's open action continues the main line past Now */
+.action-continuation-line {
+  stroke: var(--accent);
+  stroke-width: 3.25;
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+.action-continuation-label {
+  fill: var(--ink-soft);
+  font-size: 11px;
+  font-style: italic;
+}
+
 .now-glow {
   fill: var(--accent);
   opacity: 0.18;
@@ -383,6 +475,20 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 .now-label { fill: var(--ink); font-weight: 650; font-size: 13px; }
 
 .branch-line { fill: none; stroke-linecap: round; }
+
+/* a just-created line draws itself from its fork toward Now (pathLength=1) */
+.branch-line.just-born {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: line-draw 1.1s ease-out forwards;
+}
+@keyframes line-draw {
+  to { stroke-dashoffset: 0; }
+}
+[data-reduced-motion="true"] .branch-line.just-born {
+  animation: none;
+  stroke-dashoffset: 0;
+}
 .branch-hit { fill: none; stroke: transparent; stroke-width: 22; cursor: pointer; }
 .branch-label {
   font-size: 12.5px;
@@ -441,7 +547,8 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .branch-flow, .pulse, .draw-in, .main-flow, .now-glow { animation: none; }
+  .branch-flow, .pulse, .draw-in, .main-flow, .now-glow,
+  .merge-preview, .merge-preview-target, .branch-line.just-born { animation: none; }
 }
 
 /* ---------- theme characters: each mood carries itself differently ---------- */
@@ -1032,6 +1139,30 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 .touch-sheet .calm-note { font-size: 0.88rem; padding: 0.55rem 0.75rem; margin: 0; }
 .touch-sheet .branch-chip { margin: 0; }
 
+/* ---------- operation tray: every operation happens over the timeline ---------- */
+.operation-tray {
+  width: min(640px, 100%);
+  max-height: min(70vh, 40rem);
+}
+/* Operation views keep their own markup; inside the tray they lose page framing. */
+.operation-tray .panel {
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+.operation-tray .panel > h1,
+.operation-tray .panel h1:first-child {
+  font-size: 1.1rem;
+  margin: 0 0 0.35rem;
+}
+@media (min-width: 960px) {
+  /* Desktop: a compact workspace docked under the timeline, still over it. */
+  .operation-tray {
+    width: min(720px, 92vw);
+    max-height: 46vh;
+  }
+}
+
 /* ---------- feelings a line holds ---------- */
 .feelings-row {
   display: flex;
@@ -1225,6 +1356,31 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 .optional-details > summary:hover { color: var(--ink); }
 .optional-details[open] > summary { margin-bottom: 0.6rem; }
 .optional-details[open] { background: color-mix(in srgb, var(--bg-sunken) 35%, var(--bg)); }
+
+/* fork ↔ Now comparison: two anchored panels on the same line */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.compare-card {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.7rem;
+  background: var(--bg);
+}
+.compare-card .field { margin-bottom: 0.6rem; }
+.compare-card textarea { min-height: 3.4rem; }
+.compare-anchor {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+@media (max-width: 640px) {
+  .compare-grid { grid-template-columns: 1fr; }
+}
 
 /* ---------- responsive ---------- */
 @media (max-width: 760px) {

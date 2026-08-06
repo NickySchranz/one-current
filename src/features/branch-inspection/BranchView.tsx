@@ -1,13 +1,11 @@
 import { useMemo, useState } from "react";
-import { useAppStore, type View } from "@/stores/app-store";
+import { useAppStore } from "@/stores/app-store";
 import { DIFF_CHANGE_OPTIONS, RECLAIMABLE_QUALITIES, type DiffChangeId } from "@/domain/branches/diff";
 import type { Controllability } from "@/domain/branches/types";
 import { describeBranch } from "@/visualization/a11y/describe";
-import { branchColor } from "@/visualization/branch-lines/style";
 import { TagListEditor } from "@/ui/TagListEditor";
 import { MomentList } from "../branch-moments/MomentList";
 import { MomentEditor } from "../branch-moments/MomentEditor";
-import { BranchContextStrip } from "./BranchContextStrip";
 
 const EXAMPLE_BELIEFS = [
   "I cannot relax until this is resolved.",
@@ -45,25 +43,27 @@ const OUTSIDE_EXAMPLES = [
   "an uncertain outcome",
 ];
 
-type Props = { view: Extract<View, { kind: "branch" }> };
+type Props = { branchId: string };
 
-/** One calm page: the whole line — story, what's still yours, and what happens next. */
-export function BranchView({ view }: Props) {
+/** One calm view of the whole line — story, what's still yours, and what happens next. */
+export function BranchView({ branchId }: Props) {
   const branches = useAppStore((s) => s.branches);
-  const setView = useAppStore((s) => s.setView);
+  const setOperation = useAppStore((s) => s.setOperation);
   const startMerge = useAppStore((s) => s.startMerge);
   const handOffBranch = useAppStore((s) => s.handOffBranch);
   const updateBranch = useAppStore((s) => s.updateBranch);
-  const theme = useAppStore((s) => s.theme);
+  const createTodayAction = useAppStore((s) => s.createTodayAction);
   const branch = useMemo(
-    () => branches.find((b) => b.id === view.branchId),
-    [branches, view.branchId],
+    () => branches.find((b) => b.id === branchId),
+    [branches, branchId],
   );
 
   const [happened, setHappened] = useState(branch?.description ?? "");
   const [belief, setBelief] = useState(branch?.originalBelief ?? "");
   const [currentBelief, setCurrentBelief] = useState(branch?.currentBelief ?? "");
   const [addingMoment, setAddingMoment] = useState(false);
+  const [step, setStep] = useState("");
+  const [stepMade, setStepMade] = useState(false);
 
   if (!branch) {
     return (
@@ -73,7 +73,14 @@ export function BranchView({ view }: Props) {
     );
   }
 
-  const color = branchColor(branch, theme);
+  const forkWhen =
+    branch.forkLabel ??
+    new Date(branch.forkDate + "T00:00:00").toLocaleDateString(undefined, {
+      month: "long",
+      year: "numeric",
+    });
+  const today = new Date().toLocaleDateString(undefined, { month: "long", day: "numeric" });
+
   const diffSelected = new Set((branch.diffSelections ?? []) as DiffChangeId[]);
   const pr = branch.preserveRelease ?? {
     stillValid: [],
@@ -121,12 +128,11 @@ export function BranchView({ view }: Props) {
 
   return (
     <>
-      <BranchContextStrip branch={branch} color={color} />
       <div className="panel">
         <h1>{branch.title}</h1>
         <p className="hint">
-          A part of you stayed at an older moment. Take what is still yours; leave the rest where
-          it happened. Nothing on this page is required.
+          This line forked {forkWhen} and reaches Now. Take what is still yours; leave the rest
+          where it happened. Nothing here is required.
         </p>
         <p className="visually-hidden">{describeBranch(branch)}</p>
 
@@ -141,43 +147,56 @@ export function BranchView({ view }: Props) {
         </div>
 
         <details className="optional-details">
-          <summary>The story, then and now (optional)</summary>
-          <div className="field">
-            <textarea
-              value={happened}
-              onChange={(e) => setHappened(e.target.value)}
-              onBlur={saveStory}
-              placeholder="What was happening when this line began"
-              aria-label="What happened when this branch began"
-            />
+          <summary>Compare the fork with Now (optional)</summary>
+          <p className="hint">
+            Two points on the same line: where it began, and where you actually are.
+          </p>
+          <div className="compare-grid">
+            <div className="compare-card" aria-label="At the fork">
+              <p className="compare-anchor">At the fork · {forkWhen}</p>
+              <div className="field">
+                <textarea
+                  value={happened}
+                  onChange={(e) => setHappened(e.target.value)}
+                  onBlur={saveStory}
+                  placeholder="What was happening when this line began"
+                  aria-label="What happened when this branch began"
+                />
+              </div>
+              <div className="field">
+                <textarea
+                  value={belief}
+                  onChange={(e) => setBelief(e.target.value)}
+                  onBlur={saveStory}
+                  placeholder="What you started believing back then"
+                  aria-label="What did you begin believing?"
+                />
+              </div>
+              <div className="tag-row" role="group" aria-label="Example conclusions">
+                {EXAMPLE_BELIEFS.map((b) => (
+                  <button key={b} className="tag" onClick={() => setBelief(b)}>
+                    {b}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="compare-card" aria-label="At Now">
+              <p className="compare-anchor">At Now · {today}</p>
+              <div className="field">
+                <label htmlFor="current-belief">What feels true today, in your own words?</label>
+                <textarea
+                  id="current-belief"
+                  value={currentBelief}
+                  onChange={(e) => setCurrentBelief(e.target.value)}
+                  onBlur={saveStory}
+                  placeholder={
+                    branch.originalBelief ? `Then: “${branch.originalBelief}”` : undefined
+                  }
+                />
+              </div>
+            </div>
           </div>
-          <div className="tag-row" role="group" aria-label="Example conclusions">
-            {EXAMPLE_BELIEFS.map((b) => (
-              <button key={b} className="tag" onClick={() => setBelief(b)}>
-                {b}
-              </button>
-            ))}
-          </div>
-          <div className="field">
-            <textarea
-              value={belief}
-              onChange={(e) => setBelief(e.target.value)}
-              onBlur={saveStory}
-              placeholder="What you started believing back then"
-              aria-label="What did you begin believing?"
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="current-belief">What feels true today, in your own words?</label>
-            <textarea
-              id="current-belief"
-              value={currentBelief}
-              onChange={(e) => setCurrentBelief(e.target.value)}
-              onBlur={saveStory}
-              placeholder={branch.originalBelief ? `Then: “${branch.originalBelief}”` : undefined}
-            />
-          </div>
-          <p className="hint">If any of these have changed since then, mark them.</p>
+          <p className="hint">If any of these have changed since the fork, mark them.</p>
           <div className="tag-row" role="group" aria-label="What has changed">
             {DIFF_CHANGE_OPTIONS.map((o) => (
               <button
@@ -208,10 +227,13 @@ export function BranchView({ view }: Props) {
         </details>
 
         <details className="optional-details">
-          <summary>Sort more precisely (optional)</summary>
+          <summary>Where should each part go? (optional)</summary>
+          <p className="hint">
+            Everything on this line has a destination. Nothing is deleted; it is placed.
+          </p>
           <div className="field">
             <TagListEditor
-              label="Still true and worth keeping"
+              label="Carry forward — still true, comes with you"
               values={pr.stillValid}
               onChange={(v) => savePr({ stillValid: v })}
               suggestions={VALID_EXAMPLES}
@@ -219,7 +241,7 @@ export function BranchView({ view }: Props) {
           </div>
           <div className="field">
             <TagListEditor
-              label="No longer fits reality"
+              label="Leave in history — no longer fits reality"
               values={pr.outdated}
               onChange={(v) => savePr({ outdated: v })}
               suggestions={OUTDATED_EXAMPLES}
@@ -227,14 +249,11 @@ export function BranchView({ view }: Props) {
           </div>
           <div className="field">
             <TagListEditor
-              label="Outside your control"
+              label="Outside my control — not yours to carry"
               values={pr.outsideControl}
               onChange={(v) => savePr({ outsideControl: v })}
               suggestions={OUTSIDE_EXAMPLES}
             />
-          </div>
-          <div className="field">
-            <label>How much of this can you actually move?</label>
             <div className="tag-row" role="group" aria-label="Controllability">
               {CONTROLLABILITY.map((c) => (
                 <button
@@ -247,6 +266,32 @@ export function BranchView({ view }: Props) {
                 </button>
               ))}
             </div>
+          </div>
+          <div className="field">
+            <label htmlFor="pr-step">Needs a real action — one honest step</label>
+            {stepMade ? (
+              <p className="calm-note">Placed on today. It will show as your current action.</p>
+            ) : (
+              <div className="touch-input-row">
+                <input
+                  id="pr-step"
+                  value={step}
+                  onChange={(e) => setStep(e.target.value)}
+                  placeholder="e.g. send the one email"
+                />
+                <button
+                  className="btn"
+                  disabled={!step.trim()}
+                  onClick={async () => {
+                    await createTodayAction(branch.id, step.trim());
+                    setStep("");
+                    setStepMade(true);
+                  }}
+                >
+                  Make it today's action
+                </button>
+              </div>
+            )}
           </div>
         </details>
 
@@ -267,7 +312,9 @@ export function BranchView({ view }: Props) {
 
         <button
           className="branch-chip"
-          onClick={() => setView({ kind: "waiting-setup", branchId: branch.id })}
+          onClick={() =>
+            setOperation({ kind: "creating-waiting-container", branchId: branch.id })
+          }
         >
           <div>
             <strong>Place in deliberate waiting</strong>

@@ -17,11 +17,6 @@ export function activePage(view: View): PageId {
     case "now":
       return "now";
     case "branches":
-    case "branch":
-    case "create":
-    case "recurrence":
-    case "merge":
-    case "waiting-setup":
       return "branches";
     case "history":
     case "merge-review":

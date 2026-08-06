@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useT } from "@/i18n/i18n";
 
 type Props = {
   label: string;
@@ -20,6 +21,7 @@ export function TagListEditor({
   placeholder,
   variant = "default",
 }: Props) {
+  const t = useT();
   const [text, setText] = useState("");
 
   function add(value: string) {
@@ -39,11 +41,11 @@ export function TagListEditor({
     <div className="field">
       <label>{label}</label>
       {hint && <p className="hint" style={{ marginBottom: 4 }}>{hint}</p>}
-      <div className="tag-row" aria-label={`${label}: chosen`}>
+      <div className="tag-row" aria-label={t("{label}: chosen", { label })}>
         {values.map((v) => (
           <span key={v} className={`tag ${variant === "quality" ? "quality" : ""}`}>
             {v}
-            <button aria-label={`Remove ${v}`} onClick={() => remove(v)}>
+            <button aria-label={t("Remove {value}", { value: v })} onClick={() => remove(v)}>
               ×
             </button>
           </span>
@@ -59,18 +61,18 @@ export function TagListEditor({
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={placeholder ?? "Add your own…"}
-          aria-label={`Add to ${label}`}
+          placeholder={placeholder ?? t("Add your own…")}
+          aria-label={t("Add to {label}", { label })}
         />
         <button type="submit" className="btn" disabled={!text.trim()}>
-          Add
+          {t("Add")}
         </button>
       </form>
       {remaining.length > 0 && (
-        <div className="tag-row" aria-label={`${label}: suggestions`}>
+        <div className="tag-row" aria-label={t("{label}: suggestions", { label })}>
           {remaining.map((s) => (
             <button key={s} className="tag" onClick={() => add(s)}>
-              + {s}
+              + {t(s)}
             </button>
           ))}
         </div>

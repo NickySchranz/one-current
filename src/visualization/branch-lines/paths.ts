@@ -35,8 +35,6 @@ export type BranchGeometry = {
   inWindow: boolean;
   /** Closed lines keep their label inside their own time frame; hidden when cramped. */
   labelVisible: boolean;
-  /** Where this line would sit tomorrow if nothing is decided (undecided pull drifts). */
-  projectedY: number;
 };
 
 export type TimelineMetrics = {
@@ -69,12 +67,6 @@ export function buildBranchGeometry(
   const pull = effectivePull(branch);
   const pullOffset = ((pull - 1) / 4) * 0.45 * metrics.laneGap;
   const laneY = laneToY(assignment.lane, metrics) + Math.sign(assignment.lane) * pullOffset;
-  // Tomorrow's felt pull, if nothing gets decided: the line drifts further out.
-  const pullTomorrow = effectivePull(branch, new Date(Date.now() + 24 * 60 * 60 * 1000));
-  const projOffset = ((pullTomorrow - 1) / 4) * 0.45 * metrics.laneGap;
-  const projectedY = isClosed(branch)
-    ? laneY
-    : laneToY(assignment.lane, metrics) + Math.sign(assignment.lane) * projOffset;
   // The fork curve is only drawn while the fork moment is actually in view;
   // otherwise the branch enters from the left as a parallel line.
   const rawForkX = dateToXRaw(branch.forkDate, window, width);
@@ -146,7 +138,6 @@ export function buildBranchGeometry(
     labelY: laneY - 7,
     inWindow,
     labelVisible: inWindow && (!closed || runEnd - runStart > 48),
-    projectedY,
   };
 }
 

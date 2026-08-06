@@ -6,6 +6,7 @@ import type { MergeResultStatus } from "@/domain/merges/types";
 import { detectConflicts, unresolvedConflicts } from "@/domain/conflicts/logic";
 import { composeIntegratedAction, type ComposeActionInput } from "@/domain/actions/logic";
 import { RECLAIMABLE_QUALITIES } from "@/domain/branches/diff";
+import { useT } from "@/i18n/i18n";
 import { TagListEditor } from "@/ui/TagListEditor";
 import { ConflictResolver } from "../merge-conflicts/ConflictResolver";
 import { ActionComposer } from "./ActionComposer";
@@ -19,25 +20,17 @@ const RELEASE_EXAMPLES = [
   "reopening the same decision",
 ];
 
-const OUTCOMES: { id: MergeResultStatus; label: string; hint: string }[] = [
-  { id: "merged", label: "It ends here", hint: "The line ends at a merge point and stays in your history." },
-  { id: "partly-merged", label: "Part of it ends here", hint: "Some of it integrates now; the rest stays with less pull." },
-  { id: "waiting", label: "Move to deliberate waiting", hint: "Reality is unresolved; set boundaries and a review date next." },
-  { id: "converted-to-project", label: "It becomes real work", hint: "The line ends here; the work moves to where your tasks live." },
-  { id: "needs-support", label: "Carry it with support", hint: "This is best carried with another person." },
-];
-
 type Props = { branchIds: string[] };
 
 /** One screen: what returns with you, one present action, merge. */
 export function MergeWizard({ branchIds }: Props) {
+  const t = useT();
   const allBranches = useAppStore((s) => s.branches);
   const mergeDraft = useAppStore((s) => s.mergeDraft);
   const saveMergeDraft = useAppStore((s) => s.saveMergeDraft);
   const cancelMerge = useAppStore((s) => s.cancelMerge);
   const completeMerge = useAppStore((s) => s.completeMerge);
   const startMerge = useAppStore((s) => s.startMerge);
-  const setOperation = useAppStore((s) => s.setOperation);
 
   const branches = useMemo(
     () => branchIds.map((id) => allBranches.find((b) => b.id === id)).filter((b): b is PsychologicalBranch => !!b),
@@ -69,7 +62,10 @@ export function MergeWizard({ branchIds }: Props) {
   );
   const [released, setReleased] = useState<string[]>(mergeDraft?.partial.released ?? []);
   const [contribution, setContribution] = useState(mergeDraft?.partial.contribution ?? "");
-  const [outcome, setOutcome] = useState<MergeResultStatus>("merged");
+  // The outcome was decided before arriving here ("what is true now?").
+  const [outcome, setOutcome] = useState<MergeResultStatus>(
+    mergeDraft?.partial.resultStatus ?? "merged",
+  );
   const [actionInput, setActionInput] = useState<Omit<
     ComposeActionInput,
     "branches" | "qualitiesCarried" | "mergeId"
@@ -95,15 +91,16 @@ export function MergeWizard({ branchIds }: Props) {
         conflicts,
         contribution,
         released,
+        resultStatus: outcome,
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stillValid, outdated, outsideControl, reclaimable, conflicts, contribution, released]);
+  }, [stillValid, outdated, outsideControl, reclaimable, conflicts, contribution, released, outcome]);
 
   if (branches.length === 0) {
     return (
       <div className="panel">
-        <p>These branches are no longer available.</p>
+        <p>{t("These threads are no longer available.")}</p>
       </div>
     );
   }
@@ -119,7 +116,7 @@ export function MergeWizard({ branchIds }: Props) {
       const resolution =
         conflicts.map((c) => c.resolution).filter(Boolean).join(" ") ||
         contribution ||
-        "Merged into the present.";
+        "Brought back into the present.";
       const action =
         canCarryAction && actionInput
           ? composeIntegratedAction({
@@ -138,9 +135,6 @@ export function MergeWizard({ branchIds }: Props) {
         action,
         resultStatus: outcome,
       });
-      if (outcome === "waiting") {
-        setOperation({ kind: "creating-waiting-container", branchId: branches[0].id });
-      }
     } finally {
       setBusy(false);
     }
@@ -148,24 +142,31 @@ export function MergeWizard({ branchIds }: Props) {
 
   return (
     <div className="panel">
-      <h1>Merge into Now</h1>
+      <h1>{t("Bring it back to Now")}</h1>
       <p className="hint">
         {branches.length === 1
           ? branches[0].title
-          : `${branches.length} branches entering the present together`}
+          : t("{n} threads entering the present together", { n: branches.length })}
       </p>
       <p className="calm-note">
-        {branches.length === 1 ? "This branch ends here." : "These branches end here."} Nothing
-        valuable is lost — what still matters crosses into the present with you, and the rest
-        stays in the past, where it happened.
+        {branches.length === 1
+          ? t("This thread is complete for now.")
+          : t("These threads are complete for now.")}{" "}
+        {t(
+          "Nothing valuable is lost — what still matters crosses into the present with you, and the rest stays in the past, where it happened. If it returns, you can meet the new version of it.",
+        )}
       </p>
 
       {conflicts.length > 0 && (
-        <section aria-label="Conflicts">
+        <section aria-label={t("Conflicts")}>
           <p className="prompt">
             {conflicts.length === 1
-              ? "Two of these pulls ask for opposite things. Decide what the present must honour."
-              : "Some of these pulls ask for opposite things. Decide what the present must honour."}
+              ? t(
+                  "Two of these pulls ask for opposite things. Decide what the present must honour.",
+                )
+              : t(
+                  "Some of these pulls ask for opposite things. Decide what the present must honour.",
+                )}
           </p>
           {conflicts.map((c) => (
             <ConflictResolver
@@ -182,7 +183,7 @@ export function MergeWizard({ branchIds }: Props) {
 
       <div className="field">
         <TagListEditor
-          label="What returns with you"
+          label={t("What returns with you")}
           values={reclaimable}
           onChange={setReclaimable}
           suggestions={RECLAIMABLE_QUALITIES}
@@ -191,17 +192,19 @@ export function MergeWizard({ branchIds }: Props) {
       </div>
 
       <details className="optional-details">
-        <summary>What ends with this merge (optional)</summary>
+        <summary>{t("What quiets down when you bring it back (optional)")}</summary>
         <div className="field">
           <TagListEditor
-            label="Mental processes that can stop running now"
+            label={t("Mental processes that can stop running now")}
             values={released}
             onChange={setReleased}
             suggestions={RELEASE_EXAMPLES}
           />
         </div>
         <div className="field">
-          <label htmlFor="merge-words">In your own words, what did this time away give you?</label>
+          <label htmlFor="merge-words">
+            {t("In your own words, what did this time away give you?")}
+          </label>
           <textarea
             id="merge-words"
             value={contribution}
@@ -212,7 +215,7 @@ export function MergeWizard({ branchIds }: Props) {
 
       {canCarryAction && (
         <details className="optional-details">
-          <summary>One small step to carry it (optional)</summary>
+          <summary>{t("One small step to carry it (optional)")}</summary>
           <ActionComposer
             branches={branches}
             qualitiesCarried={reclaimable}
@@ -221,26 +224,19 @@ export function MergeWizard({ branchIds }: Props) {
         </details>
       )}
 
-      <details className="optional-details">
-        <summary>It doesn't fully end here? (optional)</summary>
-        {OUTCOMES.map((o) => (
-          <button
-            key={o.id}
-            className={`branch-chip ${outcome === o.id ? "selected" : ""}`}
-            aria-pressed={outcome === o.id}
-            onClick={() => setOutcome(o.id)}
-          >
-            <div>
-              <strong>{o.label}</strong>
-              <p className="hint" style={{ margin: 0 }}>{o.hint}</p>
-            </div>
-          </button>
-        ))}
-      </details>
+      <label className="hint partial-toggle">
+        <input
+          type="checkbox"
+          style={{ width: "auto", minHeight: 0 }}
+          checked={outcome === "partly-merged"}
+          onChange={(e) => setOutcome(e.target.checked ? "partly-merged" : "merged")}
+        />
+        {t("Only part of it comes back for now — the rest stays with less pull")}
+      </label>
 
       <div className="stage-nav">
         <button className="btn btn-quiet" onClick={cancelMerge}>
-          Set aside for now
+          {t("Set aside for now")}
         </button>
         <button
           className="btn btn-primary btn-large"
@@ -248,8 +244,13 @@ export function MergeWizard({ branchIds }: Props) {
           onClick={finish}
         >
           {open.length > 0
-            ? `${open.length} conflict${open.length > 1 ? "s" : ""} to settle first`
-            : "Merge into Now"}
+            ? t(
+                open.length === 1
+                  ? "1 conflict to settle first"
+                  : "{n} conflicts to settle first",
+                { n: open.length },
+              )
+            : t("Bring it back to Now")}
         </button>
       </div>
     </div>

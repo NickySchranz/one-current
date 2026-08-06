@@ -2,6 +2,20 @@ import type { PsychologicalBranch } from "@/domain/branches/types";
 import { isOpen, isWaiting, isClosed, mostActivated } from "@/domain/branches/logic";
 import type { TimeWindow } from "../zoom/time-scale";
 
+/** Translator shape: English source string in, translated sentence out. */
+type Translate = (s: string, vars?: Record<string, string | number>) => string;
+
+/** English fallback: no lookup, but placeholders still get filled in. */
+const fallbackT: Translate = (s, vars) => {
+  let out = s;
+  if (vars) {
+    for (const [k, v] of Object.entries(vars)) {
+      out = out.replaceAll(`{${k}}`, String(v));
+    }
+  }
+  return out;
+};
+
 function monthYear(iso: string): string {
   return new Date(iso.length > 10 ? iso : iso + "T00:00:00").toLocaleDateString(undefined, {
     month: "long",
@@ -11,78 +25,97 @@ function monthYear(iso: string): string {
 
 /**
  * Complete non-visual equivalent of the branching timeline.
- * Example: "Main life timeline from January 2025 to the present. Three active branches
+ * Example: "Main life timeline from January 2025 to the present. Three active threads
  * reach today. Relationship separation began in February 2026 and has pull level five."
  */
 export function describeTimeline(
   branches: PsychologicalBranch[],
   window: TimeWindow,
+  t: Translate = fallbackT,
 ): string {
   const open = branches.filter((b) => isOpen(b) && !isWaiting(b));
   const waiting = branches.filter(isWaiting);
   const merged = branches.filter(isClosed);
 
   const parts: string[] = [
-    `Main life timeline from ${monthYear(window.start)} to the present.`,
+    t("Main life timeline from {month} to the present.", { month: monthYear(window.start) }),
   ];
 
   parts.push(
     open.length === 0
-      ? "No active branches reach today."
-      : `${numberWord(open.length)} active ${open.length === 1 ? "branch reaches" : "branches reach"} today.`,
+      ? t("No active threads reach today.")
+      : open.length === 1
+        ? t("One active thread reaches today.")
+        : t("{n} active threads reach today.", { n: t(numberWord(open.length)) }),
   );
 
   for (const b of open) {
     parts.push(
-      `${b.title} began ${b.forkLabel ? b.forkLabel : "in " + monthYear(b.forkDate)} and has pull level ${numberWord(b.pull).toLowerCase()}.`,
+      t("{title} began {when} and has pull level {pull}.", {
+        title: b.title,
+        when: b.forkLabel ? b.forkLabel : t("in {month}", { month: monthYear(b.forkDate) }),
+        pull: t(numberWord(b.pull)).toLowerCase(),
+      }),
     );
   }
 
   const top = mostActivated(branches);
   if (top && open.length > 1) {
-    parts.push(`${top.title} is currently the most activated branch.`);
+    parts.push(t("{title} is currently the most activated thread.", { title: top.title }));
   }
   if (waiting.length > 0) {
     parts.push(
-      `${numberWord(waiting.length)} ${waiting.length === 1 ? "branch is" : "branches are"} in deliberate waiting.`,
+      waiting.length === 1
+        ? t("One thread is in deliberate waiting.")
+        : t("{n} threads are in deliberate waiting.", { n: t(numberWord(waiting.length)) }),
     );
   }
   if (merged.length > 0) {
     parts.push(
-      `${numberWord(merged.length)} ${merged.length === 1 ? "branch has" : "branches have"} been merged and remain part of your history.`,
+      merged.length === 1
+        ? t("One thread has been brought back and remains part of your history.")
+        : t("{n} threads have been brought back and remain part of your history.", {
+            n: t(numberWord(merged.length)),
+          }),
     );
   }
   return parts.join(" ");
 }
 
-export function describeBranch(branch: PsychologicalBranch): string {
+export function describeBranch(branch: PsychologicalBranch, t: Translate = fallbackT): string {
   const parts: string[] = [
-    `${branch.title}. ${statusText(branch)}.`,
-    `Began ${branch.forkLabel ?? "in " + monthYear(branch.forkDate)}.`,
-    `Pull level ${numberWord(branch.pull).toLowerCase()}.`,
+    `${branch.title}. ${statusText(branch, t)}.`,
+    t("Began {when}.", {
+      when: branch.forkLabel ?? t("in {month}", { month: monthYear(branch.forkDate) }),
+    }),
+    t("Pull level {pull}.", { pull: t(numberWord(branch.pull)).toLowerCase() }),
   ];
   if (branch.commits.length > 0) {
-    parts.push(`${numberWord(branch.commits.length)} ${branch.commits.length === 1 ? "moment" : "moments"} recorded.`);
+    parts.push(
+      branch.commits.length === 1
+        ? t("One moment recorded.")
+        : t("{n} moments recorded.", { n: t(numberWord(branch.commits.length)) }),
+    );
   }
   if (branch.storedQualities.length > 0) {
-    parts.push(`Carries ${branch.storedQualities.join(", ")}.`);
+    parts.push(t("Carries {list}.", { list: branch.storedQualities.map((q) => t(q)).join(", ") }));
   }
   return parts.join(" ");
 }
 
-function statusText(branch: PsychologicalBranch): string {
+function statusText(branch: PsychologicalBranch, t: Translate): string {
   switch (branch.status) {
-    case "active": return "Active branch reaching today";
-    case "activated": return "Currently activated branch";
-    case "explored": return "Explored branch, still active";
-    case "ready-to-merge": return "Ready to merge into Now";
-    case "merge-conflict": return "In conflict with another branch";
-    case "waiting-with-boundaries": return "Waiting with boundaries";
-    case "converted-to-project": return "Handed off to real work";
-    case "partly-integrated": return "Partly integrated";
-    case "merged": return "Merged into your life";
-    case "archived": return "Archived";
-    case "needs-support": return "May need outside support";
+    case "active": return t("Active thread reaching today");
+    case "activated": return t("Currently activated thread");
+    case "explored": return t("Explored thread, still active");
+    case "ready-to-merge": return t("Ready to bring back into Now");
+    case "merge-conflict": return t("In tension with another thread");
+    case "waiting-with-boundaries": return t("Waiting with boundaries");
+    case "converted-to-project": return t("Handed off to real work");
+    case "partly-integrated": return t("Partly integrated");
+    case "merged": return t("Brought back into your life");
+    case "archived": return t("Archived");
+    case "needs-support": return t("May need outside support");
   }
 }
 

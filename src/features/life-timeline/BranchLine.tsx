@@ -4,8 +4,9 @@ import type { BranchGeometry } from "@/visualization/branch-lines/paths";
 import { branchColor, restingToday } from "@/visualization/branch-lines/style";
 import type { ThemeId } from "@/visualization/theme";
 import { decidedToday } from "@/domain/feelings/logic";
-import { isOpen } from "@/domain/branches/logic";
+import { isClosed, isOpen } from "@/domain/branches/logic";
 import { describeBranch } from "@/visualization/a11y/describe";
+import { useT } from "@/i18n/i18n";
 
 type Props = {
   branch: PsychologicalBranch;
@@ -19,8 +20,6 @@ type Props = {
   dimmed?: boolean;
   /** Just created: the line draws itself from the fork toward Now. */
   born?: boolean;
-  /** Selected for Integrate Now: a quiet ring around the endpoint. */
-  selectionRing?: boolean;
   onSelect: () => void;
   onSelectMoment: (momentId: string) => void;
   onSelectMergePoint: () => void;
@@ -36,11 +35,11 @@ export const BranchLine = memo(function BranchLine({
   highlighted = false,
   dimmed = false,
   born = false,
-  selectionRing = false,
   onSelect,
   onSelectMoment,
   onSelectMergePoint,
 }: Props) {
+  const t = useT();
   // A closed line lives in its own time frame: off the window, nothing is drawn.
   if (!g.inWindow) return null;
 
@@ -59,7 +58,7 @@ export const BranchLine = memo(function BranchLine({
     <g
       role="button"
       tabIndex={-1}
-      aria-label={describeBranch(branch)}
+      aria-label={describeBranch(branch, t)}
       data-branch-id={branch.id}
       className={dimmed ? "branch-dimmed" : undefined}
       opacity={dimmed ? 0.22 : 1}
@@ -141,20 +140,10 @@ export const BranchLine = memo(function BranchLine({
             onSelectMergePoint();
           }}
         >
-          <title>Merged: {branch.title}</title>
+          <title>{t("Brought back: {title}", { title: branch.title })}</title>
         </circle>
       ) : (
         <>
-          {selectionRing && (
-            <circle
-              className="selection-ring"
-              cx={g.endX - 3}
-              cy={g.endY}
-              r={10}
-              stroke={color}
-              pointerEvents="none"
-            />
-          )}
           <circle
             className={`branch-endpoint ${emphasized ? "pulse" : ""}`}
             cx={g.endX - 3}
@@ -180,19 +169,23 @@ export const BranchLine = memo(function BranchLine({
         />
       )}
 
-      {/* waiting branches show their calm state; others show the title */}
-      {g.labelVisible && (
+      {/* a merged line or one deliberately left for today carries no label —
+          it has been answered; a left line's label returns tomorrow */}
+      {g.labelVisible && !resting && !isClosed(branch) && (
         <text
           className={`branch-label ${focused ? "selected" : ""}`}
-          x={g.labelX}
+          // A line at Now reads backwards from its endpoint, so no label ever
+          // spills past Now — the future stays clean.
+          x={g.reachesNow ? g.endX - 12 : g.labelX}
+          textAnchor={g.reachesNow ? "end" : undefined}
           y={g.labelY}
           fill={color}
           onClick={onSelect}
         >
           {label}
-          {branch.status === "waiting-with-boundaries" ? " · waiting" : ""}
-          {branch.recurrenceCount > 0 ? " · returned" : ""}
-          {resting ? " · resting today" : acted ? " · decided today" : ""}
+          {branch.status === "waiting-with-boundaries" ? t(" · waiting") : ""}
+          {branch.recurrenceCount > 0 ? t(" · returned") : ""}
+          {acted ? t(" · decided today") : ""}
         </text>
       )}
     </g>

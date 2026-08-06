@@ -229,8 +229,6 @@ textarea { min-height: 5rem; resize: vertical; }
 }
 
 /* settings gear shown in the header on small screens (settings has no bottom tab) */
-.header-settings { display: none; min-width: 34px; font-size: 1rem; }
-.header-settings[aria-current="page"] { background: var(--accent-soft); }
 
 .app-main {
   flex: 1;
@@ -268,14 +266,6 @@ textarea { min-height: 5rem; resize: vertical; }
 .btn-large { padding: 0.55rem 1.2rem; font-size: 1rem; min-height: var(--touch); }
 
 /* ---------- timeline ---------- */
-.timeline-wrap {
-  position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 320px;
-}
-
 .timeline-svg {
   display: block;
   width: 100%;
@@ -283,41 +273,30 @@ textarea { min-height: 5rem; resize: vertical; }
   user-select: none;
 }
 
-.timeline-controls {
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-  padding: 0.4rem 1rem;
-  flex-wrap: wrap;
-}
-
-/* where your energy is today: one quiet segmented strip */
-.energy-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.1rem 1rem 0.45rem;
-}
-.energy-track {
-  display: flex;
-  height: 8px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--line-axis);
-}
-.energy-seg {
-  height: 100%;
+/* The one obvious control: a round +, floating over the timeline. */
+.timeline-fab {
+  position: absolute;
+  right: 1rem;
+  bottom: 1.25rem;
+  z-index: 20;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
   border: none;
-  padding: 0;
-  margin: 0;
-  opacity: 0.75;
-  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgb(38 37 31 / 0.22);
 }
-button.energy-seg { cursor: pointer; }
-button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
-.energy-main { background: var(--accent); opacity: 0.9; }
-.energy-bar .hint { font-size: 0.72rem; }
-[data-reduced-motion="true"] .energy-seg { transition: none; }
+.timeline-fab:hover { filter: brightness(1.07); }
+.timeline-fab:active { transform: scale(0.96); }
+
+.now-workspace { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
 .return-to-now {
   position: absolute;
@@ -350,55 +329,95 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   stroke-dasharray: 2 6;
   opacity: 0.4;
 }
-.future-line {
-  fill: none;
-  stroke-width: 1.75;
-  stroke-linecap: round;
-  stroke-dasharray: 3 6;
-  opacity: 0.28;
-}
-.future-label {
-  fill: var(--ink-faint);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.8;
-}
-/* Integrate Now: selected endpoints wear a quiet ring; tensions sit near Now as ✦ */
-.selection-ring {
-  fill: none;
-  stroke-width: 1.75;
-  opacity: 0.85;
-}
-.conflict-marker {
-  fill: var(--ink);
-  font-size: 14px;
-  opacity: 0.85;
-  cursor: help;
-}
-.integrate-bar {
+/* the wholeness chip: braid strands fan out per undecided line and come home
+   as decisions are taken; the word and the filled track give the score.
+   Tapping it opens the day's forecast and where a decision would help. */
+.wholeness {
   position: absolute;
-  bottom: 0.75rem;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0.6rem;
+  left: 0.9rem;
+  z-index: 10;
+}
+.fragmentation-indicator {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 6px;
+  background: var(--surface-soft);
+  border: 1px solid var(--bg-sunken);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+.fragmentation-indicator[aria-expanded="true"] { background: var(--bg-raised); }
+.wholeness-panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
   gap: 0.6rem;
-  padding: 0.45rem 0.7rem;
+  width: min(320px, calc(100vw - 2rem));
+  padding: 0.7rem 0.8rem;
   background: var(--bg);
   border: 1px solid var(--line-soft);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  z-index: 5;
-  max-width: calc(100% - 1.5rem);
 }
-.integrate-bar .hint { margin: 0; }
-.integrate-toggle[aria-pressed="true"] {
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--line-axis));
-  background: var(--accent-soft);
+.frag-word-inline.low { color: var(--danger); }
+.wholeness-suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid var(--bg-sunken);
+  background: var(--surface-soft);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
-
+.wholeness-suggestion:hover { background: var(--bg-raised); }
+.wholeness-suggestion .hint { margin: 0; }
+.frag-base { stroke: var(--line-main); stroke-width: 2; fill: none; }
+.frag-strand { stroke: var(--ink-soft); stroke-width: 1.6; fill: none; opacity: 0.9; }
+.frag-strand.settled { stroke: var(--accent); opacity: 0.5; }
+.fragmentation-indicator.low .frag-strand { stroke: var(--danger); opacity: 0.75; }
+.frag-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 62px;
+}
+.frag-word {
+  font-size: 0.68rem;
+  line-height: 1;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+.frag-track {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+.frag-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 0.5s ease;
+}
+.fragmentation-indicator.mid .frag-fill {
+  background: color-mix(in srgb, var(--accent) 45%, var(--danger));
+}
+.fragmentation-indicator.low .frag-fill { background: var(--danger); }
+.fragmentation-indicator.low .frag-word { color: var(--danger); }
 /* a merge being considered: the line leans toward Now until confirmed or set aside */
 .merge-preview {
   fill: none;
@@ -455,6 +474,20 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   font-size: 11px;
   font-style: italic;
 }
+.action-bullet { opacity: 0.8; }
+
+/* where the day's energy went: main-line share first, then each open line's draw */
+.energy-review { display: flex; flex-direction: column; gap: 0.4rem; }
+.energy-track {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+.energy-main { background: var(--accent); }
+.energy-part { background: var(--ink-faint); opacity: 0.55; }
+.energy-part + .energy-part { border-left: 1px solid var(--bg); }
 
 .now-glow {
   fill: var(--accent);
@@ -531,24 +564,16 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   0%, 100% { opacity: 0.95; }
   50% { opacity: 0.55; }
 }
-.draw-in {
-  animation: draw 0.9s ease-out both;
-}
-@keyframes draw {
-  from { stroke-dashoffset: var(--path-length, 600); }
-  to { stroke-dashoffset: 0; }
-}
-
 [data-reduced-motion="true"] .branch-flow,
 [data-reduced-motion="true"] .pulse,
-[data-reduced-motion="true"] .draw-in,
 [data-reduced-motion="true"] .main-flow,
 [data-reduced-motion="true"] .now-glow {
   animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .branch-flow, .pulse, .draw-in, .main-flow, .now-glow,
-  .merge-preview, .merge-preview-target, .branch-line.just-born { animation: none; }
+  .branch-flow, .pulse, .main-flow, .now-glow,
+  .merge-preview, .merge-preview-target, .branch-line.just-born,
+  .quick-tray, .touch-sheet { animation: none; }
 }
 
 /* ---------- theme characters: each mood carries itself differently ---------- */
@@ -674,15 +699,24 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   padding: 1.5rem 1.1rem 4rem;
 }
 
-/* the Now tab holds one day at a time; flick sideways to move through days */
+/* paging through past days: swipe the strip, or use the quiet arrows */
 .day-swipe { touch-action: pan-y; }
-.day-strip {
+.day-pager {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  margin: -0.4rem 0 0.9rem;
+  gap: 0.5rem;
+  margin: 0.4rem 0 0.2rem;
 }
-.day-strip .action-dots { padding: 0; }
+.day-pager-label { margin: 0; min-width: 8rem; text-align: center; }
+.day-pager-arrow { font-size: 1.1rem; padding: 0.05rem 0.6rem; }
+.day-section-title {
+  font-size: 0.78rem;
+  font-weight: 550;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0.7rem 0 0.3rem;
+}
 
 .panel-context {
   border-bottom: 1px solid var(--line-soft);
@@ -742,6 +776,7 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 }
 
 .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.35rem 0; }
+.stack { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.6rem; }
 .tag {
   display: inline-flex;
   align-items: center;
@@ -814,13 +849,6 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 }
 .touch-input-row input { flex: 1; min-width: 0; }
 .touch-input-row .btn { flex: none; }
-.touch-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
 .pull-scale { display: flex; gap: 0.35rem; }
 .pull-scale button {
   flex: 1;
@@ -854,27 +882,6 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 }
 
 /* what was decided about a line today: quiet, settled, no further asks */
-.decided-note {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.7rem 0.9rem;
-  border-radius: var(--radius);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--accent-soft) 70%, var(--bg)),
-    color-mix(in srgb, var(--bg-sunken) 45%, var(--bg))
-  );
-}
-.decided-note > .hint {
-  font-size: 0.72rem;
-  font-weight: 550;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-.decided-note > strong { font-weight: 600; }
-
-/* one calm card per step: swipe sideways (or use the dots) to move through them */
 .action-card {
   display: flex;
   flex-direction: column;
@@ -936,30 +943,6 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   border-radius: var(--radius);
 }
 .nav-icon { font-size: 0.95rem; line-height: 1; }
-/* reserved space in the middle of the bottom bar for the docked + button */
-.nav-fab-slot { flex: 0 0 64px; }
-
-.fab {
-  position: fixed;
-  right: 1.1rem;
-  bottom: 1.1rem;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-ink);
-  font-size: 1.7rem;
-  font-weight: 400;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow);
-  z-index: 20;
-  transition: transform 0.15s ease;
-}
-.fab:hover { transform: scale(1.06); }
-.fab:active { transform: scale(0.96); }
 
 /* ---------- timeline page ---------- */
 .timeline-page {
@@ -1008,22 +991,63 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   margin: 0;
 }
 
-.timeline-legend {
+/* the legend and keyboard map, folded away behind a small info mark */
+.timeline-help {
   position: absolute;
-  right: 0.9rem;
-  bottom: 0.5rem;
-  font-size: 0.78rem;
-  color: var(--ink-faint);
-  pointer-events: none;
+  left: 0.9rem;
+  bottom: 1.25rem;
+  z-index: 10;
 }
-.timeline-counts { white-space: nowrap; }
-
-.action-card-row {
+.timeline-info-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--line-axis);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-style: italic;
+  font-family: Georgia, serif;
+  line-height: 1;
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  min-width: 0;
+  justify-content: center;
+  opacity: 0.65;
 }
+.timeline-info-btn:hover,
+.timeline-info-btn[aria-expanded="true"] { opacity: 1; background: var(--bg-raised); }
+.timeline-help-panel {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: min(320px, calc(100vw - 2rem));
+  padding: 0.7rem 0.8rem;
+  background: var(--bg);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* feelings grouped by where they live today — names, never numbers */
+.held-qualities {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.held-qualities li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .action-card-text {
   display: flex;
   flex-direction: column;
@@ -1043,45 +1067,6 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 }
 .action-title { font-size: 0.98rem; line-height: 1.35; }
 .action-meta { margin: 0; }
-.action-check {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1.5px solid var(--accent);
-  background: none;
-  color: var(--accent);
-  font-size: 1rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.action-check:hover { background: var(--accent-soft); }
-.action-check:active { background: var(--accent); color: var(--accent-ink); }
-
-.action-dots {
-  display: flex;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.15rem 0 0.05rem;
-}
-.action-dot {
-  flex: none;
-  width: 7px;
-  height: 7px;
-  /* buttons carry a global touch-size minimum; a pager dot must stay a dot */
-  min-height: 0;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: var(--line-axis);
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-.action-dot.current { background: var(--accent); transform: scale(1.2); }
-
 /* ---------- branch focus sheet ---------- */
 .branch-dimmed { transition: opacity 0.25s ease; }
 
@@ -1122,19 +1107,12 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   background: var(--line-axis);
   margin: 0 auto 0.6rem;
 }
-.touch-sheet-body { display: flex; flex-direction: column; gap: 0.55rem; }
 .touch-sheet-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 1.05rem;
   margin: 0;
-}
-.touch-sheet-dot {
-  flex: none;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
 }
 .touch-sheet .calm-note { font-size: 0.88rem; padding: 0.55rem 0.75rem; margin: 0; }
 .touch-sheet .branch-chip { margin: 0; }
@@ -1163,14 +1141,92 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   }
 }
 
-/* ---------- feelings a line holds ---------- */
-.feelings-row {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  flex-wrap: wrap;
+/* ---------- quick menu: the four things a branch can need ---------- */
+.quick-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
 }
-.feelings-edit { min-height: 26px; padding: 0.1rem 0.5rem; font-size: 0.82rem; }
+.quick-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  text-align: left;
+  cursor: pointer;
+}
+.quick-menu-item:hover { border-color: var(--line-axis); }
+.quick-menu-item .hint { margin: 0; font-size: 0.8rem; }
+.understand-link { margin-top: 0.2rem; }
+
+/* ---------- quick tray: a light panel, the timeline stays interactive ---------- */
+.quick-tray {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  z-index: 40;
+  width: min(560px, 100%);
+  max-height: 45vh;
+  overflow-y: auto;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.08);
+  padding: 0.35rem 1rem calc(0.85rem + env(safe-area-inset-bottom));
+  animation: sheet-up 0.22s ease;
+  outline: none;
+}
+[data-reduced-motion="true"] .quick-tray { animation: none; }
+.quick-tray-grip {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line-axis);
+  margin: 0.25rem auto 0.55rem;
+  /* A generous touch target around the small grip. */
+  padding: 0.4rem 2rem;
+  background-clip: content-box;
+  box-sizing: content-box;
+}
+.quick-tray .panel {
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+.quick-tray .panel > h1,
+.quick-tray .panel h1:first-child {
+  font-size: 1.05rem;
+  margin: 0 0 0.35rem;
+}
+@media (min-width: 900px) {
+  /* Desktop: docked to the right, beside the timeline — never over Now. */
+  .quick-tray {
+    left: auto;
+    right: 0.9rem;
+    bottom: 0.9rem;
+    transform: none;
+    width: 340px;
+    max-height: min(70vh, 36rem);
+    border-bottom: 1px solid var(--line-soft);
+    border-radius: var(--radius-lg);
+    animation: quick-in 0.18s ease;
+  }
+  [data-reduced-motion="true"] .quick-tray { animation: none; }
+  .quick-tray-grip { display: none; }
+}
+@keyframes quick-in {
+  from { transform: translateY(8px); opacity: 0.6; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ---------- feelings a line holds ---------- */
 .feeling-picker {
   display: flex;
   flex-wrap: wrap;
@@ -1191,15 +1247,6 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
   border-color: var(--accent);
   color: var(--ink);
 }
-.touch-merge {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius);
-  background: var(--bg-sunken);
-}
-
 /* feelings drifting home to the main line after a decision */
 .reclaim-layer {
   position: absolute;
@@ -1223,59 +1270,6 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 }
 [data-reduced-motion="true"] .reclaim-layer { display: none; }
 
-/* ---------- integration summary ---------- */
-.integration-card { display: flex; flex-direction: column; gap: 0.5rem; }
-.integration-held {
-  display: flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  font-size: 0.9rem;
-}
-.integration-held .swatch { align-self: center; }
-
-/* ---------- filters ---------- */
-.filter-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-.filter-btn { display: inline-flex; gap: 0.35rem; }
-.filter-count {
-  font-size: 0.75rem;
-  opacity: 0.75;
-  font-variant-numeric: tabular-nums;
-}
-
-.filter-popover-wrap { position: relative; }
-.filter-popover {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 30;
-  background: var(--bg-raised);
-  border: 1px solid var(--line-axis);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 0.75rem;
-  min-width: 300px;
-  max-width: min(360px, calc(100vw - 2rem));
-}
-.filter-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 0.4rem;
-  min-width: 1.1rem;
-  height: 1.1rem;
-  padding: 0 0.25rem;
-  border-radius: 6px;
-  font-size: 0.7rem;
-  font-weight: 550;
-  font-variant-numeric: tabular-nums;
-  background: var(--accent-soft);
-  color: var(--ink);
-}
 
 .chip {
   border: 1px solid var(--line-axis);
@@ -1386,20 +1380,8 @@ button.energy-seg:hover, button.energy-seg:focus-visible { opacity: 1; }
 @media (max-width: 760px) {
   .nav-tabs { display: none; }
   .nav-bottom { display: flex; }
-  .header-settings { display: inline-flex; }
-  .timeline-legend { display: none; }
   .branch-row { flex-wrap: wrap; }
   .branch-row-actions { width: 100%; justify-content: flex-end; }
-  /* the + docks in the middle of the bottom bar, popping out of its top edge */
-  .fab {
-    right: auto;
-    left: calc(50% - 27px);
-    bottom: calc(1.35rem + env(safe-area-inset-bottom));
-    width: 54px;
-    height: 54px;
-    border: 3px solid var(--bg-raised);
-    z-index: 30;
-  }
 }
 
 @media (max-width: 640px) {

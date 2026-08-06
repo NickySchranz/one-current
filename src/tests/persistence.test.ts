@@ -15,7 +15,7 @@ beforeEach(async () => {
     waiting: [],
     actions: [],
     mergeDraft: undefined,
-    view: { kind: "timeline" },
+    view: { kind: "now" },
     operation: { kind: "idle" },
   });
 });
@@ -70,8 +70,8 @@ describe("IndexedDB persistence", () => {
     const state = useAppStore.getState();
     expect(state.mergeDraft?.id).toBe(draft.id);
     // The merge reopens over the timeline, not on a separate page.
-    expect(state.view).toEqual({ kind: "timeline" });
-    expect(state.operation).toEqual({ kind: "merging-branch", branchIds: [branch.id] });
+    expect(state.view).toEqual({ kind: "now" });
+    expect(state.operation).toEqual({ kind: "confirming-merge", branchIds: [branch.id] });
     expect(state.mergeDraft?.partial.stillValid).toEqual(["it matters"]);
   });
 

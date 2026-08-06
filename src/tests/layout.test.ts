@@ -30,14 +30,14 @@ describe("time scale", () => {
     expect(dateToX("2020-01-01", w, 1000)).toBe(0); // clamped
   });
 
-  it("default window contains the earliest fork with margin and a quarter of future", () => {
+  it("default window contains the earliest fork with margin and puts Now at the half-way point", () => {
     const w = defaultWindow(["2025-03-01", "2026-01-01"], NOW);
     expect(w.start < "2025-03-01").toBe(true);
-    // The end extends past today, but the future stays at most a quarter of the span.
+    // The end extends past today: Now sits at the middle of the span.
     expect(w.end > "2026-08-04").toBe(true);
     const span = Date.parse(w.end) - Date.parse(w.start);
     const future = Date.parse(w.end) - Date.parse("2026-08-04");
-    expect(future).toBeLessThanOrEqual(span / 4 + DAY);
+    expect(Math.abs(future - span / 2)).toBeLessThanOrEqual(DAY);
   });
 
   it("generates ticks appropriate to the zoom level", () => {
@@ -47,16 +47,16 @@ describe("time scale", () => {
     expect(days.some((t) => t.label === "Today")).toBe(true);
   });
 
-  it("the right edge extends at most a quarter-span past today", () => {
+  it("the right edge extends at most a half-span past today", () => {
     const w = { start: "2026-06-01", end: "2026-08-04" };
     const today = Date.parse("2026-08-04");
     const zoomed = zoomWindow(w, 2, 1, "2026-08-04");
     const zoomedSpan = Date.parse(zoomed.end) - Date.parse(zoomed.start);
-    expect(Date.parse(zoomed.end)).toBeLessThanOrEqual(today + zoomedSpan / 4);
+    expect(Date.parse(zoomed.end)).toBeLessThanOrEqual(today + zoomedSpan / 2);
     const span = Date.parse(w.end) - Date.parse(w.start);
     // Panning forward stops at the furthest extension...
     const panned = panWindow(w, 0.5, "2026-08-04");
-    expect(Date.parse(panned.end)).toBe(today + span / 4);
+    expect(Date.parse(panned.end)).toBe(today + span / 2);
     // ...and panning back moves the future out of the window entirely.
     const back = panWindow(w, -0.5, "2026-08-04");
     expect(Date.parse(back.end) < today).toBe(true);
@@ -188,10 +188,10 @@ describe("timeline layout", () => {
     const laneYs = layout.geometries.filter((g) => !g.endsOnMain).map((g) => g.laneY);
     expect(new Set(laneYs).size).toBe(laneYs.length);
     expect(layout.height).toBeGreaterThan(layout.mainY);
-    // Now sits around three quarters in: the band beyond it is tomorrow's projection.
+    // Now sits around the middle: the half beyond it is the clean future.
     expect(layout.fullWidth).toBe(900);
-    expect(layout.nowX).toBeLessThan(layout.fullWidth);
-    expect(layout.nowX).toBeGreaterThan(layout.fullWidth * 0.7);
+    expect(layout.nowX).toBeLessThan(layout.fullWidth * 0.6);
+    expect(layout.nowX).toBeGreaterThan(layout.fullWidth * 0.4);
     // Open branches end at Now, not at the right edge.
     const open = layout.geometries.find((g) => g.reachesNow);
     expect(open?.endX).toBe(layout.nowX);
@@ -214,7 +214,7 @@ describe("screen reader descriptions", () => {
     ];
     const text = describeTimeline(branches, { start: "2025-01-01", end: "2026-08-04" });
     expect(text).toContain("Main life timeline from January 2025 to the present.");
-    expect(text).toContain("Three active branches reach today.");
+    expect(text).toContain("Three active threads reach today.");
     expect(text).toContain("Relationship separation began in February 2026 and has pull level five.");
     expect(text).toContain("Career uncertainty began in June 2026 and has pull level three.");
   });
@@ -225,8 +225,8 @@ describe("screen reader descriptions", () => {
       mk({ id: "m1", title: "Old grief", status: "merged", mergeDate: "2026-01-01" }),
     ];
     const text = describeTimeline(branches, { start: "2025-01-01", end: "2026-08-04" });
-    expect(text).toContain("One branch is in deliberate waiting.");
-    expect(text).toContain("One branch has been merged");
+    expect(text).toContain("One thread is in deliberate waiting.");
+    expect(text).toContain("One thread has been brought back");
   });
 
   it("describes a single branch without technical language", () => {

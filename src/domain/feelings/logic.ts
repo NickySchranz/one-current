@@ -57,7 +57,7 @@ const LOCKS: Record<Anxiety, Feeling[]> = {
   helplessness: ["hope", "energy"],
 };
 
-/** From what a line makes you feel, suggest which feelings it locks away. */
+/** From what a line makes you feel, suggest which feelings become less available. */
 export function suggestLockedFeelings(anxieties: string[]): string[] {
   const locked = new Set(
     anxieties.flatMap((a) => LOCKS[a as Anxiety] ?? []),

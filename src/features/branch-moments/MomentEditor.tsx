@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { MomentType } from "@/domain/moments/types";
 import { useAppStore } from "@/stores/app-store";
+import { useT } from "@/i18n/i18n";
 
 const MOMENT_TYPES: { id: MomentType; label: string }[] = [
   { id: "event", label: "Something happened" },
@@ -17,6 +18,7 @@ type Props = { branchId: string; onDone?: () => void };
 
 /** Quick moment capture: what happened, when, what it changed. */
 export function MomentEditor({ branchId, onDone }: Props) {
+  const t = useT();
   const addMoment = useAppStore((s) => s.addMoment);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
@@ -45,18 +47,18 @@ export function MomentEditor({ branchId, onDone }: Props) {
 
   return (
     <div className="card sunken">
-      <h3>Add a moment</h3>
+      <h3>{t("Add a moment")}</h3>
       <div className="field">
-        <label htmlFor="moment-title">What happened here?</label>
+        <label htmlFor="moment-title">{t("What happened here?")}</label>
         <input
           id="moment-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="A conversation, setback, decision, reassurance…"
+          placeholder={t("A conversation, setback, decision, reassurance…")}
         />
       </div>
       <div className="field">
-        <label htmlFor="moment-date">When?</label>
+        <label htmlFor="moment-date">{t("When?")}</label>
         <input
           id="moment-date"
           type="date"
@@ -66,22 +68,24 @@ export function MomentEditor({ branchId, onDone }: Props) {
         />
       </div>
       <div className="field">
-        <label>What kind of moment?</label>
+        <label>{t("What kind of moment?")}</label>
         <div className="tag-row" role="group">
-          {MOMENT_TYPES.map((t) => (
+          {MOMENT_TYPES.map((mt) => (
             <button
-              key={t.id}
-              className={`tag ${type === t.id ? "quality" : ""}`}
-              aria-pressed={type === t.id}
-              onClick={() => setType(t.id)}
+              key={mt.id}
+              className={`tag ${type === mt.id ? "quality" : ""}`}
+              aria-pressed={type === mt.id}
+              onClick={() => setType(mt.id)}
             >
-              {t.label}
+              {t(mt.label)}
             </button>
           ))}
         </div>
       </div>
       <div className="field">
-        <label htmlFor="moment-belief">What did you begin believing after this? (optional)</label>
+        <label htmlFor="moment-belief">
+          {t("What did you begin believing after this? (optional)")}
+        </label>
         <input
           id="moment-belief"
           value={belief}
@@ -89,7 +93,7 @@ export function MomentEditor({ branchId, onDone }: Props) {
         />
       </div>
       <div className="field">
-        <label>Did this make the branch stronger, lighter, or simply different?</label>
+        <label>{t("Did this make the thread stronger, lighter, or simply different?")}</label>
         <div className="tag-row" role="group">
           {(["stronger", "lighter", "different"] as const).map((eff) => (
             <button
@@ -98,13 +102,13 @@ export function MomentEditor({ branchId, onDone }: Props) {
               aria-pressed={effect === eff}
               onClick={() => setEffect(effect === eff ? undefined : eff)}
             >
-              {eff}
+              {t(eff)}
             </button>
           ))}
         </div>
       </div>
       <button className="btn btn-primary" disabled={!title.trim() || busy} onClick={save}>
-        Add moment
+        {t("Add moment")}
       </button>
     </div>
   );

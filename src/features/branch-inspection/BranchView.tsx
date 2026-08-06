@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { DIFF_CHANGE_OPTIONS, RECLAIMABLE_QUALITIES, type DiffChangeId } from "@/domain/branches/diff";
-import type { Controllability } from "@/domain/branches/types";
+import type { Controllability, PsychologicalBranch } from "@/domain/branches/types";
+import { ANXIETIES, suggestLockedFeelings } from "@/domain/feelings/logic";
 import { describeBranch } from "@/visualization/a11y/describe";
+import { useT } from "@/i18n/i18n";
 import { TagListEditor } from "@/ui/TagListEditor";
+import { FeelingPicker } from "@/features/branch-touch/FeelingPicker";
 import { MomentList } from "../branch-moments/MomentList";
 import { MomentEditor } from "../branch-moments/MomentEditor";
 
@@ -47,10 +50,9 @@ type Props = { branchId: string };
 
 /** One calm view of the whole line — story, what's still yours, and what happens next. */
 export function BranchView({ branchId }: Props) {
+  const t = useT();
   const branches = useAppStore((s) => s.branches);
   const setOperation = useAppStore((s) => s.setOperation);
-  const startMerge = useAppStore((s) => s.startMerge);
-  const handOffBranch = useAppStore((s) => s.handOffBranch);
   const updateBranch = useAppStore((s) => s.updateBranch);
   const createTodayAction = useAppStore((s) => s.createTodayAction);
   const branch = useMemo(
@@ -64,11 +66,13 @@ export function BranchView({ branchId }: Props) {
   const [addingMoment, setAddingMoment] = useState(false);
   const [step, setStep] = useState("");
   const [stepMade, setStepMade] = useState(false);
+  // The less-available feelings follow what it stirs until adjusted by hand.
+  const [occupiesCustom, setOccupiesCustom] = useState(false);
 
   if (!branch) {
     return (
       <div className="panel">
-        <p>This line no longer exists.</p>
+        <p>{t("This thread no longer exists.")}</p>
       </div>
     );
   }
@@ -126,19 +130,38 @@ export function BranchView({ branchId }: Props) {
     });
   }
 
+  function toggleAnxiety(a: string) {
+    if (!branch) return;
+    const current = branch.anxieties ?? [];
+    const next = current.includes(a) ? current.filter((x) => x !== a) : [...current, a];
+    const patch: Partial<PsychologicalBranch> = { anxieties: next };
+    if (!occupiesCustom) patch.occupies = suggestLockedFeelings(next);
+    void updateBranch(branch.id, patch);
+  }
+
+  function toggleOccupies(f: string) {
+    if (!branch) return;
+    setOccupiesCustom(true);
+    const current = branch.occupies ?? [];
+    const next = current.includes(f) ? current.filter((x) => x !== f) : [...current, f];
+    void updateBranch(branch.id, { occupies: next });
+  }
+
   return (
     <>
       <div className="panel">
         <h1>{branch.title}</h1>
         <p className="hint">
-          This line forked {forkWhen} and reaches Now. Take what is still yours; leave the rest
-          where it happened. Nothing here is required.
+          {t(
+            "This thread split off {when} and reaches Now. Take what is still yours; leave the rest where it happened. Nothing here is required.",
+            { when: forkWhen },
+          )}
         </p>
-        <p className="visually-hidden">{describeBranch(branch)}</p>
+        <p className="visually-hidden">{describeBranch(branch, t)}</p>
 
         <div className="field">
           <TagListEditor
-            label="What from this still belongs to you now?"
+            label={t("What from this still belongs to you now?")}
             values={pr.reclaimable}
             onChange={(v) => savePr({ reclaimable: v })}
             suggestions={RECLAIMABLE_QUALITIES}
@@ -147,20 +170,20 @@ export function BranchView({ branchId }: Props) {
         </div>
 
         <details className="optional-details">
-          <summary>Compare the fork with Now (optional)</summary>
+          <summary>{t("Compare where it began with Now (optional)")}</summary>
           <p className="hint">
-            Two points on the same line: where it began, and where you actually are.
+            {t("Two points on the same thread: where it began, and where you actually are.")}
           </p>
           <div className="compare-grid">
-            <div className="compare-card" aria-label="At the fork">
-              <p className="compare-anchor">At the fork · {forkWhen}</p>
+            <div className="compare-card" aria-label={t("Where it began")}>
+              <p className="compare-anchor">{t("Where it began · {date}", { date: forkWhen })}</p>
               <div className="field">
                 <textarea
                   value={happened}
                   onChange={(e) => setHappened(e.target.value)}
                   onBlur={saveStory}
-                  placeholder="What was happening when this line began"
-                  aria-label="What happened when this branch began"
+                  placeholder={t("What was happening when this thread began")}
+                  aria-label={t("What happened when this thread began")}
                 />
               </div>
               <div className="field">
@@ -168,36 +191,40 @@ export function BranchView({ branchId }: Props) {
                   value={belief}
                   onChange={(e) => setBelief(e.target.value)}
                   onBlur={saveStory}
-                  placeholder="What you started believing back then"
-                  aria-label="What did you begin believing?"
+                  placeholder={t("What did you begin believing at the time?")}
+                  aria-label={t("What did you begin believing at the time?")}
                 />
               </div>
-              <div className="tag-row" role="group" aria-label="Example conclusions">
+              <div className="tag-row" role="group" aria-label={t("Example conclusions")}>
                 {EXAMPLE_BELIEFS.map((b) => (
                   <button key={b} className="tag" onClick={() => setBelief(b)}>
-                    {b}
+                    {t(b)}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="compare-card" aria-label="At Now">
-              <p className="compare-anchor">At Now · {today}</p>
+            <div className="compare-card" aria-label={t("At Now")}>
+              <p className="compare-anchor">{t("At Now · {date}", { date: today })}</p>
               <div className="field">
-                <label htmlFor="current-belief">What feels true today, in your own words?</label>
+                <label htmlFor="current-belief">
+                  {t("What feels true today, in your own words?")}
+                </label>
                 <textarea
                   id="current-belief"
                   value={currentBelief}
                   onChange={(e) => setCurrentBelief(e.target.value)}
                   onBlur={saveStory}
                   placeholder={
-                    branch.originalBelief ? `Then: “${branch.originalBelief}”` : undefined
+                    branch.originalBelief
+                      ? t("Then: “{belief}”", { belief: branch.originalBelief })
+                      : undefined
                   }
                 />
               </div>
             </div>
           </div>
-          <p className="hint">If any of these have changed since the fork, mark them.</p>
-          <div className="tag-row" role="group" aria-label="What has changed">
+          <p className="hint">{t("If any of these have changed since it began, mark them.")}</p>
+          <div className="tag-row" role="group" aria-label={t("What has changed")}>
             {DIFF_CHANGE_OPTIONS.map((o) => (
               <button
                 key={o.id}
@@ -205,15 +232,45 @@ export function BranchView({ branchId }: Props) {
                 aria-pressed={diffSelected.has(o.id)}
                 onClick={() => toggleDiff(o.id)}
               >
-                {o.label}
+                {t(o.label)}
               </button>
             ))}
           </div>
         </details>
 
         <details className="optional-details">
+          <summary>{t("What it stirs, and what feels less available (optional)")}</summary>
+          <p className="hint">
+            {t("Tap what's true. Naming it is how the thread starts loosening.")}
+          </p>
+          <FeelingPicker
+            options={ANXIETIES}
+            selected={branch.anxieties ?? []}
+            onToggle={toggleAnxiety}
+            label={t("What this thread makes you feel")}
+          />
+          {(branch.anxieties ?? []).length > 0 && (
+            <>
+              <p className="prompt" style={{ marginTop: "0.75rem" }}>
+                {t("What feels less available while this thread is active?")}
+              </p>
+              <p className="hint">
+                {t(
+                  "You selected these; adjust freely. They return to your main line each time you decide something about the thread.",
+                )}
+              </p>
+              <FeelingPicker
+                selected={branch.occupies ?? []}
+                onToggle={toggleOccupies}
+                label={t("What feels less available while this thread is active")}
+              />
+            </>
+          )}
+        </details>
+
+        <details className="optional-details">
           <summary>
-            Moments on this line
+            {t("Moments on this thread")}
             {branch.commits.length > 0 ? ` (${branch.commits.length})` : ""}
           </summary>
           <MomentList branch={branch} />
@@ -221,19 +278,19 @@ export function BranchView({ branchId }: Props) {
             <MomentEditor branchId={branch.id} onDone={() => setAddingMoment(false)} />
           ) : (
             <button className="btn" onClick={() => setAddingMoment(true)}>
-              Add a moment
+              {t("Add a moment")}
             </button>
           )}
         </details>
 
         <details className="optional-details">
-          <summary>Where should each part go? (optional)</summary>
+          <summary>{t("Where should each part go? (optional)")}</summary>
           <p className="hint">
-            Everything on this line has a destination. Nothing is deleted; it is placed.
+            {t("Everything on this thread has a destination. Nothing is deleted; it is placed.")}
           </p>
           <div className="field">
             <TagListEditor
-              label="Carry forward — still true, comes with you"
+              label={t("Carry forward — still true, comes with you")}
               values={pr.stillValid}
               onChange={(v) => savePr({ stillValid: v })}
               suggestions={VALID_EXAMPLES}
@@ -241,7 +298,7 @@ export function BranchView({ branchId }: Props) {
           </div>
           <div className="field">
             <TagListEditor
-              label="Leave in history — no longer fits reality"
+              label={t("Leave in history — no longer fits reality")}
               values={pr.outdated}
               onChange={(v) => savePr({ outdated: v })}
               suggestions={OUTDATED_EXAMPLES}
@@ -249,12 +306,12 @@ export function BranchView({ branchId }: Props) {
           </div>
           <div className="field">
             <TagListEditor
-              label="Outside my control — not yours to carry"
+              label={t("Outside my control — not yours to carry")}
               values={pr.outsideControl}
               onChange={(v) => savePr({ outsideControl: v })}
               suggestions={OUTSIDE_EXAMPLES}
             />
-            <div className="tag-row" role="group" aria-label="Controllability">
+            <div className="tag-row" role="group" aria-label={t("Controllability")}>
               {CONTROLLABILITY.map((c) => (
                 <button
                   key={c.id}
@@ -262,22 +319,24 @@ export function BranchView({ branchId }: Props) {
                   aria-pressed={branch.controllability === c.id}
                   onClick={() => updateBranch(branch.id, { controllability: c.id })}
                 >
-                  {c.label}
+                  {t(c.label)}
                 </button>
               ))}
             </div>
           </div>
           <div className="field">
-            <label htmlFor="pr-step">Needs a real action — one honest step</label>
+            <label htmlFor="pr-step">{t("Needs a real action — one honest step")}</label>
             {stepMade ? (
-              <p className="calm-note">Placed on today. It will show as your current action.</p>
+              <p className="calm-note">
+                {t("Placed on today. It will show as your current action.")}
+              </p>
             ) : (
               <div className="touch-input-row">
                 <input
                   id="pr-step"
                   value={step}
                   onChange={(e) => setStep(e.target.value)}
-                  placeholder="e.g. send the one email"
+                  placeholder={t("e.g. send the one email")}
                 />
                 <button
                   className="btn"
@@ -288,72 +347,46 @@ export function BranchView({ branchId }: Props) {
                     setStepMade(true);
                   }}
                 >
-                  Make it today's action
+                  {t("Make it today's action")}
                 </button>
               </div>
             )}
           </div>
         </details>
 
-        <p className="prompt">What should happen with this line?</p>
-
-        <button
-          className="branch-chip"
-          onClick={() => startMerge([branch.id])}
-          disabled={branch.status === "merged"}
-        >
-          <div>
-            <strong>Fold it back into your line</strong>
-            <p className="hint" style={{ margin: 0 }}>
-              Keep what matters, release the rest, and let this line end at a merge point.
-            </p>
-          </div>
-        </button>
-
-        <button
-          className="branch-chip"
-          onClick={() =>
-            setOperation({ kind: "creating-waiting-container", branchId: branch.id })
-          }
-        >
-          <div>
-            <strong>Place in deliberate waiting</strong>
-            <p className="hint" style={{ margin: 0 }}>
-              Reality is unresolved. Set boundaries and a review condition, then keep living.
-            </p>
-          </div>
-        </button>
-
-        <button
-          className="branch-chip"
-          onClick={() => handOffBranch(branch.id)}
-          disabled={branch.status === "converted-to-project"}
-        >
-          <div>
-            <strong>This is real work now</strong>
-            <p className="hint" style={{ margin: 0 }}>
-              It leaves your head and moves to where your tasks live. The line ends here.
-            </p>
-          </div>
-        </button>
-
-        <button
-          className="branch-chip"
-          onClick={() => updateBranch(branch.id, { status: "needs-support" })}
-        >
-          <div>
-            <strong>This may need support</strong>
-            <p className="hint" style={{ margin: 0 }}>
-              Some lines are carried best with another person — a friend, a group, or a
-              professional.
-            </p>
-          </div>
-        </button>
+        <p className="prompt">{t("What does this thread need from you now?")}</p>
+        <div className="tag-row">
+          <button
+            className="btn"
+            onClick={() => setOperation({ kind: "quick-act", branchId: branch.id })}
+          >
+            {t("Act")}
+          </button>
+          <button
+            className="btn"
+            onClick={() => setOperation({ kind: "quick-wait", branchId: branch.id })}
+          >
+            {t("Wait")}
+          </button>
+          <button
+            className="btn"
+            onClick={() => setOperation({ kind: "quick-merge", branchId: branch.id })}
+          >
+            {t("Bring back")}
+          </button>
+          <button
+            className="btn"
+            onClick={() => setOperation({ kind: "quick-note", branchId: branch.id })}
+          >
+            {t("Note")}
+          </button>
+        </div>
 
         {branch.status === "needs-support" && (
           <p className="calm-note">
-            Marked as needing support. Bringing this to someone you trust is a form of action, not
-            a failure of the line.
+            {t(
+              "Marked as carried with support. Bringing this to someone you trust is a form of action, not a failure of the thread.",
+            )}
           </p>
         )}
       </div>

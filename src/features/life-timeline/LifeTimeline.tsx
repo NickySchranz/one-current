@@ -3,16 +3,23 @@ import { filterBranches, useAppStore } from "@/stores/app-store";
 import { buildTimelineLayout } from "@/visualization/main-line/layout";
 import { generateTicks, dateToX } from "@/visualization/zoom/time-scale";
 import { describeTimeline, describeBranch } from "@/visualization/a11y/describe";
-import { isOpen, isWaiting, mostActivated } from "@/domain/branches/logic";
-import { detectConflicts } from "@/domain/conflicts/logic";
+import { isClosed, isWaiting, mostActivated } from "@/domain/branches/logic";
 import type { PsychologicalBranch } from "@/domain/branches/types";
 import { BranchLine } from "./BranchLine";
-import { TimelineFilters } from "./TimelineFilters";
-import { EnergyBar } from "./EnergyBar";
+import { TimelineHelp } from "@/features/timeline-help/TimelineHelp";
+import { WholenessIndicator } from "./WholenessIndicator";
 import { branchColor } from "@/visualization/branch-lines/style";
 import { mergePreviewPath } from "@/visualization/branch-lines/paths";
+import { useT } from "@/i18n/i18n";
 
 const DAY = 24 * 60 * 60 * 1000;
+
+/** Never let timeline shortcuts fire while the user is typing somewhere. */
+function isEditableTarget(e: { target: EventTarget | null }): boolean {
+  const t = e.target as HTMLElement | null;
+  if (!t) return false;
+  return t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName);
+}
 
 export function LifeTimeline() {
   const branches = useAppStore((s) => s.branches);
@@ -33,28 +40,14 @@ export function LifeTimeline() {
   const reducedMotion = useAppStore((s) => s.reducedMotion);
   const actions = useAppStore((s) => s.actions);
   const waiting = useAppStore((s) => s.waiting);
-  const startMerge = useAppStore((s) => s.startMerge);
-
-  // Integrate Now: several endpoints are selected, then merged together.
-  const integrating = operation.kind === "integrating";
-  const selectedIds = operation.kind === "integrating" ? operation.branchIds : [];
-
-  function toggleIntegration(branchId: string) {
-    if (operation.kind !== "integrating") return;
-    const has = operation.branchIds.includes(branchId);
-    setOperation({
-      kind: "integrating",
-      branchIds: has
-        ? operation.branchIds.filter((id) => id !== branchId)
-        : [...operation.branchIds, branchId],
-    });
-  }
+  const language = useAppStore((s) => s.language);
+  const t = useT();
 
   // The line the current operation concerns stays lit; everything else steps back.
   const focusedBranchId =
-    operation.kind === "inspecting-branch" || operation.kind === "creating-waiting-container"
+    "branchId" in operation
       ? operation.branchId
-      : operation.kind === "merging-branch" && operation.branchIds.length === 1
+      : operation.kind === "confirming-merge" && operation.branchIds.length === 1
         ? operation.branchIds[0]
         : undefined;
 
@@ -75,6 +68,34 @@ export function LifeTimeline() {
   const stageRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ width: 960, height: 480 });
+  // When the quick tray rises over the stage as a bottom sheet, the lanes move
+  // up into the space that remains — the selected line and Now stay visible
+  // together, never hidden behind the panel.
+  const [bottomInset, setBottomInset] = useState(0);
+  const insetRef = useRef(0);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      let next = 0;
+      const stage = stageRef.current;
+      const tray = document.querySelector(".quick-tray");
+      if (stage && tray) {
+        const stageRect = stage.getBoundingClientRect();
+        const trayRect = tray.getBoundingClientRect();
+        const overlapX =
+          Math.min(stageRect.right, trayRect.right) - Math.max(stageRect.left, trayRect.left);
+        const overlapY = Math.max(0, stageRect.bottom - trayRect.top);
+        // Only the bottom sheet counts; the desktop side panel leaves Now clear.
+        if (overlapX > stageRect.width * 0.55 && overlapY > 0) {
+          next = Math.min(overlapY, stageRect.height * 0.6);
+        }
+      }
+      if (next !== insetRef.current) {
+        insetRef.current = next;
+        setBottomInset(next);
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [operation, size]);
   const [focusIndex, setFocusIndex] = useState(-1);
   // Vertical zoom: spread a few lines apart, or squeeze many into view.
   const [yZoom, setYZoom] = useState(1);
@@ -136,28 +157,22 @@ export function LifeTimeline() {
     () =>
       buildTimelineLayout(visible, {
         width: size.width,
-        height: size.height,
+        height: Math.max(220, size.height - bottomInset),
         window: window_,
         compact,
         yZoom,
       }),
-    [visible, size, window_, compact, yZoom],
+    [visible, size, window_, compact, yZoom, bottomInset],
   );
 
   const ticks = useMemo(() => generateTicks(layout.window), [layout.window]);
-  const summary = useMemo(() => describeTimeline(visible, layout.window), [visible, layout.window]);
+  const summary = useMemo(
+    () => describeTimeline(visible, layout.window, t),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
+    [visible, layout.window, language],
+  );
   const top = mostActivated(visible);
   const byId = useMemo(() => new Map(visible.map((b) => [b.id, b])), [visible]);
-
-  const openCount = visible.filter((b) => isOpen(b) && !isWaiting(b)).length;
-  const waitingCount = visible.filter(isWaiting).length;
-
-  // Tensions between the selected lines appear as markers near Now, before the merge.
-  const selectedBranches = selectedIds
-    .map((id) => byId.get(id))
-    .filter((b): b is PsychologicalBranch => !!b);
-  const selectionConflicts =
-    selectedBranches.length > 1 ? detectConflicts(selectedBranches) : [];
 
   const ordered = layout.geometries
     .map((g) => byId.get(g.branchId))
@@ -167,19 +182,31 @@ export function LifeTimeline() {
   // the recent week with the right edge at the furthest future we extend.
   const today = new Date().toISOString().slice(0, 10);
   const span = Date.parse(layout.window.end) - Date.parse(layout.window.start);
-  const furthestEnd = Date.parse(today) + span / 4;
+  const restingEnd = Date.parse(today) + span / 2;
   const awayFromNow =
-    furthestEnd - Date.parse(layout.window.end) > 0.25 * DAY ||
+    Math.abs(restingEnd - Date.parse(layout.window.end)) > 0.25 * DAY ||
     Math.abs(span - 8 * DAY) > 0.75 * DAY;
 
   const todayX = dateToX(today, layout.window, layout.metrics.width);
 
-  // Today's open action continues the main line past Now: life keeps moving.
-  const todayAction = [...actions]
-    .reverse()
-    .find((a) => !a.completedAt && a.createdAt.slice(0, 10) === today);
+  // Every decided, still-open action gathers around the main line past Now —
+  // one place, not scattered across lanes. Actions of merged lines leave with
+  // them; actions of lines left for today are withdrawn by that decision.
+  const futureActions = useMemo(() => {
+    return actions.filter((a) => {
+      if (a.completedAt) return false;
+      const owner = a.branchesIntegrated[0]?.branchId;
+      if (!owner) return true;
+      const b = branches.find((x) => x.id === owner);
+      return !!b && !isClosed(b);
+    });
+  }, [actions, branches]);
+
+  // How split the present is: open lines pull apart, decisions gather them.
+  const activeLines = visible.filter((b) => !isClosed(b) && !isWaiting(b));
 
   function onKeyDown(e: React.KeyboardEvent) {
+    if (isEditableTarget(e)) return;
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       const dir = e.key === "ArrowDown" ? 1 : -1;
@@ -192,18 +219,7 @@ export function LifeTimeline() {
       panBy(0.15);
     } else if ((e.key === "Enter" || e.key === " ") && focusIndex >= 0 && ordered[focusIndex]) {
       e.preventDefault();
-      const target = ordered[focusIndex];
-      if (integrating) {
-        if (isOpen(target)) toggleIntegration(target.id);
-      } else {
-        setOperation({ kind: "inspecting-branch", branchId: target.id, depth: "touch" });
-      }
-    } else if (e.key === "i" || e.key === "I") {
-      e.preventDefault();
-      setOperation(integrating ? { kind: "idle" } : { kind: "integrating", branchIds: [] });
-    } else if ((e.key === "m" || e.key === "M") && integrating && selectedIds.length > 0) {
-      e.preventDefault();
-      void startMerge(selectedIds);
+      setOperation({ kind: "quick-touch", branchId: ordered[focusIndex].id });
     } else if (e.key === "+" || e.key === "=") {
       zoomBy(0.7);
     } else if (e.key === "-") {
@@ -265,32 +281,23 @@ export function LifeTimeline() {
 
   return (
     <div className="timeline-page">
-      <div className="timeline-controls">
-        <TimelineFilters variant="popover" />
-        {openCount > 1 && (
-          <button
-            className="btn btn-quiet integrate-toggle"
-            aria-pressed={integrating}
-            onClick={() =>
-              setOperation(integrating ? { kind: "idle" } : { kind: "integrating", branchIds: [] })
-            }
-          >
-            Integrate Now
-          </button>
-        )}
-        <span className="hint timeline-counts" aria-hidden="true">
-          {openCount} active · {waitingCount} waiting
-        </span>
-      </div>
-
-      <EnergyBar branches={visible} />
-
-
       <p className="visually-hidden" role="status">
         {summary}
       </p>
 
       <div className="timeline-stage" ref={stageRef}>
+        {/* One round +, unmistakable and wordless, floating on the water. */}
+        <button
+          className="timeline-fab"
+          aria-label={t("New thread")}
+          onClick={() => setOperation({ kind: "creating-branch" })}
+        >
+          +
+        </button>
+        <TimelineHelp />
+        {/* how split the present is: strands fan out per undecided line and
+            come home as decisions are taken — tap it for the day's forecast */}
+        <WholenessIndicator activeLines={activeLines} />
         <svg
           ref={svgRef}
           className="timeline-svg"
@@ -346,8 +353,9 @@ export function LifeTimeline() {
             aria-hidden="true"
           />
 
-          {/* faded projection: how tomorrow would feel if nothing gets decided.
-              It lives in time — panning back slides it out of the window. */}
+          {/* the future stays one line: the main line continues faded, nothing
+              branches ahead of Now. It lives in time — panning back slides it
+              out of the window. */}
           {layout.fullWidth - layout.nowX > 4 && (
           <g className="future-projection" aria-hidden="true">
             <rect
@@ -361,29 +369,6 @@ export function LifeTimeline() {
               className="future-main"
               d={`M ${layout.nowX} ${layout.mainY} L ${layout.fullWidth} ${layout.mainY}`}
             />
-            {layout.geometries
-              .filter((g) => g.reachesNow)
-              .map((g) => {
-                const branch = byId.get(g.branchId);
-                if (!branch) return null;
-                const span = layout.fullWidth - layout.nowX;
-                return (
-                  <path
-                    key={g.branchId}
-                    className="future-line"
-                    stroke={branchColor(branch, theme)}
-                    d={`M ${layout.nowX} ${g.laneY} C ${layout.nowX + span * 0.4} ${g.laneY}, ${layout.nowX + span * 0.6} ${g.projectedY}, ${layout.fullWidth} ${g.projectedY}`}
-                  />
-                );
-              })}
-            <text
-              className="future-label"
-              x={layout.nowX + (layout.fullWidth - layout.nowX) / 2}
-              y={layout.height - 8}
-              textAnchor="middle"
-            >
-              tomorrow
-            </text>
           </g>
           )}
 
@@ -420,17 +405,20 @@ export function LifeTimeline() {
                     stroke={branchColor(branch, theme)}
                   />
                   <text className="review-label" x={x} y={g.laneY - 9} textAnchor="middle">
-                    review · {reviewLabel}
+                    {t("review · {date}", { date: reviewLabel })}
                   </text>
                   <title>
-                    Review on {reviewLabel}. Nothing further is required from you until then.
+                    {t("Review on {date}. Nothing further is required from you until then.", {
+                      date: reviewLabel,
+                    })}
                   </title>
                 </g>
               );
             })}
 
-          {/* today's action continues the main line past Now: life keeps moving */}
-          {todayAction && layout.fullWidth - layout.nowX > 40 && (
+          {/* decided actions gather around the main line past Now: one place
+              where everything you chose to do next can be read together */}
+          {futureActions.length > 0 && layout.fullWidth - layout.nowX > 40 && (
             <g className="action-continuation" aria-hidden="true">
               <path
                 className="action-continuation-line"
@@ -439,11 +427,26 @@ export function LifeTimeline() {
                   layout.fullWidth - 6,
                 )} ${layout.mainY}`}
               />
-              <text className="action-continuation-label" x={layout.nowX + 14} y={layout.mainY + 16}>
-                {todayAction.title.length > 26
-                  ? todayAction.title.slice(0, 24) + "…"
-                  : todayAction.title}
-              </text>
+              {futureActions.map((a, i) => {
+                const owner = branches.find(
+                  (b) => b.id === a.branchesIntegrated[0]?.branchId,
+                );
+                const y = layout.mainY + 16 + i * 16;
+                return (
+                  <g key={a.id}>
+                    <circle
+                      className="action-bullet"
+                      cx={layout.nowX + 16}
+                      cy={y - 4}
+                      r={3}
+                      fill={owner ? branchColor(owner, theme) : "var(--accent)"}
+                    />
+                    <text className="action-continuation-label" x={layout.nowX + 24} y={y}>
+                      {a.title.length > 26 ? a.title.slice(0, 24) + "…" : a.title}
+                    </text>
+                  </g>
+                );
+              })}
             </g>
           )}
 
@@ -462,18 +465,8 @@ export function LifeTimeline() {
                 highlighted={branch.id === focusedBranchId}
                 dimmed={!!focusedBranchId && branch.id !== focusedBranchId}
                 born={!reducedMotion && born?.branchId === branch.id}
-                selectionRing={integrating && selectedIds.includes(branch.id)}
-                onSelect={() => {
-                  if (integrating) {
-                    if (isOpen(branch)) toggleIntegration(branch.id);
-                    return;
-                  }
-                  setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "touch" });
-                }}
-                onSelectMoment={() => {
-                  if (integrating) return;
-                  setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "touch" });
-                }}
+                onSelect={() => setOperation({ kind: "quick-touch", branchId: branch.id })}
+                onSelectMoment={() => setOperation({ kind: "quick-touch", branchId: branch.id })}
                 onSelectMergePoint={() => {
                   const mergeId = branch.mergeIds[branch.mergeIds.length - 1];
                   if (mergeId) setView({ kind: "merge-review", mergeId });
@@ -483,7 +476,7 @@ export function LifeTimeline() {
           })}
 
           {/* a merge being considered: the lines curve toward Now, reversibly */}
-          {(operation.kind === "merging-branch" || operation.kind === "integrating") && (
+          {operation.kind === "confirming-merge" && (
             <g className="merge-preview-layer" aria-hidden="true">
               {operation.branchIds.map((id) => {
                 const g = layout.geometries.find((x) => x.branchId === id);
@@ -509,93 +502,38 @@ export function LifeTimeline() {
             </g>
           )}
 
-          {/* tensions between the selected lines, sitting where they would meet */}
-          {selectionConflicts.map((c) => {
-            const ys = c.branchIds
-              .map((id) => layout.geometries.find((g) => g.branchId === id)?.laneY)
-              .filter((y): y is number => y !== undefined);
-            const y = ys.length > 0 ? ys.reduce((a, b) => a + b, 0) / ys.length : layout.mainY;
-            return (
-              <text
-                key={c.id}
-                className="conflict-marker"
-                x={layout.nowX - 30}
-                y={y + 5}
-                textAnchor="middle"
-              >
-                ✦
-                <title>
-                  {c.demandA} ↔ {c.demandB}
-                </title>
-              </text>
-            );
-          })}
-
           {/* Now marker: alive, breathing */}
           <g
             className="now-marker"
             role="button"
             tabIndex={-1}
             style={{ cursor: "pointer" }}
-            onClick={() => setView({ kind: "now" })}
-            aria-label="Now. Select to see everything entering the present."
+            onClick={() => returnToNow()}
+            aria-label={t("Now. Select to return the view to the present.")}
           >
             <circle className="now-glow" cx={layout.nowX - 2} cy={layout.mainY} r={14} />
             <circle cx={layout.nowX - 2} cy={layout.mainY} r={7} />
             <text className="now-label" x={layout.nowX - 8} y={layout.mainY - 18} textAnchor="end">
-              Now
+              {t("Now")}
             </text>
           </g>
         </svg>
 
         {branches.length === 0 && (
           <div className="timeline-empty">
-            <p className="prompt">Your life continues on one main line.</p>
+            <p className="prompt">{t("Your life continues on one main line.")}</p>
             <p className="hint">
-              When something begins pulling part of your attention away from the present, add it as
-              a branch with the + button. You can merge it back when it has given you what it
-              carries.
+              {t(
+                "When something begins pulling part of your attention away from the present, add it as a thread with the + button. You can bring it back when it has given you what it carries.",
+              )}
             </p>
           </div>
         )}
 
         {awayFromNow && (
           <button className="btn return-to-now" onClick={returnToNow}>
-            ⇥ Return to Now
+            ⇥ {t("Return to Now")}
           </button>
-        )}
-
-        {/* choosing what can enter the present together */}
-        {integrating && (
-          <div className="integrate-bar" role="status">
-            <span className="hint">
-              {selectedIds.length === 0
-                ? "Touch the endpoint of each line that can enter the present together."
-                : `${selectedIds.length} line${selectedIds.length > 1 ? "s" : ""} selected` +
-                  (selectionConflicts.length > 0
-                    ? ` · ${selectionConflicts.length} tension${
-                        selectionConflicts.length > 1 ? "s" : ""
-                      } to settle (✦)`
-                    : "")}
-            </span>
-            <button className="btn btn-quiet" onClick={() => setOperation({ kind: "idle" })}>
-              Cancel
-            </button>
-            <button
-              className="btn btn-primary"
-              disabled={selectedIds.length === 0}
-              onClick={() => void startMerge(selectedIds)}
-            >
-              Merge into Now
-            </button>
-          </div>
-        )}
-
-        {branches.length > 0 && (
-          <span className="hint timeline-legend" aria-hidden="true">
-            solid = active · dotted = waiting · curved back = merged · thicker = stronger pull ·
-            faint ✓ = decided today · scroll = step back from the lines · pinch or shift-scroll = zoom time
-          </span>
         )}
 
         {/* feelings returning to the main line after a decision */}
@@ -620,7 +558,7 @@ export function LifeTimeline() {
                     } as React.CSSProperties
                   }
                 >
-                  {f}
+                  {t(f)}
                 </span>
               ))}
             </div>
@@ -630,16 +568,12 @@ export function LifeTimeline() {
       </div>
 
       {/* semantic non-visual equivalent */}
-      <nav aria-label="Branches">
+      <nav aria-label={t("Threads")}>
         <ul className="visually-hidden">
           {ordered.map((b) => (
             <li key={b.id}>
-              <button
-                onClick={() =>
-                  setOperation({ kind: "inspecting-branch", branchId: b.id, depth: "touch" })
-                }
-              >
-                {describeBranch(b)}
+              <button onClick={() => setOperation({ kind: "quick-touch", branchId: b.id })}>
+                {describeBranch(b, t)}
               </button>
             </li>
           ))}

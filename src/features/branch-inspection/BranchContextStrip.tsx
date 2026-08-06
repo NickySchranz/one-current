@@ -1,6 +1,7 @@
 import type { PsychologicalBranch } from "@/domain/branches/types";
 import { effectivePull, isClosed } from "@/domain/branches/logic";
 import { statusToLineStyle, pullToThickness } from "@/visualization/branch-lines/style";
+import { useT } from "@/i18n/i18n";
 
 type Props = { branch: PsychologicalBranch; color: string };
 
@@ -9,6 +10,7 @@ type Props = { branch: PsychologicalBranch; color: string };
  * while a branch is inspected.
  */
 export function BranchContextStrip({ branch, color }: Props) {
+  const t = useT();
   const style = statusToLineStyle(branch.status);
   const merged = isClosed(branch);
   const w = 640;
@@ -51,7 +53,7 @@ export function BranchContextStrip({ branch, color }: Props) {
         </text>
         <circle cx={w - 12} cy={mainY} r={6} fill="var(--accent)" />
         <text x={w - 12} y={mainY - 8} fontSize={11.5} fontWeight={650} fill="var(--ink)" textAnchor="end">
-          Now
+          {t("Now")}
         </text>
         {!merged && <circle cx={endX} cy={laneY} r={4.5} fill={color} opacity={style.opacity} />}
       </svg>

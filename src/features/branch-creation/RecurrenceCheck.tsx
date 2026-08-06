@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAppStore } from "@/stores/app-store";
+import { useT } from "@/i18n/i18n";
 import type { CreateBranchInput } from "@/stores/app-store";
 import {
   RECURRENCE_REASONS,
@@ -9,7 +10,7 @@ import {
 
 type Props = { matchedBranchId: string; pending: CreateBranchInput };
 
-/** A new concern resembles a branch merged before. Recurrence is not failure. */
+/** A new concern resembles a thread brought back before. Recurrence is not failure. */
 export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
   const branches = useAppStore((s) => s.branches);
   const createBranchNow = useAppStore((s) => s.createBranchNow);
@@ -17,6 +18,7 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
   const addMoment = useAppStore((s) => s.addMoment);
   const updateBranch = useAppStore((s) => s.updateBranch);
   const setOperation = useAppStore((s) => s.setOperation);
+  const t = useT();
 
   const matched = branches.find((b) => b.id === matchedBranchId);
   const [reason, setReason] = useState<RecurrenceReasonId | null>(null);
@@ -32,43 +34,50 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
 
     if (rec === "new-branch") {
       const branch = await createBranchNow(pending);
-      setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "deep" });
+      setOperation({ kind: "quick-touch", branchId: branch.id });
     } else if (rec === "add-moment") {
       await addMoment({
         branchId: matched.id,
         date: new Date().toISOString().slice(0, 10),
         title: pending.title,
         type: "intensification",
-        description: `Returned: ${RECURRENCE_REASONS.find((r) => r.id === reason)?.label}`,
+        description: t("Returned: {reason}", {
+          reason: t(RECURRENCE_REASONS.find((r) => r.id === reason)?.label ?? ""),
+        }),
       });
-      setOperation({ kind: "inspecting-branch", branchId: matched.id, depth: "deep" });
+      setOperation({ kind: "quick-touch", branchId: matched.id });
     } else if (rec === "reopen-waiting") {
       await updateBranch(matched.id, { status: "active", lastActivatedAt: new Date().toISOString() });
-      setOperation({ kind: "inspecting-branch", branchId: matched.id, depth: "deep" });
+      setOperation({ kind: "quick-touch", branchId: matched.id });
     } else if (rec === "new-conflict") {
       await updateBranch(matched.id, { status: "active" });
-      setOperation({ kind: "merging-branch", branchIds: [matched.id] });
+      setOperation({ kind: "quick-merge", branchId: matched.id });
     } else {
       await updateBranch(matched.id, { status: "needs-support" });
-      setOperation({ kind: "inspecting-branch", branchId: matched.id, depth: "deep" });
+      setOperation({ kind: "seeking-support", branchId: matched.id });
     }
   }
 
   return (
     <div className="panel">
-      <p className="prompt">This resembles a branch you merged before.</p>
+      <p className="prompt">{t("This resembles a thread you brought back before.")}</p>
       <div className="card sunken">
         <strong>{matched.title}</strong>
         <p className="hint">
-          Merged {matched.mergeDate ?? "earlier"} · returned {matched.recurrenceCount} time
-          {matched.recurrenceCount === 1 ? "" : "s"} before
+          {t(
+            matched.recurrenceCount === 1
+              ? "Brought back {date} · returned {n} time before"
+              : "Brought back {date} · returned {n} times before",
+            { date: matched.mergeDate ?? t("earlier"), n: matched.recurrenceCount },
+          )}
         </p>
       </div>
       <p className="calm-note">
-        Returning does not mean the previous merge was false. Something new may be asking for
-        attention.
+        {t(
+          "Returning does not mean it was brought back too soon. Something new may be asking for attention.",
+        )}
       </p>
-      <p className="prompt">What is different now?</p>
+      <p className="prompt">{t("What is different now?")}</p>
       <div className="choice-grid">
         {RECURRENCE_REASONS.map((r) => (
           <button
@@ -77,7 +86,7 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
             aria-pressed={reason === r.id}
             onClick={() => setReason(r.id)}
           >
-            {r.label}
+            {t(r.label)}
           </button>
         ))}
       </div>
@@ -87,13 +96,13 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
           onClick={async () => {
             // Treat it as genuinely new anyway.
             const branch = await createBranchNow(pending);
-            setOperation({ kind: "inspecting-branch", branchId: branch.id, depth: "deep" });
+            setOperation({ kind: "quick-touch", branchId: branch.id });
           }}
         >
-          It is something new
+          {t("It is something new")}
         </button>
         <button className="btn btn-primary" disabled={!reason || busy} onClick={proceed}>
-          Continue
+          {t("Continue")}
         </button>
       </div>
     </div>

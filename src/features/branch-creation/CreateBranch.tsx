@@ -1,315 +1,254 @@
 import { useState } from "react";
 import { useAppStore } from "@/stores/app-store";
+import { useT } from "@/i18n/i18n";
 import type { PsychologicalBranch } from "@/domain/branches/types";
-import { BRANCH_KIND_CHOICES, type ForkPeriodChoice, type Pull } from "@/domain/branches/types";
+import type { ForkPeriodChoice, Pull } from "@/domain/branches/types";
 import { ANXIETIES, suggestLockedFeelings } from "@/domain/feelings/logic";
 import { FeelingPicker } from "@/features/branch-touch/FeelingPicker";
 
-type PeriodOption = { id: string; label: string; choice: ForkPeriodChoice | null };
+type WhenId = "today" | "this-week" | "this-month" | "earlier";
+type EarlierId = "date" | "period" | "unsure";
 
-const PERIODS: PeriodOption[] = [
-  { id: "today", label: "Today", choice: { kind: "today" } },
-  { id: "yesterday", label: "Yesterday", choice: { kind: "yesterday" } },
-  { id: "this-week", label: "This week", choice: { kind: "this-week" } },
-  { id: "this-month", label: "This month", choice: { kind: "this-month" } },
-  { id: "date", label: "Around a date…", choice: null },
-  { id: "period", label: "A life period…", choice: null },
-  { id: "unsure", label: "I am not sure", choice: { kind: "unsure" } },
+const WHEN_OPTIONS: { id: WhenId; label: string }[] = [
+  { id: "today", label: "Today" },
+  { id: "this-week", label: "This week" },
+  { id: "this-month", label: "This month" },
+  { id: "earlier", label: "Earlier…" },
+];
+
+const EARLIER_OPTIONS: { id: EarlierId; label: string }[] = [
+  { id: "date", label: "Around a date" },
+  { id: "period", label: "A life period" },
+  { id: "unsure", label: "I am not sure" },
 ];
 
 /**
- * Fast fork: name it, say when — the line draws itself onto the timeline
- * behind this tray and is immediately real. Everything after that is optional.
+ * One screen: name what pulls, say when, create. The line draws itself onto
+ * the timeline immediately — everything deeper is a choice afterwards.
  */
 export function CreateBranch() {
   const requestBranch = useAppStore((s) => s.requestBranch);
-  const updateBranch = useAppStore((s) => s.updateBranch);
   const setOperation = useAppStore((s) => s.setOperation);
+  const t = useT();
 
-  const [step, setStep] = useState<"name" | "when" | "active">("name");
   const [title, setTitle] = useState("");
   const [pull, setPull] = useState<Pull>(3);
-  const [period, setPeriod] = useState<ForkPeriodChoice | null>(null);
-  const [periodId, setPeriodId] = useState<string>("");
+  const [whenId, setWhenId] = useState<WhenId>("today");
+  const [earlierId, setEarlierId] = useState<EarlierId>("date");
   const [approxDate, setApproxDate] = useState("");
   const [periodLabel, setPeriodLabel] = useState("");
   const [periodYear, setPeriodYear] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  // The branch, once it exists. Enrichment below edits it in place.
-  const [branch, setBranch] = useState<PsychologicalBranch | null>(null);
-  const [kindId, setKindId] = useState("");
   const [anxieties, setAnxieties] = useState<string[]>([]);
-  const [occupies, setOccupies] = useState<string[]>([]);
-  // The less-available feelings follow what it stirs until adjusted by hand.
-  const [occupiesCustom, setOccupiesCustom] = useState(false);
-  const [occupiesNone, setOccupiesNone] = useState(false);
-
-  function choosePeriod(opt: PeriodOption) {
-    setPeriodId(opt.id);
-    setPeriod(opt.choice);
-  }
+  const [busy, setBusy] = useState(false);
+  const [branch, setBranch] = useState<PsychologicalBranch | null>(null);
 
   function resolvedPeriod(): ForkPeriodChoice | null {
-    if (periodId === "date") {
+    if (whenId === "today") return { kind: "today" };
+    if (whenId === "this-week") return { kind: "this-week" };
+    if (whenId === "this-month") return { kind: "this-month" };
+    if (earlierId === "date") {
       return approxDate ? { kind: "approximate-date", date: approxDate } : null;
     }
-    if (periodId === "period") {
+    if (earlierId === "period") {
       if (!periodLabel || !periodYear) return null;
-      return {
-        kind: "life-period",
-        label: periodLabel,
-        approximateDate: `${periodYear}-06-15`,
-      };
+      return { kind: "life-period", label: periodLabel, approximateDate: `${periodYear}-06-15` };
     }
-    return period;
+    return { kind: "unsure" };
   }
 
-  async function startLine() {
+  async function createNow() {
     const p = resolvedPeriod();
     if (!title.trim() || !p || busy) return;
     setBusy(true);
     try {
       // The kind is not asked up front; it can be named later, or never.
+      // What the thread draws away is derived from how it makes you feel.
       const result = await requestBranch({
         title,
         kindChoiceId: "unnamed",
         period: p,
         pull,
+        anxieties: anxieties.length > 0 ? anxieties : undefined,
+        occupies: anxieties.length > 0 ? suggestLockedFeelings(anxieties) : undefined,
       });
       // On recurrence the tray content switches to the recurrence check.
-      if (result.branch) {
-        setBranch(result.branch);
-        setStep("active");
-      }
+      if (result.branch) setBranch(result.branch);
     } finally {
       setBusy(false);
     }
   }
 
-  function chooseKind(id: string) {
-    if (!branch) return;
-    setKindId(id);
-    const kind = BRANCH_KIND_CHOICES.find((k) => k.id === id);
-    if (kind) void updateBranch(branch.id, { type: kind.type, orientation: kind.orientation });
-  }
-
-  function toggleAnxiety(a: string) {
-    if (!branch) return;
-    const next = anxieties.includes(a)
-      ? anxieties.filter((x) => x !== a)
-      : [...anxieties, a];
-    setAnxieties(next);
-    const patch: Partial<PsychologicalBranch> = { anxieties: next };
-    if (!occupiesCustom && !occupiesNone) {
-      const suggested = suggestLockedFeelings(next);
-      setOccupies(suggested);
-      patch.occupies = suggested;
-    }
-    void updateBranch(branch.id, patch);
-  }
-
-  function toggleOccupies(f: string) {
-    if (!branch) return;
-    setOccupiesCustom(true);
-    setOccupiesNone(false);
-    const next = occupies.includes(f) ? occupies.filter((x) => x !== f) : [...occupies, f];
-    setOccupies(next);
-    void updateBranch(branch.id, { occupies: next });
-  }
-
-  function occupiesNothing() {
-    if (!branch) return;
-    setOccupiesCustom(true);
-    setOccupiesNone(true);
-    setOccupies([]);
-    void updateBranch(branch.id, { occupies: [] });
+  if (branch) {
+    return (
+      <div className="panel">
+        <p className="calm-note">
+          {t(
+            "Thread started. Its line just drew itself onto the timeline — it begins in your past and reaches Now.",
+          )}
+        </p>
+        <div className="stack">
+          <button className="btn btn-primary" onClick={() => setOperation({ kind: "idle" })}>
+            {t("Return to timeline")}
+          </button>
+          <button
+            className="btn"
+            onClick={() => setOperation({ kind: "understanding", branchId: branch.id })}
+          >
+            {t("Explore what it carries")}
+          </button>
+          <button
+            className="btn"
+            onClick={() => setOperation({ kind: "quick-wait", branchId: branch.id })}
+          >
+            {t("Wait on this")}
+          </button>
+          <button
+            className="btn"
+            onClick={() => setOperation({ kind: "quick-act", branchId: branch.id })}
+          >
+            {t("Add one action")}
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="panel">
-      {step === "name" && (
-        <>
-          <p className="prompt">What began pulling part of your attention away from the present?</p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (title.trim()) setStep("when");
-            }}
-          >
-            <div className="field">
-              <input
-                autoFocus
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Name it in a few words"
-                aria-label="Name the branch"
-              />
-            </div>
-            <div className="field">
-              <label>How strongly does it pull right now?</label>
-              <div className="pull-scale" role="group" aria-label="Emotional pull from one to five">
-                {([1, 2, 3, 4, 5] as Pull[]).map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    aria-pressed={pull === p}
-                    onClick={() => setPull(p)}
-                  >
-                    {p}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="stage-nav">
-              <button
-                type="button"
-                className="btn btn-quiet"
-                onClick={() => setOperation({ kind: "idle" })}
-              >
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-primary" disabled={!title.trim()}>
-                Continue
-              </button>
-            </div>
-          </form>
-        </>
-      )}
-
-      {step === "when" && (
-        <>
-          <p className="prompt">When did this branch begin?</p>
-          <div className="choice-grid">
-            {PERIODS.map((opt) => (
+      <p className="prompt">{t("What is pulling at you?")}</p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void createNow();
+        }}
+      >
+        <div className="field">
+          <input
+            autoFocus
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder={t("Name it in a few words")}
+            aria-label={t("Name the thread")}
+          />
+        </div>
+        <div className="field">
+          <label>{t("Since when?")}</label>
+          <div className="tag-row" role="group" aria-label={t("When this began")}>
+            {WHEN_OPTIONS.map((opt) => (
               <button
                 key={opt.id}
-                className="choice"
-                aria-pressed={periodId === opt.id}
-                onClick={() => choosePeriod(opt)}
+                type="button"
+                className="tag"
+                aria-pressed={whenId === opt.id}
+                onClick={() => setWhenId(opt.id)}
               >
-                {opt.label}
+                {t(opt.label)}
               </button>
             ))}
           </div>
-          {periodId === "date" && (
-            <div className="field">
-              <label htmlFor="approx-date">Roughly when?</label>
-              <input
-                id="approx-date"
-                type="date"
-                max={new Date().toISOString().slice(0, 10)}
-                value={approxDate}
-                onChange={(e) => setApproxDate(e.target.value)}
-              />
-            </div>
-          )}
-          {periodId === "period" && (
-            <>
-              <div className="field">
-                <label htmlFor="period-label">Name the period</label>
-                <input
-                  id="period-label"
-                  value={periodLabel}
-                  onChange={(e) => setPeriodLabel(e.target.value)}
-                  placeholder="e.g. after the move, my first job"
-                />
-              </div>
-              <div className="field">
-                <label htmlFor="period-year">Around which year?</label>
-                <input
-                  id="period-year"
-                  type="number"
-                  min={1930}
-                  max={new Date().getFullYear()}
-                  value={periodYear}
-                  onChange={(e) => setPeriodYear(e.target.value)}
-                />
-              </div>
-            </>
-          )}
-          <div className="stage-nav">
-            <button className="btn btn-quiet" onClick={() => setStep("name")}>Back</button>
-            <button
-              className="btn btn-primary"
-              disabled={!resolvedPeriod() || busy}
-              onClick={startLine}
-            >
-              Start this line
-            </button>
-          </div>
-        </>
-      )}
-
-      {step === "active" && branch && (
-        <>
-          <p className="calm-note">
-            The branch is active. Its line just drew itself behind this card — it forks from your
-            past and reaches Now.
-          </p>
-          <p className="hint">
-            You can say more about it here, or simply return. Nothing below is required.
-          </p>
-
-          <details className="optional-details">
-            <summary>What kind of branch is this?</summary>
-            <div className="choice-grid">
-              {BRANCH_KIND_CHOICES.map((k) => (
+        </div>
+        {whenId === "earlier" && (
+          <>
+            <div className="tag-row" role="group" aria-label={t("Earlier, more precisely")}>
+              {EARLIER_OPTIONS.map((opt) => (
                 <button
-                  key={k.id}
-                  className="choice"
-                  aria-pressed={kindId === k.id}
-                  onClick={() => chooseKind(k.id)}
+                  key={opt.id}
+                  type="button"
+                  className="tag"
+                  aria-pressed={earlierId === opt.id}
+                  onClick={() => setEarlierId(opt.id)}
                 >
-                  {k.label}
+                  {t(opt.label)}
                 </button>
               ))}
             </div>
-          </details>
-
-          <details className="optional-details" open>
-            <summary>What is it making you feel?</summary>
-            <p className="hint">Tap what's true. Naming it is how the line starts loosening.</p>
-            <FeelingPicker
-              options={ANXIETIES}
-              selected={anxieties}
-              onToggle={toggleAnxiety}
-              label="What this line makes you feel"
-            />
-            {anxieties.length > 0 && (
-              <>
-                <p className="prompt" style={{ marginTop: "0.75rem" }}>
-                  What feels less available while this branch is active?
-                </p>
-                <p className="hint">
-                  These return to your main line each time you decide something about it. Adjust
-                  if it feels different.
-                </p>
-                <FeelingPicker
-                  selected={occupies}
-                  onToggle={toggleOccupies}
-                  label="What feels less available while this branch is active"
+            {earlierId === "date" && (
+              <div className="field">
+                <label htmlFor="approx-date">{t("Roughly when?")}</label>
+                <input
+                  id="approx-date"
+                  type="date"
+                  max={new Date().toISOString().slice(0, 10)}
+                  value={approxDate}
+                  onChange={(e) => setApproxDate(e.target.value)}
                 />
-                <div className="tag-row">
-                  <button className="tag" aria-pressed={occupiesNone} onClick={occupiesNothing}>
-                    Nothing, really
-                  </button>
-                  <button className="tag" onClick={() => setOperation({ kind: "idle" })}>
-                    Not sure yet
-                  </button>
+              </div>
+            )}
+            {earlierId === "period" && (
+              <>
+                <div className="field">
+                  <label htmlFor="period-label">{t("Name the period")}</label>
+                  <input
+                    id="period-label"
+                    value={periodLabel}
+                    onChange={(e) => setPeriodLabel(e.target.value)}
+                    placeholder={t("e.g. after the move, my first job")}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="period-year">{t("Around which year?")}</label>
+                  <input
+                    id="period-year"
+                    type="number"
+                    min={1930}
+                    max={new Date().getFullYear()}
+                    value={periodYear}
+                    onChange={(e) => setPeriodYear(e.target.value)}
+                  />
                 </div>
               </>
             )}
-          </details>
-
-          <div className="stage-nav">
-            <span className="hint">{branch.title}</span>
-            <button className="btn btn-primary" onClick={() => setOperation({ kind: "idle" })}>
-              Done
-            </button>
+          </>
+        )}
+        <div className="field">
+          <label>{t("How strongly does it pull right now?")}</label>
+          <div className="pull-scale" role="group" aria-label={t("Emotional pull from one to five")}>
+            {([1, 2, 3, 4, 5] as Pull[]).map((p) => (
+              <button key={p} type="button" aria-pressed={pull === p} onClick={() => setPull(p)}>
+                {p}
+              </button>
+            ))}
           </div>
-        </>
-      )}
+        </div>
+        <div className="field">
+          <label>{t("What does it make you feel? (optional)")}</label>
+          <FeelingPicker
+            label={t("What it makes you feel")}
+            options={ANXIETIES}
+            selected={anxieties}
+            onToggle={(f) =>
+              setAnxieties((prev) =>
+                prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f],
+              )
+            }
+          />
+          {anxieties.length > 0 && (
+            <p className="hint" style={{ margin: 0 }}>
+              {t("While it stays open, it may draw on {list}.", {
+                list: suggestLockedFeelings(anxieties)
+                  .map((f) => t(f))
+                  .join(", "),
+              })}
+            </p>
+          )}
+        </div>
+        <div className="stage-nav">
+          <button
+            type="button"
+            className="btn btn-quiet"
+            onClick={() => setOperation({ kind: "idle" })}
+          >
+            {t("Cancel")}
+          </button>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!title.trim() || !resolvedPeriod() || busy}
+          >
+            {t("Start the thread")}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

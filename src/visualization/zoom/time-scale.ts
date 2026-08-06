@@ -9,8 +9,12 @@ export type TimeWindow = {
 
 const DAY = 24 * 60 * 60 * 1000;
 
-/** At most a quarter of the visible span may lie beyond today. */
-export const MAX_FUTURE_FRACTION = 0.25;
+/**
+ * At most half of the visible span may lie beyond today: panning forward can
+ * bring Now to the middle of the screen, leaving room to read the decided
+ * actions that continue each line into the future.
+ */
+export const MAX_FUTURE_FRACTION = 0.5;
 
 export function daysBetween(a: string, b: string): number {
   return Math.round((Date.parse(b) - Date.parse(a)) / DAY);
@@ -41,25 +45,31 @@ export function xToDate(x: number, window: TimeWindow, width: number): string {
 }
 
 /**
- * The default view: the recent week, extended to the furthest future we allow —
- * Now sits at three quarters and the last quarter is the faded projection band.
+ * The default view: the recent week behind you and the same room ahead —
+ * Now sits at the halfway point, with space to read the decided actions.
  */
 export function weekWindow(now: Date = new Date()): TimeWindow {
   const today = now.toISOString().slice(0, 10);
-  return { start: addDays(today, -6), end: addDays(today, 2) };
+  return { start: addDays(today, -4), end: addDays(today, 4) };
+}
+
+/** The last year, with Now at the halfway point. */
+export function yearWindow(now: Date = new Date()): TimeWindow {
+  const today = now.toISOString().slice(0, 10);
+  return { start: addDays(today, -365), end: addDays(today, 365) };
 }
 
 /** Choose a window that comfortably contains every fork with breathing room. */
 export function defaultWindow(forkDates: string[], now: Date = new Date()): TimeWindow {
   const today = now.toISOString().slice(0, 10);
   if (forkDates.length === 0) {
-    return { start: addDays(today, -365), end: addDays(today, 122) };
+    return { start: addDays(today, -365), end: addDays(today, 365) };
   }
   const earliest = [...forkDates].sort()[0];
   const span = Math.max(120, daysBetween(earliest, today));
   const start = addDays(earliest, -Math.round(span * 0.12));
-  // Extend past today so the future stays exactly a quarter of the view.
-  const future = Math.round(daysBetween(start, today) / 3);
+  // Extend past today so Now sits at the halfway point of the view.
+  const future = daysBetween(start, today);
   return { start, end: addDays(today, future) };
 }
 
@@ -137,7 +147,7 @@ function iso(d: Date): string {
 
 /**
  * Zoom the window around a focal point (0..1 across the width).
- * When `today` is given, the right edge may extend at most a quarter-span past it.
+ * When `today` is given, the right edge may extend at most a half-span past it.
  */
 export function zoomWindow(window: TimeWindow, factor: number, focal = 0.5, today?: string): TimeWindow {
   const start = Date.parse(window.start);
@@ -161,7 +171,7 @@ export function zoomWindow(window: TimeWindow, factor: number, focal = 0.5, toda
 
 /**
  * Pan the window by a fraction of its span. The right edge may move at most a
- * quarter-span past today; panning back lets the future slide out of view.
+ * half-span past today; panning back lets the future slide out of view.
  */
 export function panWindow(window: TimeWindow, fraction: number, today: string): TimeWindow {
   const span = Date.parse(window.end) - Date.parse(window.start);

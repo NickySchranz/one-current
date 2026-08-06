@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { MergeConflict } from "@/domain/conflicts/types";
 import type { PsychologicalBranch } from "@/domain/branches/types";
 import { CONFLICT_TYPE_LABELS, resolveConflict } from "@/domain/conflicts/logic";
+import { useT } from "@/i18n/i18n";
 import { TagListEditor } from "@/ui/TagListEditor";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 
 /** Two valid branches demand incompatible actions. Resolve the conflict. */
 export function ConflictResolver({ conflict, branches, onResolved }: Props) {
+  const t = useT();
   const [preserved, setPreserved] = useState<string[]>(conflict.preservedTruths);
   const [excesses, setExcesses] = useState<string[]>(conflict.rejectedExcesses);
   const [resolution, setResolution] = useState(conflict.resolution ?? "");
@@ -21,33 +23,36 @@ export function ConflictResolver({ conflict, branches, onResolved }: Props) {
 
   return (
     <div className={`card conflict ${resolved ? "resolved" : ""}`}>
-      <h3>{CONFLICT_TYPE_LABELS[conflict.type]}</h3>
+      <h3>{t(CONFLICT_TYPE_LABELS[conflict.type])}</h3>
       <p className="hint">
-        Between {involved.map((b) => b.title).join(" and ")}
+        {t("Between {names}", { names: involved.map((b) => b.title).join(t(" and ")) })}
       </p>
       <div className="demand">{conflict.demandA}</div>
       <div className="demand">{conflict.demandB}</div>
 
       {resolved ? (
-        <p className="calm-note">Resolved: {conflict.resolution}</p>
+        <p className="calm-note">
+          {t("Resolved: {resolution}", { resolution: conflict.resolution ?? "" })}
+        </p>
       ) : (
         <>
           <TagListEditor
-            label="What does each branch correctly understand?"
+            label={t("What does each thread correctly understand?")}
             values={preserved}
             onChange={setPreserved}
-            placeholder="A truth worth keeping"
+            placeholder={t("A truth worth keeping")}
           />
           <TagListEditor
-            label="Where is each branch becoming excessive?"
+            label={t("Where is each thread becoming excessive?")}
             values={excesses}
             onChange={setExcesses}
-            placeholder="A demand that would fragment you"
+            placeholder={t("A demand that would fragment you")}
           />
           <div className="field">
             <label>
-              What action respects both truths without letting either branch control the whole
-              present?
+              {t(
+                "What action respects both truths without letting either thread control the whole present?",
+              )}
             </label>
             <textarea
               value={resolution}
@@ -59,7 +64,7 @@ export function ConflictResolver({ conflict, branches, onResolved }: Props) {
             disabled={!resolution.trim()}
             onClick={() => onResolved(resolveConflict(conflict, resolution.trim(), preserved, excesses))}
           >
-            Resolve the conflict
+            {t("Resolve the conflict")}
           </button>
         </>
       )}

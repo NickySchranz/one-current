@@ -39,11 +39,18 @@ export function isReviewDue(container: WaitingContainer, now: Date = new Date())
   return !container.closedAt && container.reviewDate <= now.toISOString().slice(0, 10);
 }
 
-export function nextReviewText(container: WaitingContainer, now: Date = new Date()): string {
+export function nextReviewText(
+  container: WaitingContainer,
+  t: (s: string, vars?: Record<string, string | number>) => string = (s) => s,
+  now: Date = new Date(),
+): string {
   if (isReviewDue(container, now)) {
-    return `Review is due: ${container.awaiting}`;
+    return t("Review is due: {awaiting}", { awaiting: container.awaiting });
   }
-  return `Nothing further is required until ${formatReviewDate(container.reviewDate)} or until: ${container.reopenConditions.join("; ")}`;
+  return t("Nothing further is required until {date} or until: {conditions}", {
+    date: formatReviewDate(container.reviewDate),
+    conditions: container.reopenConditions.join("; "),
+  });
 }
 
 export function formatReviewDate(iso: string): string {

@@ -22,6 +22,7 @@ export const repo = {
   saveMerge: (m: BranchMerge) => db.merges.put(m),
   saveWaiting: (w: WaitingContainer) => db.waiting.put(w),
   saveAction: (a: IntegratedAction) => db.actions.put(a),
+  deleteAction: (id: string) => db.actions.delete(id),
   saveDraft: (d: MergeDraft) => db.drafts.put(d),
   deleteDraft: (id: string) => db.drafts.delete(id),
 

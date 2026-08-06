@@ -47,7 +47,7 @@ function moment(
 /**
  * A believable in-use timeline: lines of every kind at different distances
  * from Now — drifting, resting, waiting, merged, converted. Every open line
- * names the anxieties it stirs and the feelings those lock away, so the
+ * names the anxieties it stirs and the feelings those hold, so the
  * energy split and the integration summary have something real to show.
  */
 export function buildExampleData(): {

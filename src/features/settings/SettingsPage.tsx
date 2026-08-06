@@ -1,11 +1,15 @@
 import { useRef, useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { THEMES } from "@/visualization/theme";
+import { useT } from "@/i18n/i18n";
 
-/** Appearance, comfort, and privacy controls. */
-export function SettingsPage() {
+/** Appearance, language, comfort, and privacy sections, rendered inside More. */
+export function SettingsSections() {
+  const t = useT();
   const theme = useAppStore((s) => s.theme);
   const setTheme = useAppStore((s) => s.setTheme);
+  const language = useAppStore((s) => s.language);
+  const setLanguage = useAppStore((s) => s.setLanguage);
   const reducedMotion = useAppStore((s) => s.reducedMotion);
   const setReducedMotion = useAppStore((s) => s.setReducedMotion);
   const exportData = useAppStore((s) => s.exportData);
@@ -31,41 +35,62 @@ export function SettingsPage() {
   async function doImport(file: File) {
     try {
       await importData(await file.text());
-      setMessage("Import complete.");
+      setMessage(t("Import complete."));
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Import failed.");
+      setMessage(e instanceof Error ? e.message : t("Import failed."));
     }
   }
 
   return (
-    <div className="panel">
-      <h1>Settings</h1>
-
-      <h2>Appearance</h2>
+    <>
+      <h2>{t("Appearance")}</h2>
       <div className="card">
-        <div className="filter-row" role="group" aria-label="Theme">
-          {THEMES.map((t) => (
+        <div className="filter-row" role="group" aria-label={t("Theme")}>
+          {THEMES.map((th) => (
             <button
-              key={t.id}
+              key={th.id}
               className="btn"
-              aria-pressed={theme === t.id}
-              onClick={() => setTheme(t.id)}
+              aria-pressed={theme === th.id}
+              onClick={() => setTheme(th.id)}
             >
               <span
                 className="theme-swatch"
-                style={{ background: `linear-gradient(135deg, ${t.paper} 48%, ${t.accent} 52%)` }}
+                style={{ background: `linear-gradient(135deg, ${th.paper} 48%, ${th.accent} 52%)` }}
                 aria-hidden="true"
               />
-              {t.name}
+              {t(th.name)}
             </button>
           ))}
         </div>
         <p className="hint" style={{ margin: 0 }}>
-          {THEMES.find((t) => t.id === theme)?.hint}
+          {t(THEMES.find((th) => th.id === theme)?.hint ?? "")}
         </p>
       </div>
 
-      <h2>Comfort</h2>
+      <h2>{t("Language")}</h2>
+      <div className="card">
+        <div className="filter-row" role="group" aria-label={t("Language")}>
+          <button
+            className="btn"
+            aria-pressed={language === "en"}
+            onClick={() => setLanguage("en")}
+          >
+            English
+          </button>
+          <button
+            className="btn"
+            aria-pressed={language === "es"}
+            onClick={() => setLanguage("es")}
+          >
+            Español
+          </button>
+        </div>
+        <p className="hint" style={{ margin: 0 }}>
+          {t("Changes every word the app says. Your own words stay as you wrote them.")}
+        </p>
+      </div>
+
+      <h2>{t("Comfort")}</h2>
       <div className="card">
         <label style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
           <input
@@ -74,36 +99,38 @@ export function SettingsPage() {
             checked={reducedMotion}
             onChange={(e) => setReducedMotion(e.target.checked)}
           />
-          Reduce motion (no line movement or pulsing)
+          {t("Reduce motion (no line movement or pulsing)")}
         </label>
       </div>
 
-      <h2>Explore</h2>
+      <h2>{t("Explore")}</h2>
       <div className="card">
         <p className="hint">
-          See what a lived-in timeline looks like: nine example branches — drifting, waiting,
-          resting, merged — plus today's actions. You can delete them any time.
+          {t(
+            "See what a lived-in timeline looks like: nine example threads — drifting, waiting, resting, brought back — plus today's actions. You can delete them any time.",
+          )}
         </p>
         <button className="btn" onClick={() => void loadExampleData()}>
-          Load example branches
+          {t("Load example threads")}
         </button>
       </div>
 
-      <h2>Privacy</h2>
+      <h2>{t("Privacy")}</h2>
       <div className="card">
         <p className="hint">
-          Everything you write stays in this browser, stored locally on your device. Nothing is
-          sent anywhere. Export a copy before switching devices.
+          {t(
+            "Everything you write stays in this browser, stored locally on your device. Nothing is sent anywhere. Export a copy before switching devices.",
+          )}
         </p>
         <div className="filter-row">
-          <button className="btn" onClick={doExport}>Export everything</button>
-          <button className="btn" onClick={() => fileRef.current?.click()}>Import</button>
+          <button className="btn" onClick={doExport}>{t("Export everything")}</button>
+          <button className="btn" onClick={() => fileRef.current?.click()}>{t("Import")}</button>
           <input
             ref={fileRef}
             type="file"
             accept="application/json"
             className="visually-hidden"
-            aria-label="Import a One Current export file"
+            aria-label={t("Import a One Current export file")}
             onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) void doImport(f);
@@ -112,27 +139,33 @@ export function SettingsPage() {
           />
           {!confirmingDelete ? (
             <button className="btn btn-danger" onClick={() => setConfirmingDelete(true)}>
-              Delete everything
+              {t("Delete everything")}
             </button>
           ) : (
             <>
-              <span>Delete all branches, merges, and history permanently?</span>
+              <span>
+                {t(
+                  "Delete all threads, everything brought back, and your whole history? This cannot be undone.",
+                )}
+              </span>
               <button
                 className="btn btn-danger"
                 onClick={async () => {
                   await deleteEverything();
                   setConfirmingDelete(false);
-                  setMessage("All data deleted.");
+                  setMessage(t("All data deleted."));
                 }}
               >
-                Yes, delete
+                {t("Yes, delete")}
               </button>
-              <button className="btn" onClick={() => setConfirmingDelete(false)}>Keep it</button>
+              <button className="btn" onClick={() => setConfirmingDelete(false)}>
+                {t("Keep it")}
+              </button>
             </>
           )}
         </div>
         {message && <p role="status">{message}</p>}
       </div>
-    </div>
+    </>
   );
 }

@@ -16,28 +16,50 @@ import { repo } from "@/db/repository";
 import { panWindow, weekWindow, zoomWindow, type TimeWindow } from "@/visualization/zoom/time-scale";
 import { isThemeId, type ThemeId } from "@/visualization/theme";
 
-/** The tabs. Everything that concerns a line happens over the timeline, not on a page. */
+/**
+ * Three destinations. Now is where I work — it IS the timeline. History is
+ * where I review. More holds everything else.
+ */
 export type View =
-  | { kind: "timeline" }
   | { kind: "now" }
-  | { kind: "merge-review"; mergeId: string }
   | { kind: "history" }
-  | { kind: "branches" }
-  | { kind: "settings" };
+  | { kind: "merge-review"; mergeId: string }
+  | { kind: "more" };
 
 /**
- * What is currently happening ON the timeline. The timeline stays mounted and
- * visible; the operation renders in an anchored tray over it.
+ * What is currently happening in Now. The timeline stays mounted and visible;
+ * quick operations render in a light tray beside it, focused ones over it.
  */
 export type TimelineOperation =
   | { kind: "idle" }
   | { kind: "creating-branch" }
   | { kind: "checking-recurrence"; matchedBranchId: string; pending: CreateBranchInput }
-  | { kind: "inspecting-branch"; branchId: string; depth: "touch" | "deep" }
-  | { kind: "merging-branch"; branchIds: string[] }
-  | { kind: "creating-waiting-container"; branchId: string }
-  /** Integrate Now: selecting several open lines at their endpoints, then merging them together. */
-  | { kind: "integrating"; branchIds: string[] };
+  /** "What does this branch need from you now?" — the small menu at an endpoint. */
+  | { kind: "quick-touch"; branchId: string }
+  | { kind: "quick-act"; branchId: string }
+  | { kind: "quick-wait"; branchId: string }
+  | { kind: "quick-merge"; branchId: string }
+  | { kind: "quick-note"; branchId: string }
+  /** Looking deeper into one branch. Focused: the timeline waits behind it. */
+  | { kind: "understanding"; branchId: string }
+  /** The final, explicit merge confirmation. Focused. */
+  | { kind: "confirming-merge"; branchIds: string[] }
+  /** A branch that needs more support than an app should carry alone. Focused. */
+  | { kind: "seeking-support"; branchId: string };
+
+/** How much of the screen an operation may take. */
+export function operationDepth(op: TimelineOperation): "none" | "quick" | "focused" {
+  switch (op.kind) {
+    case "idle":
+      return "none";
+    case "understanding":
+    case "confirming-merge":
+    case "seeking-support":
+      return "focused";
+    default:
+      return "quick";
+  }
+}
 
 export type StatusFilter = "all" | "active" | "waiting" | "merged" | "recurring";
 
@@ -58,6 +80,8 @@ type AppState = {
   statusFilter: StatusFilter;
   reducedMotion: boolean;
   theme: ThemeId;
+  /** UI language: every app term, never the user's own words. */
+  language: "en" | "es";
   reclaim?: ReclaimEvent;
   /** A branch was just created: its line draws itself onto the timeline. */
   born?: { key: number; branchId: string };
@@ -79,8 +103,6 @@ type AppState = {
   easeBranch(id: string, patch?: Partial<PsychologicalBranch>): Promise<void>;
   /** One small step today for a single branch; eases its pull. */
   createTodayAction(branchId: string, step: string): Promise<void>;
-  /** Fold a line back into the main line, naming only what it frees up. No wizard. */
-  quickMerge(branchId: string, freedFeelings: string[]): Promise<void>;
   /** A folded line came back to mind: it continues as an open line again. */
   reopenBranch(branchId: string): Promise<void>;
   clearReclaim(): void;
@@ -104,6 +126,7 @@ type AppState = {
   setStatusFilter(f: StatusFilter): void;
   setReducedMotion(v: boolean): void;
   setTheme(t: ThemeId): void;
+  setLanguage(l: "en" | "es"): void;
 
   exportData(): Promise<string>;
   importData(json: string): Promise<void>;
@@ -114,6 +137,21 @@ type AppState = {
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+/** Operations happen in Now. */
+function nowView(current: View): View {
+  return current.kind === "now" ? current : { kind: "now" };
+}
+
+function initialLanguage(): "en" | "es" {
+  try {
+    const saved = localStorage.getItem("one-current-language");
+    if (saved === "es" || saved === "en") return saved;
+  } catch {
+    // storage unavailable; default to English
+  }
+  return "en";
 }
 
 function initialTheme(): ThemeId {
@@ -134,13 +172,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   merges: [],
   waiting: [],
   actions: [],
-  view: { kind: "timeline" },
+  view: { kind: "now" },
   operation: { kind: "idle" },
   typeFilter: new Set(),
   statusFilter: "all",
   reducedMotion:
     typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches,
   theme: initialTheme(),
+  language: initialLanguage(),
 
   async init() {
     const data = await repo.loadAll();
@@ -153,33 +192,37 @@ export const useAppStore = create<AppState>((set, get) => ({
       actions: data.actions,
       mergeDraft: draft,
       window: weekWindow(),
-      view: { kind: "timeline" },
-      // An interrupted merge is restored where it stopped — over the timeline.
+      view: { kind: "now" },
+      // An interrupted merge is restored where it stopped — at the confirmation.
       operation: draft
-        ? { kind: "merging-branch", branchIds: draft.branchIds }
+        ? { kind: "confirming-merge", branchIds: draft.branchIds }
         : { kind: "idle" },
     });
   },
 
-  // Leaving the timeline sets any open operation down.
+  // Leaving Now sets any open operation down.
   setView: (view) => set({ view, operation: { kind: "idle" } }),
-  // Operations live over the timeline, so starting one returns to it.
+  // Operations live in Now, so starting one returns there.
   setOperation: (operation) =>
     set((s) => ({
       operation,
-      view: operation.kind === "idle" ? s.view : { kind: "timeline" },
+      view: operation.kind === "idle" ? s.view : nowView(s.view),
     })),
   returnToNow: () => {
-    set({ view: { kind: "timeline" }, window: weekWindow() });
+    set({ view: { kind: "now" }, window: weekWindow() });
   },
 
   async requestBranch(input) {
     const match = detectRecurrence(input.title, get().branches);
     if (match) {
-      set({
-        operation: { kind: "checking-recurrence", matchedBranchId: match.id, pending: input },
-        view: { kind: "timeline" },
-      });
+      set((s) => ({
+        operation: {
+          kind: "checking-recurrence" as const,
+          matchedBranchId: match.id,
+          pending: input,
+        },
+        view: nowView(s.view),
+      }));
       return { recurrenceOf: match.id };
     }
     const branch = await get().createBranchNow(input);
@@ -193,7 +236,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((s) => ({
       branches: [...s.branches, branch],
       window: weekWindow(),
-      view: { kind: "timeline" },
+      view: nowView(s.view),
       born: { key: Date.now(), branchId: branch.id },
     }));
     return branch;
@@ -217,7 +260,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     await repo.deleteBranch(id);
     set((s) => ({
       branches: s.branches.filter((b) => b.id !== id),
-      view: { kind: "timeline" },
+      view: nowView(s.view),
       operation: { kind: "idle" },
     }));
   },
@@ -245,49 +288,23 @@ export const useAppStore = create<AppState>((set, get) => ({
       lastActivatedAt: new Date().toISOString(),
     };
     await repo.saveBranch(next);
+    // "Nothing can be done" and a planned action are mutually exclusive:
+    // leaving the line for today withdraws its open actions.
+    let removedActionIds: string[] = [];
+    if (patch?.leftOn) {
+      const stale = get().actions.filter(
+        (a) => !a.completedAt && a.branchesIntegrated.some((x) => x.branchId === id),
+      );
+      removedActionIds = stale.map((a) => a.id);
+      await Promise.all(removedActionIds.map((actionId) => repo.deleteAction(actionId)));
+    }
     set((s) => ({
       branches: s.branches.map((b) => (b.id === id ? next : b)),
+      actions:
+        removedActionIds.length > 0
+          ? s.actions.filter((a) => !removedActionIds.includes(a.id))
+          : s.actions,
       reclaim: freed.length > 0 ? { key: Date.now(), branchId: id, feelings: freed } : s.reclaim,
-    }));
-  },
-
-  async quickMerge(branchId, freedFeelings) {
-    const branch = get().branches.find((b) => b.id === branchId);
-    if (!branch) return;
-    const merge = createMerge({
-      branches: [branch],
-      preserveRelease: {
-        stillValid: [],
-        outdated: [],
-        outsideControl: [],
-        reclaimable: freedFeelings,
-      },
-      conflicts: [],
-      resolution: "Folded back into the main line.",
-      released: [],
-      resultStatus: "merged",
-    });
-    const next = applyMergeToBranch(
-      { ...branch, occupies: freedFeelings.length > 0 ? freedFeelings : branch.occupies },
-      merge,
-    );
-    // A merged line is out of your head: nothing left to do on it.
-    const openActions = get()
-      .actions.filter(
-        (a) => !a.completedAt && a.branchesIntegrated.some((x) => x.branchId === branchId),
-      )
-      .map((a) => completeAction(a));
-    await repo.saveMerge(merge);
-    await repo.saveBranch(next);
-    for (const a of openActions) await repo.saveAction(a);
-    set((s) => ({
-      merges: [...s.merges, merge],
-      branches: s.branches.map((b) => (b.id === branchId ? next : b)),
-      actions: s.actions.map((a) => openActions.find((c) => c.id === a.id) ?? a),
-      reclaim:
-        freedFeelings.length > 0
-          ? { key: Date.now(), branchId, feelings: freedFeelings }
-          : s.reclaim,
     }));
   },
 
@@ -326,7 +343,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
     await repo.saveAction(action);
     set((s) => ({ actions: [...s.actions, action] }));
-    await get().easeBranch(branchId);
+    // Deciding an action lifts "nothing can be done" — they cannot coexist.
+    await get().easeBranch(branchId, { leftOn: undefined });
   },
 
   async updateMoment(branchId, moment) {
@@ -349,11 +367,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       partial: {},
     };
     await repo.saveDraft(draft);
-    set({
+    set((s) => ({
       mergeDraft: draft,
-      operation: { kind: "merging-branch", branchIds },
-      view: { kind: "timeline" },
-    });
+      operation: { kind: "confirming-merge" as const, branchIds },
+      view: nowView(s.view),
+    }));
   },
 
   async saveMergeDraft(draft) {
@@ -364,7 +382,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   async cancelMerge() {
     const draft = get().mergeDraft;
     if (draft) await repo.deleteDraft(draft.id);
-    set({ mergeDraft: undefined, view: { kind: "timeline" }, operation: { kind: "idle" } });
+    set((s) => ({
+      mergeDraft: undefined,
+      view: nowView(s.view),
+      operation: { kind: "idle" as const },
+    }));
   },
 
   async completeMerge(input) {
@@ -380,7 +402,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       actions: merge.action ? [...s.actions, merge.action] : s.actions,
       branches: s.branches.map((b) => updated.find((u) => u.id === b.id) ?? b),
       mergeDraft: undefined,
-      view: { kind: "timeline" },
+      view: nowView(s.view),
       operation: { kind: "idle" },
     }));
     return merge;
@@ -426,7 +448,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       branches: s.branches.map((b) => (b.id === branchId ? next : b)),
       actions: s.actions.map((a) => openActions.find((c) => c.id === a.id) ?? a),
       reclaim: freed.length > 0 ? { key: Date.now(), branchId, feelings: freed } : s.reclaim,
-      view: { kind: "timeline" },
+      view: nowView(s.view),
       operation: { kind: "idle" },
     }));
   },
@@ -461,6 +483,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     set({ theme });
   },
+  setLanguage: (language) => {
+    try {
+      localStorage.setItem("one-current-language", language);
+    } catch {
+      // storage may be unavailable (private mode); the choice still applies now
+    }
+    set({ language });
+  },
 
   exportData: () => repo.exportAll(),
   async importData(json) {
@@ -484,7 +514,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       branches: [...s.branches, ...data.branches],
       merges: [...s.merges, ...data.merges],
       actions: [...s.actions, ...data.actions],
-      view: { kind: "timeline" },
+      view: nowView(s.view),
       operation: { kind: "idle" },
       window: weekWindow(),
     }));
@@ -497,7 +527,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       waiting: [],
       actions: [],
       mergeDraft: undefined,
-      view: { kind: "timeline" },
+      view: { kind: "now" },
       operation: { kind: "idle" },
       window: weekWindow(),
     });

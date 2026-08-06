@@ -47,7 +47,7 @@ export type CreateBranchInput = {
   description?: string;
   /** What it makes you feel (tap-only, chosen at creation). */
   anxieties?: string[];
-  /** Feelings it locks away from the main line. */
+  /** Feelings that are less available on the main line while this branch is active. */
   occupies?: string[];
 };
 

@@ -82,6 +82,14 @@ export const THEMES = [
     accent: "#52e3b8",
   },
   {
+    id: "pompom",
+    name: "Pompom",
+    hint: "Peach fluff and button eyes. Every open thread is a pomeranian pup — leave it waiting and it barks.",
+    mode: "light",
+    paper: "#fdf3e7",
+    accent: "#e0823f",
+  },
+  {
     id: "gravemist",
     name: "Gravemist",
     hint: "Fog and lantern light. Every open thread is a small ghost — its wail widens until you answer.",

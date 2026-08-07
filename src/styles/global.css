@@ -263,6 +263,32 @@
   --main-flow-dash: 2 34;
 }
 
+/* ---------- Pompom: peach fluff; every open thread is a pomeranian pup */
+[data-theme="pompom"] {
+  --bg: #fdf3e7;
+  --bg-raised: #fffbf4;
+  --bg-sunken: #f5e6d2;
+  --ink: #46362a;
+  --ink-soft: #8b7460;
+  --ink-faint: #c0a68d;
+  --line-main: #5f4832;
+  --line-axis: #efdec8;
+  --accent: #e0823f;
+  --accent-ink: #fff7ec;
+  --accent-soft: #f9e5cc;
+  --danger: #c14f43;
+  --focus: #cf7430;
+  --shadow: 0 1px 2px rgb(70 54 42 / 0.07), 0 10px 30px rgb(70 54 42 / 0.09);
+  --font-body: ui-rounded, "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --btn-radius: 14px;
+  --flow-duration: 2.2s;
+  --flow-dash: 2 8;
+  --main-flow-duration: 2.8s;
+  --main-flow-dash: 2 18;
+}
+
 /* ---------- Gravemist: grey-violet fog; every open thread is a small ghost */
 [data-theme="gravemist"] {
   --bg: #17161c;
@@ -1125,6 +1151,63 @@ textarea { min-height: 5rem; resize: vertical; }
 @keyframes lure-pulse {
   0%, 100% { opacity: 0.06; transform: scale(0.8); }
   50% { opacity: 0.4; transform: scale(1.25); }
+}
+
+/* Pompom: biscuit buttons with a hop, a Now that bounces like an excited pup.
+   The pups themselves are alive: a happy one wags its tail, a barking one
+   yaps from the shoulders while its bark marks snap outward. */
+[data-theme="pompom"] .btn {
+  background: var(--bg-raised);
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--line-axis));
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+[data-theme="pompom"] .btn:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+[data-theme="pompom"] .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+[data-theme="pompom"] .now-glow {
+  animation: puppy-bounce 2.1s ease-in-out infinite;
+}
+@keyframes puppy-bounce {
+  0%, 100% { opacity: 0.16; transform: scale(0.95) translateY(0); }
+  32% { opacity: 0.3; transform: scale(1.08) translateY(-1.8px); }
+  48% { opacity: 0.2; transform: scale(0.98) translateY(0); }
+  62% { opacity: 0.28; transform: scale(1.05) translateY(-1.2px); }
+}
+
+.pom-pup { cursor: pointer; touch-action: none; }
+.pom-pup .pom-tail,
+.pom-pup .pom-head,
+.pom-pup .pom-bark {
+  transform-box: fill-box;
+}
+.pom-pup .pom-tail { transform-origin: 20% 85%; }
+.pom-pup.is-happy .pom-tail { animation: pom-wag 1.1s ease-in-out infinite; }
+.pom-pup .pom-head { transform-origin: 50% 90%; }
+.pom-pup.is-barking .pom-head { animation: pom-yap 0.6s ease-in-out infinite; }
+.pom-pup .pom-bark { transform-origin: 50% 50%; }
+.pom-pup.is-barking .pom-bark { animation: pom-bark 0.6s ease-out infinite; }
+@keyframes pom-wag {
+  0%, 100% { transform: rotate(-9deg); }
+  50% { transform: rotate(11deg); }
+}
+@keyframes pom-yap {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-0.7px) rotate(-2.5deg); }
+  55% { transform: translateY(0.2px) rotate(1.5deg); }
+}
+@keyframes pom-bark {
+  0% { opacity: 0; transform: scale(0.7); }
+  35% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+[data-reduced-motion="true"] .pom-tail,
+[data-reduced-motion="true"] .pom-head,
+[data-reduced-motion="true"] .pom-bark { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .pom-tail, .pom-head, .pom-bark { animation: none; }
 }
 
 /* Gravemist: faded stone buttons, the Now light gutters like a lantern in fog */

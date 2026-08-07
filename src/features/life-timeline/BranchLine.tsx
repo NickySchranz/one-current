@@ -13,6 +13,7 @@ import { Balloon } from "./Balloon";
 import { CatHead } from "./CatHead";
 import { AnglerHead } from "./AnglerHead";
 import { Ghost } from "./Ghost";
+import { Pomeranian } from "./Pomeranian";
 import { useSquiggle } from "./useSquiggle";
 
 /** Themes where an undecided open thread ends in a creature instead of a
@@ -24,6 +25,8 @@ type CreatureProps = {
   scale?: number;
   color: string;
   loudness?: number;
+  /** Comfort setting: creatures that move on their own hold still. */
+  reducedMotion?: boolean;
   onClick?: (e: React.MouseEvent) => void;
 };
 const CREATURES: Partial<Record<ThemeId, (props: CreatureProps) => JSX.Element>> = {
@@ -33,6 +36,7 @@ const CREATURES: Partial<Record<ThemeId, (props: CreatureProps) => JSX.Element>>
   catnap: CatHead,
   abyss: AnglerHead,
   gravemist: Ghost,
+  pompom: Pomeranian,
 };
 
 type Props = {
@@ -211,6 +215,7 @@ export const BranchLine = memo(function BranchLine({
             scale={1.4 + (g.thickness - 2) * 0.24}
             color={color}
             loudness={loudness}
+            reducedMotion={reducedMotion}
             onClick={(e) => {
               e.stopPropagation();
               onSelect();

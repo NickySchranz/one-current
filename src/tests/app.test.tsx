@@ -771,6 +771,7 @@ describe("living time and loudness", () => {
       ["catnap", ".cat-head"],
       ["abyss", ".angler-head"],
       ["gravemist", ".ghost-wisp"],
+      ["pompom", ".pom-pup"],
     ] as const;
 
     await renderReady();

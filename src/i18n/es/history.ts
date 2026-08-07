@@ -140,6 +140,9 @@ export const history: Record<string, string> = {
   Abyss: "Abismo",
   "Deep-sea black. Every open thread is an anglerfish — the louder it grows, the brighter its lure.":
     "Negro de aguas profundas. Cada hilo abierto es un pez abisal: cuanto más fuerte suena, más brilla su señuelo.",
+  Pompom: "Pompón",
+  "Peach fluff and button eyes. Every open thread is a pomeranian pup — leave it waiting and it barks.":
+    "Pelusa melocotón y ojos de botón. Cada hilo abierto es un cachorro pomerania: déjalo esperando y ladra.",
   Gravemist: "Niebla del camposanto",
   "Fog and lantern light. Every open thread is a small ghost — its wail widens until you answer.":
     "Niebla y luz de farol. Cada hilo abierto es un pequeño fantasma: su lamento crece hasta que respondes.",

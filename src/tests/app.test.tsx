@@ -733,6 +733,36 @@ describe("living time and loudness", () => {
     expect(useAppStore.getState().operation).toEqual({ kind: "viewing-actions" });
   });
 
+  it("focusing a thread leans the main line toward its lane, and it returns on idle", async () => {
+    await renderReady();
+    // Reduced motion lands the lean instantly — same target, no tween.
+    useAppStore.setState({ reducedMotion: true });
+    const b = await createThread("The reunion");
+    await waitFor(() => expect(document.querySelector(".branch-endpoint")).toBeTruthy());
+
+    const mainLineY = () => {
+      const d = (document.querySelector(".main-line") as SVGPathElement).getAttribute("d")!;
+      return Number(d.match(/^M 0 (-?[\d.]+)/)![1]);
+    };
+    const rest = mainLineY();
+    const laneY = Number(
+      (document.querySelector(".branch-endpoint") as SVGCircleElement).getAttribute("cy"),
+    );
+
+    useAppStore.getState().setOperation({ kind: "quick-touch", branchId: b.id });
+    await screen.findByText("What does this thread need from you now?");
+    // The main line moves toward the focused lane — but the lane itself stays put.
+    await waitFor(() => expect(Math.abs(mainLineY() - rest)).toBeGreaterThan(8));
+    expect(Math.sign(mainLineY() - rest)).toBe(Math.sign(laneY - rest));
+    expect(
+      Number((document.querySelector(".branch-endpoint") as SVGCircleElement).getAttribute("cy")),
+    ).toBeCloseTo(laneY, 1);
+
+    // Closing the panel lets the main line settle back to its resting place.
+    useAppStore.getState().setOperation({ kind: "idle" });
+    await waitFor(() => expect(mainLineY()).toBe(rest));
+  });
+
   it("creature themes turn open threads into their creature; other themes keep circles", async () => {
     const creatures = [
       ["demonfire", ".dragon-head"],

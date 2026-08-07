@@ -71,9 +71,9 @@ export function LifeTimeline() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ width: 960, height: 480 });
-  // When the quick tray rises over the stage as a bottom sheet, the lanes move
-  // up into the space that remains — the selected line and Now stay visible
-  // together, never hidden behind the panel.
+  // When the quick tray rises over the stage as a bottom sheet, the view
+  // scrolls so the selected line and Now stay visible together above it —
+  // the lanes themselves keep their places.
   const [bottomInset, setBottomInset] = useState(0);
   const insetRef = useRef(0); // the value currently on screen (mid-tween)
   const insetTargetRef = useRef(0); // where the tween is heading
@@ -197,19 +197,80 @@ export function LifeTimeline() {
   // The app's sense of the present: ticks forward every half minute, jumps
   // when the Testing controls fast-forward time.
   const now = useMemo(() => new Date(nowTick), [nowTick]);
+  // The wholeness chip is pinned over the stage's top corner. The canvas
+  // keeps that much room above the top lane, so scrolling to the top always
+  // brings the highest thread out from underneath it.
+  const [topInset, setTopInset] = useState(0);
+  useEffect(() => {
+    const stage = stageRef.current;
+    const chip = stage?.querySelector(".wholeness .fragmentation-indicator");
+    if (!stage || !chip) return;
+    const measure = () => {
+      const bottom =
+        chip.getBoundingClientRect().bottom - stage.getBoundingClientRect().top;
+      setTopInset(Math.max(0, Math.round(bottom) + 8));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(chip);
+    return () => ro.disconnect();
+  }, [size]);
+
+  // While a thread is in focus the main line leans toward its lane so the two
+  // read together; everything else stays put. Animated below.
+  const [mainShift, setMainShift] = useState(0);
+  const shiftRef = useRef(0);
+  const shiftTargetRef = useRef(0);
+  const shiftTweenRef = useRef(0);
   const layout = useMemo(
     () =>
       buildTimelineLayout(visible, {
         width: size.width,
-        // Whatever space the open panel leaves is what the lanes fit into —
-        // even the lowest thread stays visible above the sheet.
-        height: Math.max(130, size.height - bottomInset),
+        height: size.height,
         window: window_,
         compact,
         now,
+        mainShift,
+        // Room above the top lane for its label, clear of the pinned chip.
+        topPad: topInset > 0 ? topInset + 18 : undefined,
       }),
-    [visible, size, window_, compact, bottomInset, now],
+    [visible, size, window_, compact, now, mainShift, topInset],
   );
+
+  // The lean glides in over about a third of a second and glides back to rest
+  // when the panel closes. Lanes are anchored to bandY, so the target does not
+  // move while the main line travels.
+  useEffect(() => {
+    let target = 0;
+    if (focusedBranchId) {
+      const g = layout.geometries.find((geo) => geo.branchId === focusedBranchId);
+      if (g && g.inWindow) {
+        const delta = g.laneY - layout.bandY;
+        const gap = compact ? 36 : 44;
+        target = Math.abs(delta) > gap ? delta - Math.sign(delta) * gap : 0;
+      }
+    }
+    if (target === shiftTargetRef.current) return;
+    shiftTargetRef.current = target;
+    cancelAnimationFrame(shiftTweenRef.current);
+    if (reducedMotion) {
+      shiftRef.current = target;
+      setMainShift(target);
+      return;
+    }
+    const from = shiftRef.current;
+    const t0 = performance.now();
+    const duration = 300;
+    const step = (frameNow: number) => {
+      const p = Math.min(1, (frameNow - t0) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      shiftRef.current = from + (target - from) * eased;
+      setMainShift(shiftRef.current);
+      if (p < 1) shiftTweenRef.current = requestAnimationFrame(step);
+    };
+    shiftTweenRef.current = requestAnimationFrame(step);
+  }, [focusedBranchId, layout, compact, reducedMotion]);
+  useEffect(() => () => cancelAnimationFrame(shiftTweenRef.current), []);
 
   // With many threads the canvas grows taller than the stage and scrolls.
   // Whenever its shape changes, settle the view around the main line so Now
@@ -219,23 +280,33 @@ export function LifeTimeline() {
     if (!sc) return;
     const overflow = layout.height - sc.clientHeight;
     if (overflow > 0) {
-      sc.scrollTop = Math.max(0, Math.min(overflow, layout.mainY - sc.clientHeight / 2));
+      sc.scrollTop = Math.max(0, Math.min(overflow, layout.bandY - sc.clientHeight / 2));
     }
-  }, [layout.height, layout.mainY]);
+  }, [layout.height, layout.bandY]);
 
-  // The tapped thread stays in sight: when a panel opens for it, scroll its
-  // lane up into the space the panel leaves free. Runs while the inset
-  // animates, so the view follows the sheet as it slides in.
+  // The tapped thread stays in sight: when a panel opens, scroll so the pair —
+  // its lane and the leaning main line — sits centered in the space the panel
+  // leaves free. Runs while the inset and the lean animate, so the view
+  // follows the sheet as it slides in. The canvas gains exactly the panel's
+  // height of scroll room, so even the lowest lane can rise above it.
   useEffect(() => {
-    if (!focusedBranchId) return;
     const sc = scrollRef.current;
     if (!sc) return;
-    const g = layout.geometries.find((geo) => geo.branchId === focusedBranchId);
-    if (!g) return;
+    if (!focusedBranchId && bottomInset <= 0) return;
     const usable = Math.max(130, sc.clientHeight - bottomInset);
-    const maxScroll = Math.max(0, layout.height - sc.clientHeight);
-    sc.scrollTop = Math.max(0, Math.min(maxScroll, g.endY - usable / 2));
-  }, [focusedBranchId, layout, bottomInset]);
+    const maxScroll = Math.max(0, layout.height + Math.round(bottomInset) - sc.clientHeight);
+    let anchor = layout.mainY;
+    let scrollCap = maxScroll;
+    if (focusedBranchId) {
+      const g = layout.geometries.find((geo) => geo.branchId === focusedBranchId);
+      if (g && g.inWindow) {
+        anchor = (g.laneY + layout.mainY) / 2;
+        // A focused lane comes to rest below the pinned chip, never underneath.
+        scrollCap = Math.min(scrollCap, Math.min(g.laneY, g.labelY) - 14 - topInset);
+      }
+    }
+    sc.scrollTop = Math.max(0, Math.min(scrollCap, anchor - usable / 2));
+  }, [focusedBranchId, layout, bottomInset, topInset]);
 
   const ticks = useMemo(() => generateTicks(layout.window, now), [layout.window, now]);
   const summary = useMemo(
@@ -381,7 +452,9 @@ export function LifeTimeline() {
           ref={svgRef}
           className="timeline-svg"
           width={size.width}
-          height={layout.height}
+          // While a panel is up the canvas grows by the panel's height, giving
+          // the scroll room that brings low lanes up into the visible space.
+          height={layout.height + Math.round(bottomInset)}
           role="img"
           aria-label={summary}
           tabIndex={0}

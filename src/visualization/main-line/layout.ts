@@ -13,6 +13,8 @@ export type TimelineLayout = {
   /** Where the current moment falls in the window; anything right of it is projection. */
   nowX: number;
   mainY: number;
+  /** Anchor of the lane band; mainY equals it unless the main line leans. */
+  bandY: number;
   /** Full drawable width. */
   fullWidth: number;
 };
@@ -28,6 +30,16 @@ export type LayoutOptions = {
   /** Compact metrics stack lanes closer together on small screens. */
   compact?: boolean;
   now?: Date;
+  /**
+   * Minimum room above the top lane, in px — the stage may pin an indicator
+   * over its top corner, and the lanes must be able to scroll clear of it.
+   */
+  topPad?: number;
+  /**
+   * Vertical lean of the main line away from the lane band, in px. Used while
+   * a thread is in focus: the main line moves toward it, the lanes stay put.
+   */
+  mainShift?: number;
 };
 
 // Every thread keeps its room: lanes squeeze only down to a readable gap.
@@ -67,7 +79,11 @@ export function buildTimelineLayout(
 
   let laneGap = options.compact ? 40 : 52;
   let height: number;
-  let topPad = TOP_PAD;
+  // A pinned indicator may claim the top corner: the top lane keeps clear of
+  // it, and this padding never shaves away — scrolling to the top must always
+  // bring the highest thread out from underneath.
+  const minTopPad = Math.max(MIN_TOP_PAD, options.topPad ?? 0);
+  let topPad = Math.max(TOP_PAD, options.topPad ?? 0);
   let bottomPad = BOTTOM_PAD;
 
   if (options.height && options.height > 0) {
@@ -82,7 +98,7 @@ export function buildTimelineLayout(
     );
     const overflow = topPad + total * laneGap + bottomPad - height;
     if (overflow > 0) {
-      const shaveTop = Math.min(TOP_PAD - MIN_TOP_PAD, Math.ceil(overflow / 2));
+      const shaveTop = Math.min(Math.max(0, topPad - minTopPad), Math.ceil(overflow / 2));
       topPad -= shaveTop;
       bottomPad -= Math.min(BOTTOM_PAD - MIN_BOTTOM_PAD, overflow - shaveTop);
       height = Math.max(height, topPad + total * laneGap + bottomPad);
@@ -93,12 +109,18 @@ export function buildTimelineLayout(
 
   // Center the whole band of lanes; with no branches the main line sits mid-stage.
   const spare = Math.max(0, height - topPad - bottomPad - total * laneGap);
-  const mainY = Math.round(topPad + above * laneGap + spare / 2);
+  const bandY = Math.round(topPad + above * laneGap + spare / 2);
+  // The main line may lean toward a focused thread — but stays on the canvas.
+  const shift = options.mainShift ?? 0;
+  const mainY = Math.round(
+    Math.max(minTopPad, Math.min(height - MIN_BOTTOM_PAD, bandY + shift)),
+  );
 
   const metrics: TimelineMetrics = {
     width,
     nowX,
     mainY,
+    bandY,
     laneGap,
     curveLength: options.compact ? 40 : 64,
   };
@@ -119,6 +141,7 @@ export function buildTimelineLayout(
     height,
     nowX,
     mainY,
+    bandY,
     fullWidth: width,
   };
 }

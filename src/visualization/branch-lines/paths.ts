@@ -44,13 +44,16 @@ export type TimelineMetrics = {
   /** X of the current moment; open branches end here. Defaults to the right edge. */
   nowX?: number;
   mainY: number;
+  /** Anchor of the lane band. The main line may lean away from it toward a
+   * focused thread while the lanes stay put. Defaults to mainY. */
+  bandY?: number;
   laneGap: number;
   /** Horizontal length of fork / merge curves. */
   curveLength: number;
 };
 
 export function laneToY(lane: number, metrics: TimelineMetrics): number {
-  return metrics.mainY + lane * metrics.laneGap;
+  return (metrics.bandY ?? metrics.mainY) + lane * metrics.laneGap;
 }
 
 /**

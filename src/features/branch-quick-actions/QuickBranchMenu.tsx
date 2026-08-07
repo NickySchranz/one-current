@@ -38,7 +38,7 @@ export function QuickBranchMenu({ branchId }: Props) {
   const setOperation = useAppStore((s) => s.setOperation);
   const reopenBranch = useAppStore((s) => s.reopenBranch);
   const easeBranch = useAppStore((s) => s.easeBranch);
-  const updateBranch = useAppStore((s) => s.updateBranch);
+  const dialLoudness = useAppStore((s) => s.dialLoudness);
   const [eased, setEased] = useState(false);
   // The sheet opens as a peek: the thread's name and its loudness dial only.
   // Pulling it up (or tapping the question) reveals the decisions.
@@ -128,6 +128,9 @@ export function QuickBranchMenu({ branchId }: Props) {
   // peek at — the sheet opens straight onto the decisions.
   const decided = decidedToday(branch, appNow());
   const showAll = expanded || decided;
+  // The dial shows the loudness as felt today, drift included. Moving it
+  // re-anchors the drift, so pulling it down always genuinely quiets the line.
+  const felt = effectiveLoudness(branch, appNow());
 
   return (
     <div
@@ -170,17 +173,13 @@ export function QuickBranchMenu({ branchId }: Props) {
             min={1}
             max={5}
             step={0.1}
-            value={branch.loudness}
+            value={felt}
             aria-valuetext={
-              branch.loudness === 1
-                ? t("Quiet")
-                : t("Loudness {level} of 5", { level: Math.round(branch.loudness) })
+              felt === 1 ? t("Quiet") : t("Loudness {level} of 5", { level: Math.round(felt) })
             }
-            onChange={(e) =>
-              void updateBranch(branchId, { loudness: Number(e.target.value) as Loudness })
-            }
+            onChange={(e) => void dialLoudness(branchId, Number(e.target.value) as Loudness)}
           />
-          {effectiveLoudness(branch, appNow()) > branch.loudness && (
+          {felt > branch.loudness && (
             <span className="hint">{t("Undecided days have made it louder.")}</span>
           )}
         </div>

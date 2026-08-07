@@ -156,9 +156,10 @@ export function OperationTray() {
     return () => window.removeEventListener("keydown", onKey);
   }, [operation.kind, setOperation]);
 
-  // A tap anywhere outside the quick tray sets it down. A drag is a pan, not
-  // a dismissal; and taps on branch endpoints still switch context, because
-  // their click handler runs after this and opens the next tray.
+  // A tap anywhere outside the quick tray only sets it down — nothing
+  // underneath activates on that same tap (no thread, no nav button). The
+  // next tap is free to open whatever it lands on. A drag is a pan, not a
+  // dismissal.
   useEffect(() => {
     if (depth !== "quick") return;
     let start: { x: number; y: number } | null = null;
@@ -173,13 +174,22 @@ export function OperationTray() {
       const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
       start = null;
       if (moved > 8) return;
+      // Eat the click that follows this pointerup, so the tap closes the
+      // tray and does nothing else. Armed outside this effect's lifetime:
+      // closing the tray re-runs effects before the click ever arrives.
+      const swallow = (ev: Event) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+      };
+      window.addEventListener("click", swallow, { capture: true, once: true });
+      setTimeout(() => window.removeEventListener("click", swallow, true), 150);
       setOperation({ kind: "idle" });
     };
-    window.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointerdown", onDown, true);
+    window.addEventListener("pointerup", onUp, true);
     return () => {
-      window.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointerdown", onDown, true);
+      window.removeEventListener("pointerup", onUp, true);
     };
   }, [depth, setOperation]);
 

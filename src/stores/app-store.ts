@@ -109,6 +109,8 @@ type AppState = {
   ): Promise<{ recurrenceOf?: string; branch?: PsychologicalBranch }>;
   createBranchNow(input: CreateBranchInput): Promise<PsychologicalBranch>;
   updateBranch(id: string, patch: Partial<PsychologicalBranch>): Promise<void>;
+  /** Set the loudness dial by hand: re-anchors the daily drift, so what you set is what is felt today. */
+  dialLoudness(id: string, level: Loudness): Promise<void>;
   deleteBranch(id: string): Promise<void>;
   addMoment(input: CreateMomentInput): Promise<BranchCommit>;
   /** Any decision about a branch loosens its loudness; optionally applies a patch alongside. */
@@ -312,6 +314,12 @@ export const useAppStore = create<AppState>((set, get) => ({
       }),
     }));
     if (next) await repo.saveBranch(next);
+  },
+
+  async dialLoudness(id, level) {
+    // A touch, not a decision: the day counter is untouched, but the drift
+    // re-anchors here — the level under your thumb is the level that is felt.
+    await get().updateBranch(id, { loudness: level, loudnessSetOn: todayIso() });
   },
 
   async deleteBranch(id) {

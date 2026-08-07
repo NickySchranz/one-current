@@ -606,12 +606,12 @@ describe("living time and loudness", () => {
       (document.querySelector(".branch-tremor") as SVGGElement).getAttribute("data-loudness"),
     ).toBe("2");
 
-    // Two undecided days later it sounds louder (2 base + 1 drift).
+    // Two undecided days later it sounds louder (2 base + 2 drift).
     useAppStore.getState().fastForward(2 * DAY);
     await waitFor(() => {
       const g = document.querySelector(".branch-tremor") as SVGGElement | null;
       expect(g).toBeTruthy();
-      expect(g!.getAttribute("data-loudness")).toBe("3");
+      expect(g!.getAttribute("data-loudness")).toBe("4");
     });
 
     // Leaving it for today is a decision: the line rests, perfectly still.
@@ -688,6 +688,49 @@ describe("living time and loudness", () => {
     expect(
       screen.queryByRole("slider", { name: "How loud is this thread right now?" }),
     ).toBeFalsy();
+  });
+
+  it("pulling the dial down genuinely quiets a line that had drifted louder", async () => {
+    await renderReady();
+    const b = await createThread("The inbox", 2);
+    useAppStore.getState().clearBorn();
+    useAppStore.getState().fastForward(3 * DAY);
+    useAppStore.getState().setOperation({ kind: "quick-touch", branchId: b.id });
+
+    // The dial shows the loudness as felt today, drift included.
+    const slider = await screen.findByRole("slider", {
+      name: "How loud is this thread right now?",
+    });
+    expect(Number((slider as HTMLInputElement).value)).toBe(5); // 2 base + 3 days
+    await screen.findByText("Undecided days have made it louder.");
+
+    // Pulling it to the bottom re-anchors the drift: the line falls still.
+    fireEvent.change(slider, { target: { value: "1" } });
+    await waitFor(() =>
+      expect(useAppStore.getState().branches.find((x) => x.id === b.id)?.loudness).toBe(1),
+    );
+    await waitFor(() => expect(document.querySelector(".branch-tremor")).toBeFalsy());
+    expect(screen.queryByText("Undecided days have made it louder.")).toBeFalsy();
+    // A touch, not a decision.
+    expect(useAppStore.getState().branches[0].lastDecisionOn).toBeUndefined();
+  });
+
+  it("a tap outside an open panel only closes it — nothing underneath activates", async () => {
+    await renderReady();
+    const b = await createThread("The visa");
+    useAppStore.getState().setOperation({ kind: "quick-touch", branchId: b.id });
+    await screen.findByText("What does this thread need from you now?");
+
+    // Tap lands on the Actions nav button: the panel closes, Actions stays shut.
+    const actionsBtn = screen.getAllByRole("button", { name: "Actions" })[0];
+    fireEvent.pointerDown(actionsBtn, { pointerId: 7, clientX: 40, clientY: 700 });
+    fireEvent.pointerUp(actionsBtn, { pointerId: 7, clientX: 40, clientY: 700 });
+    fireEvent.click(actionsBtn);
+    expect(useAppStore.getState().operation).toEqual({ kind: "idle" });
+
+    // The next tap is free: now Actions opens.
+    fireEvent.click(actionsBtn);
+    expect(useAppStore.getState().operation).toEqual({ kind: "viewing-actions" });
   });
 
   it("demonfire turns open threads into dragon heads; other themes keep circles", async () => {

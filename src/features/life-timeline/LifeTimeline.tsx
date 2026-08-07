@@ -3,7 +3,7 @@ import { filterBranches, useAppStore } from "@/stores/app-store";
 import { buildTimelineLayout } from "@/visualization/main-line/layout";
 import { generateTicks, dateToX } from "@/visualization/zoom/time-scale";
 import { describeTimeline, describeBranch } from "@/visualization/a11y/describe";
-import { isClosed, mostActivated } from "@/domain/branches/logic";
+import { effectiveLoudness, isClosed, mostActivated } from "@/domain/branches/logic";
 import { decidedToday } from "@/domain/feelings/logic";
 import type { PsychologicalBranch, Loudness } from "@/domain/branches/types";
 import { BranchLine } from "./BranchLine";
@@ -40,7 +40,7 @@ export function LifeTimeline() {
   const born = useAppStore((s) => s.born);
   const clearBorn = useAppStore((s) => s.clearBorn);
   const reducedMotion = useAppStore((s) => s.reducedMotion);
-  const updateBranch = useAppStore((s) => s.updateBranch);
+  const dialLoudness = useAppStore((s) => s.dialLoudness);
   const actions = useAppStore((s) => s.actions);
   const language = useAppStore((s) => s.language);
   const t = useT();
@@ -150,7 +150,7 @@ export function LifeTimeline() {
       dragRef.current = { x: clientX, moved: true };
     },
     onCommit: (branchId, level) => {
-      void updateBranch(branchId, { loudness: level as Loudness });
+      void dialLoudness(branchId, level as Loudness);
     },
   });
 
@@ -222,6 +222,20 @@ export function LifeTimeline() {
       sc.scrollTop = Math.max(0, Math.min(overflow, layout.mainY - sc.clientHeight / 2));
     }
   }, [layout.height, layout.mainY]);
+
+  // The tapped thread stays in sight: when a panel opens for it, scroll its
+  // lane up into the space the panel leaves free. Runs while the inset
+  // animates, so the view follows the sheet as it slides in.
+  useEffect(() => {
+    if (!focusedBranchId) return;
+    const sc = scrollRef.current;
+    if (!sc) return;
+    const g = layout.geometries.find((geo) => geo.branchId === focusedBranchId);
+    if (!g) return;
+    const usable = Math.max(130, sc.clientHeight - bottomInset);
+    const maxScroll = Math.max(0, layout.height - sc.clientHeight);
+    sc.scrollTop = Math.max(0, Math.min(maxScroll, g.endY - usable / 2));
+  }, [focusedBranchId, layout, bottomInset]);
 
   const ticks = useMemo(() => generateTicks(layout.window, now), [layout.window, now]);
   const summary = useMemo(
@@ -499,9 +513,14 @@ export function LifeTimeline() {
                   // with the line until tomorrow (or until it reopens).
                   isClosed(branch) || decidedToday(branch, now)
                     ? undefined
-                    : // The drag moves in whole levels; a fine-tuned fractional
-                      // loudness starts from its nearest step.
-                      (e) => dial.onBranchPointerDown(branch.id, Math.round(branch.loudness), e)
+                    : // The drag moves in whole levels, starting from the
+                      // loudness as felt today (drift included).
+                      (e) =>
+                        dial.onBranchPointerDown(
+                          branch.id,
+                          Math.round(effectiveLoudness(branch, now)),
+                          e,
+                        )
                 }
                 focused={i === focusIndex}
                 emphasizedId={top?.id}

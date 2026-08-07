@@ -371,13 +371,21 @@ describe("energy split across lines", () => {
 });
 
 describe("loudness of a line", () => {
-  it("holds its base through the first undecided day, then grows one step per day", () => {
+  it("grows one step per undecided day, up to the maximum", () => {
     const b = mkBranch({ loudness: 2, lastDecisionOn: "2026-08-04" });
     expect(effectiveLoudness(b, NOW)).toBe(2); // decided today
-    expect(effectiveLoudness(b, new Date("2026-08-05T12:00:00Z"))).toBe(2); // one day of grace
-    expect(effectiveLoudness(b, new Date("2026-08-06T12:00:00Z"))).toBe(3);
-    expect(effectiveLoudness(b, new Date("2026-08-07T12:00:00Z"))).toBe(4);
+    expect(effectiveLoudness(b, new Date("2026-08-05T12:00:00Z"))).toBe(3);
+    expect(effectiveLoudness(b, new Date("2026-08-06T12:00:00Z"))).toBe(4);
+    expect(effectiveLoudness(b, new Date("2026-08-07T12:00:00Z"))).toBe(5);
     expect(effectiveLoudness(b, new Date("2026-08-20T12:00:00Z"))).toBe(5); // never past 5
+  });
+
+  it("setting the dial by hand re-anchors the drift: what you set is what is felt", () => {
+    const b = mkBranch({ loudness: 4, lastDecisionOn: "2026-08-01" });
+    expect(effectiveLoudness(b, NOW)).toBe(5); // days of drift
+    const dialed = { ...b, loudness: 1, loudnessSetOn: "2026-08-04" };
+    expect(effectiveLoudness(dialed, NOW)).toBe(1); // pulled down → genuinely calm
+    expect(effectiveLoudness(dialed, new Date("2026-08-05T12:00:00Z"))).toBe(2); // drifts again from here
   });
 
   it("integrated lines and calm waiting hold at the base — no drift", () => {

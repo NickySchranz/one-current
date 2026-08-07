@@ -39,9 +39,11 @@ const MIN_LANE_GAP_COMPACT = 28;
 const MAX_LANE_GAP = 56;
 const TOP_PAD = 58; // clear of the wholeness chip, with room for the Now label
 const BOTTOM_PAD = 48; // room for the axis labels
-// When a sheet squeezes the stage, padding gives way before any thread does.
-const MIN_TOP_PAD = 24;
-const MIN_BOTTOM_PAD = 20;
+// When a sheet squeezes the stage, padding gives way before any thread does —
+// but never so far that the outer lanes look glued to the borders: the top
+// lane keeps room for its label, the bottom one stays clear of the axis.
+const MIN_TOP_PAD = 40;
+const MIN_BOTTOM_PAD = 36;
 
 /** Pure composition of the whole timeline scene: lanes, geometry, heights. */
 export function buildTimelineLayout(

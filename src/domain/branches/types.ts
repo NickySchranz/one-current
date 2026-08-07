@@ -65,6 +65,8 @@ export type PsychologicalBranch = {
   leftOn?: string;
   /** ISO date of the most recent decision about this branch. Undecided days let the loudness drift upward. */
   lastDecisionOn?: string;
+  /** ISO date the loudness dial was last set by hand. Setting it re-anchors the daily drift: what you set is what is felt. */
+  loudnessSetOn?: string;
   commits: BranchCommit[];
   mergeIds: string[];
   /** ISO date at which the branch merged back; set when status is merged/partly-integrated. */

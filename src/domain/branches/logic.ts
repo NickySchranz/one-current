@@ -103,20 +103,28 @@ export function easeLoudness(loudness: Loudness): Loudness {
   return Math.max(1, loudness - 1) as Loudness;
 }
 
-/** Whole days since the last decision about this branch (creation counts as the first decision). */
+/**
+ * Whole days since the branch was last given attention: a decision, or setting
+ * its loudness dial by hand (creation counts as the first decision).
+ */
 export function daysSinceDecision(branch: PsychologicalBranch, now: Date = new Date()): number {
-  const ref = branch.lastDecisionOn ?? branch.firstCreatedAt.slice(0, 10);
+  // ISO dates compare lexically: the later of the two anchors wins;
+  // creation only counts while neither exists yet.
+  const anchors = [branch.lastDecisionOn, branch.loudnessSetOn].filter((d): d is string => !!d);
+  const ref =
+    anchors.length > 0 ? anchors.sort()[anchors.length - 1] : branch.firstCreatedAt.slice(0, 10);
   return Math.max(0, Math.floor((now.getTime() - Date.parse(ref)) / DAY));
 }
 
 /**
- * The loudness as felt today: each undecided day (after one day of grace) pulls the
- * branch harder and further from Now. Any decision resets the clock and eases it.
+ * The loudness as felt today: every full undecided day adds one, up to the
+ * maximum of 5. Any decision — or setting the dial by hand — resets the clock,
+ * so what you set is exactly what is felt.
  * Waiting and closed branches do not drift — their state is already a decision.
  */
 export function effectiveLoudness(branch: PsychologicalBranch, now: Date = new Date()): Loudness {
   if (isClosed(branch) || branch.status === "waiting-with-boundaries") return branch.loudness;
-  const drift = Math.max(0, daysSinceDecision(branch, now) - 1);
+  const drift = daysSinceDecision(branch, now);
   return Math.min(5, branch.loudness + drift) as Loudness;
 }
 

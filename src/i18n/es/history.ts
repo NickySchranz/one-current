@@ -128,6 +128,21 @@ export const history: Record<string, string> = {
   Demonfire: "Fuego de dragón",
   "Ember dark. Every open thread is a small dragon — face it kindly and it settles.":
     "Oscuridad de brasas. Cada hilo abierto es un pequeño dragón: míralo con amabilidad y se calma.",
+  "Koi pond": "Estanque de kois",
+  "Still water. Every open thread is a koi nosing at Now — feed it a decision and the pond settles.":
+    "Agua quieta. Cada hilo abierto es un koi que asoma al Ahora: dale una decisión y el estanque se calma.",
+  Carnival: "Feria",
+  "Cream and bunting. Every open thread is a balloon — the longer it waits, the tighter it swells.":
+    "Crema y banderines. Cada hilo abierto es un globo: cuanto más espera, más se hincha.",
+  Catnap: "Siesta de gato",
+  "Lavender and soft paws. Every open thread is a cat watching you — answer it and it curls up.":
+    "Lavanda y patas suaves. Cada hilo abierto es un gato que te mira: respóndele y se acurruca.",
+  Abyss: "Abismo",
+  "Deep-sea black. Every open thread is an anglerfish — the louder it grows, the brighter its lure.":
+    "Negro de aguas profundas. Cada hilo abierto es un pez abisal: cuanto más fuerte suena, más brilla su señuelo.",
+  Gravemist: "Niebla del camposanto",
+  "Fog and lantern light. Every open thread is a small ghost — its wail widens until you answer.":
+    "Niebla y luz de farol. Cada hilo abierto es un pequeño fantasma: su lamento crece hasta que respondes.",
   Language: "Idioma",
   "Changes every word the app says. Your own words stay as you wrote them.":
     "Cambia cada palabra que dice la app. Tus propias palabras se quedan como las escribiste.",

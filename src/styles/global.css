@@ -160,6 +160,135 @@
   --main-flow-dash: 2 16;
 }
 
+/* ---------- Koi pond: still aqua water; every open thread is a koi */
+[data-theme="koipond"] {
+  --bg: #e9f3ee;
+  --bg-raised: #f7fbf9;
+  --bg-sunken: #dcebe3;
+  --ink: #21332c;
+  --ink-soft: #5c7268;
+  --ink-faint: #92a89d;
+  --line-main: #33544a;
+  --line-axis: #c8ddd2;
+  --accent: #3d7ea6;
+  --accent-ink: #f2f9fc;
+  --accent-soft: #d8e8f0;
+  --danger: #b05147;
+  --focus: #2f6f92;
+  --shadow: 0 1px 2px rgb(33 51 44 / 0.06), 0 10px 30px rgb(33 51 44 / 0.08);
+  --font-body: "Avenir Next", "Segoe UI", Seravek, "Gill Sans Nova", sans-serif;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --btn-radius: 12px;
+  --flow-duration: 3.8s;
+  --flow-dash: 1 12;
+  --main-flow-duration: 4.6s;
+  --main-flow-dash: 2 24;
+}
+
+/* ---------- Carnival: cream and bunting; every open thread is a balloon */
+[data-theme="carnival"] {
+  --bg: #fbf0e0;
+  --bg-raised: #fffaf0;
+  --bg-sunken: #f3e3cc;
+  --ink: #40323a;
+  --ink-soft: #83707a;
+  --ink-faint: #b3a2ab;
+  --line-main: #5a4550;
+  --line-axis: #e8d8c4;
+  --accent: #c65a8a;
+  --accent-ink: #fff3f8;
+  --accent-soft: #f5dce8;
+  --danger: #b0473f;
+  --focus: #a84b7b;
+  --shadow: 0 2px 4px rgb(90 60 70 / 0.08), 0 12px 32px rgb(90 60 70 / 0.1);
+  --font-body: Futura, "Century Gothic", "Trebuchet MS", "URW Gothic", sans-serif;
+  --radius: 18px;
+  --radius-lg: 26px;
+  --btn-radius: 999px;
+  --flow-duration: 2s;
+  --flow-dash: 2 10;
+  --main-flow-duration: 2.6s;
+  --main-flow-dash: 2 20;
+}
+
+/* ---------- Catnap: drowsy lavender; every open thread is a watching cat */
+[data-theme="catnap"] {
+  --bg: #f4f0f8;
+  --bg-raised: #fcfaff;
+  --bg-sunken: #eae4f1;
+  --ink: #2e2837;
+  --ink-soft: #6f6680;
+  --ink-faint: #a79dbb;
+  --line-main: #4a4058;
+  --line-axis: #ded5e9;
+  --accent: #7a5ba6;
+  --accent-ink: #f7f2ff;
+  --accent-soft: #e8def3;
+  --danger: #a8544e;
+  --focus: #6a4e93;
+  --shadow: 0 1px 2px rgb(46 40 55 / 0.06), 0 10px 30px rgb(46 40 55 / 0.08);
+  --font-body: ui-rounded, "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --btn-radius: 12px;
+  --flow-duration: 5s;
+  --flow-dash: 1 16;
+  --main-flow-duration: 5.6s;
+  --main-flow-dash: 2 28;
+}
+
+/* ---------- Abyss: deep-sea black; every open thread is an anglerfish */
+[data-theme="abyss"] {
+  --bg: #050a12;
+  --bg-raised: #0b1420;
+  --bg-sunken: #02060c;
+  --ink: #cfe4e2;
+  --ink-soft: #7f9a9c;
+  --ink-faint: #48606a;
+  --line-main: #9fc4c4;
+  --line-axis: #14222e;
+  --accent: #52e3b8;
+  --accent-ink: #04241a;
+  --accent-soft: #0b3328;
+  --danger: #d96a5a;
+  --focus: #52e3b8;
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.6), 0 8px 28px rgb(0 0 0 / 0.55);
+  --radius: 6px;
+  --radius-lg: 10px;
+  --btn-radius: 4px;
+  --flow-duration: 5.5s;
+  --flow-dash: 1 20;
+  --main-flow-duration: 6s;
+  --main-flow-dash: 2 34;
+}
+
+/* ---------- Gravemist: grey-violet fog; every open thread is a small ghost */
+[data-theme="gravemist"] {
+  --bg: #17161c;
+  --bg-raised: #211f28;
+  --bg-sunken: #100f14;
+  --ink: #d9d6e4;
+  --ink-soft: #928da3;
+  --ink-faint: #5d5969;
+  --line-main: #bcb7cc;
+  --line-axis: #2d2a38;
+  --accent: #8a86b5;
+  --accent-ink: #14121c;
+  --accent-soft: #2a2740;
+  --danger: #c26558;
+  --focus: #a29ecf;
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.5), 0 8px 28px rgb(0 0 0 / 0.45);
+  --font-body: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --btn-radius: 6px;
+  --flow-duration: 4.2s;
+  --flow-dash: 1 14;
+  --main-flow-duration: 5s;
+  --main-flow-dash: 2 24;
+}
+
 * { box-sizing: border-box; }
 
 html, body, #root { height: 100%; }
@@ -909,6 +1038,117 @@ textarea { min-height: 5rem; resize: vertical; }
   60% { opacity: 0.2; transform: scale(1.02); }
 }
 .dragon-head { cursor: pointer; touch-action: none; }
+
+/* Koi pond: watery buttons, the Now light spreads like a ring on the surface */
+[data-theme="koipond"] .btn {
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-raised));
+  border-color: transparent;
+  box-shadow: var(--shadow);
+  transition: background 0.25s ease;
+}
+[data-theme="koipond"] .btn:hover {
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-raised));
+  border-color: transparent;
+}
+[data-theme="koipond"] .btn-primary { background: var(--accent); color: var(--accent-ink); }
+[data-theme="koipond"] .now-glow {
+  animation: pond-ripple 3.6s ease-out infinite;
+}
+@keyframes pond-ripple {
+  0% { opacity: 0.3; transform: scale(0.7); }
+  60% { opacity: 0.05; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+/* Carnival: pill buttons with a bounce, a Now that bobs like a balloon */
+[data-theme="carnival"] .btn {
+  background: var(--bg-raised);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line-axis));
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+[data-theme="carnival"] .btn:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+[data-theme="carnival"] .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+[data-theme="carnival"] h1, [data-theme="carnival"] h2 { letter-spacing: 0.02em; }
+[data-theme="carnival"] .now-glow {
+  animation: balloon-bob 2.6s ease-in-out infinite;
+}
+@keyframes balloon-bob {
+  0%, 100% { opacity: 0.18; transform: scale(0.95) translateY(0); }
+  50% { opacity: 0.3; transform: scale(1.1) translateY(-1.5px); }
+}
+
+/* Catnap: pillowy buttons, the Now light blinks slow like a drowsy eye */
+[data-theme="catnap"] .btn {
+  background: color-mix(in srgb, var(--accent) 7%, var(--bg-raised));
+  border-color: transparent;
+  box-shadow: var(--shadow);
+  transition: background 0.3s ease;
+}
+[data-theme="catnap"] .btn:hover {
+  background: color-mix(in srgb, var(--accent) 15%, var(--bg-raised));
+  border-color: transparent;
+}
+[data-theme="catnap"] .btn-primary { background: var(--accent); color: var(--accent-ink); }
+[data-theme="catnap"] .now-glow {
+  animation: drowsy-blink 6s ease-in-out infinite;
+}
+@keyframes drowsy-blink {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  46% { opacity: 0.16; transform: scale(0.98); }
+  50% { opacity: 0.02; transform: scale(0.9); }
+  54% { opacity: 0.16; transform: scale(0.98); }
+}
+
+/* Abyss: pressure-dark buttons, the Now light pulses like a lure in the deep */
+[data-theme="abyss"] .btn {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line-axis));
+  box-shadow: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+[data-theme="abyss"] .btn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+[data-theme="abyss"] .btn-primary {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="abyss"] .now-glow {
+  animation: lure-pulse 4.8s ease-in-out infinite;
+}
+@keyframes lure-pulse {
+  0%, 100% { opacity: 0.06; transform: scale(0.8); }
+  50% { opacity: 0.4; transform: scale(1.25); }
+}
+
+/* Gravemist: faded stone buttons, the Now light gutters like a lantern in fog */
+[data-theme="gravemist"] .btn {
+  background: linear-gradient(var(--bg-raised), var(--bg-sunken));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+[data-theme="gravemist"] .btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line-axis));
+  color: var(--accent);
+}
+[data-theme="gravemist"] h2 { font-style: italic; font-weight: 500; }
+[data-theme="gravemist"] .now-glow {
+  animation: lantern-gutter 5.2s ease-in-out infinite;
+}
+@keyframes lantern-gutter {
+  0%, 100% { opacity: 0.1; transform: scale(0.9); }
+  22% { opacity: 0.26; transform: scale(1.05); }
+  30% { opacity: 0.14; transform: scale(0.96); }
+  44% { opacity: 0.3; transform: scale(1.12); }
+  70% { opacity: 0.12; transform: scale(0.92); }
+  82% { opacity: 0.22; transform: scale(1.02); }
+}
 
 /* reduced motion outranks every theme's Now animation */
 [data-reduced-motion="true"] .now-glow { animation: none; }

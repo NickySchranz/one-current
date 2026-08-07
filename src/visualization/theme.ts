@@ -49,6 +49,46 @@ export const THEMES = [
     paper: "#161013",
     accent: "#c65a33",
   },
+  {
+    id: "koipond",
+    name: "Koi pond",
+    hint: "Still water. Every open thread is a koi nosing at Now — feed it a decision and the pond settles.",
+    mode: "light",
+    paper: "#e9f3ee",
+    accent: "#3d7ea6",
+  },
+  {
+    id: "carnival",
+    name: "Carnival",
+    hint: "Cream and bunting. Every open thread is a balloon — the longer it waits, the tighter it swells.",
+    mode: "light",
+    paper: "#fbf0e0",
+    accent: "#c65a8a",
+  },
+  {
+    id: "catnap",
+    name: "Catnap",
+    hint: "Lavender and soft paws. Every open thread is a cat watching you — answer it and it curls up.",
+    mode: "light",
+    paper: "#f4f0f8",
+    accent: "#7a5ba6",
+  },
+  {
+    id: "abyss",
+    name: "Abyss",
+    hint: "Deep-sea black. Every open thread is an anglerfish — the louder it grows, the brighter its lure.",
+    mode: "dark",
+    paper: "#050a12",
+    accent: "#52e3b8",
+  },
+  {
+    id: "gravemist",
+    name: "Gravemist",
+    hint: "Fog and lantern light. Every open thread is a small ghost — its wail widens until you answer.",
+    mode: "dark",
+    paper: "#17161c",
+    accent: "#8a86b5",
+  },
 ] as const;
 
 export type ThemeId = (typeof THEMES)[number]["id"];

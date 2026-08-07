@@ -8,7 +8,32 @@ import { isClosed, isOpen } from "@/domain/branches/logic";
 import { describeBranch } from "@/visualization/a11y/describe";
 import { useT } from "@/i18n/i18n";
 import { DragonHead } from "./DragonHead";
+import { KoiFish } from "./KoiFish";
+import { Balloon } from "./Balloon";
+import { CatHead } from "./CatHead";
+import { AnglerHead } from "./AnglerHead";
+import { Ghost } from "./Ghost";
 import { useSquiggle } from "./useSquiggle";
+
+/** Themes where an undecided open thread ends in a creature instead of a
+ * plain circle. Every creature takes the same props: anchored at the line
+ * end, wearing the thread's colour, animated by its loudness. */
+type CreatureProps = {
+  x: number;
+  y: number;
+  scale?: number;
+  color: string;
+  loudness?: number;
+  onClick?: (e: React.MouseEvent) => void;
+};
+const CREATURES: Partial<Record<ThemeId, (props: CreatureProps) => JSX.Element>> = {
+  demonfire: DragonHead,
+  koipond: KoiFish,
+  carnival: Balloon,
+  catnap: CatHead,
+  abyss: AnglerHead,
+  gravemist: Ghost,
+};
 
 type Props = {
   branch: PsychologicalBranch;
@@ -91,6 +116,7 @@ export const BranchLine = memo(function BranchLine({
     (g.style.emphasized || branch.id === emphasizedId || highlighted);
   const color = branchColor(branch, theme, emphasized ? "raised" : g.style.saturation);
   const label = branch.title.length > 34 ? branch.title.slice(0, 32) + "…" : branch.title;
+  const Creature = CREATURES[theme];
 
   return (
     <g
@@ -175,11 +201,11 @@ export const BranchLine = memo(function BranchLine({
       ))}
 
       {/* endpoint: the line's presence at Now (merged lines get theirs below).
-          In Demonfire an undecided open thread is a small dragon facing you;
-          a decision today calms it back into the plain circle. */}
+          In a creature theme an undecided open thread is a small creature
+          facing you; a decision today calms it back into the plain circle. */}
       {!g.endsOnMain &&
-        (theme === "demonfire" && !acted && !resting ? (
-          <DragonHead
+        (Creature && !acted && !resting ? (
+          <Creature
             x={g.endX - 3}
             y={g.endY}
             scale={1.4 + (g.thickness - 2) * 0.24}

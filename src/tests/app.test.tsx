@@ -733,16 +733,32 @@ describe("living time and loudness", () => {
     expect(useAppStore.getState().operation).toEqual({ kind: "viewing-actions" });
   });
 
-  it("demonfire turns open threads into dragon heads; other themes keep circles", async () => {
+  it("creature themes turn open threads into their creature; other themes keep circles", async () => {
+    const creatures = [
+      ["demonfire", ".dragon-head"],
+      ["koipond", ".koi-fish"],
+      ["carnival", ".balloon-end"],
+      ["catnap", ".cat-head"],
+      ["abyss", ".angler-head"],
+      ["gravemist", ".ghost-wisp"],
+    ] as const;
+
     await renderReady();
     await createThread("The old rivalry");
     await waitFor(() => expect(document.querySelector(".branch-endpoint")).toBeTruthy());
-    expect(document.querySelector(".dragon-head")).toBeFalsy();
+    for (const [, selector] of creatures) {
+      expect(document.querySelector(selector)).toBeFalsy();
+    }
 
-    useAppStore.getState().setTheme("demonfire");
-    await waitFor(() => expect(document.querySelector(".dragon-head")).toBeTruthy());
+    for (const [theme, selector] of creatures) {
+      useAppStore.getState().setTheme(theme);
+      await waitFor(() => expect(document.querySelector(selector)).toBeTruthy());
+    }
 
     useAppStore.getState().setTheme("riverbed");
     await waitFor(() => expect(document.querySelector(".dragon-head")).toBeFalsy());
+    for (const [, selector] of creatures) {
+      expect(document.querySelector(selector)).toBeFalsy();
+    }
   });
 });

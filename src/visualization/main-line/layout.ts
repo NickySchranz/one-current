@@ -100,7 +100,7 @@ export function buildTimelineLayout(
   const geometries = branches
     .map((b) => {
       const a = byId.get(b.id);
-      return a ? buildBranchGeometry(b, a, window, metrics) : undefined;
+      return a ? buildBranchGeometry(b, a, window, metrics, now) : undefined;
     })
     .filter((g): g is BranchGeometry => !!g);
 

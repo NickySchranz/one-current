@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { useT } from "@/i18n/i18n";
 import type { CreateBranchInput } from "@/stores/app-store";
+import { appNow } from "@/domain/time/clock";
 import {
   RECURRENCE_REASONS,
   recommendForRecurrence,
@@ -38,7 +39,7 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
     } else if (rec === "add-moment") {
       await addMoment({
         branchId: matched.id,
-        date: new Date().toISOString().slice(0, 10),
+        date: appNow().toISOString().slice(0, 10),
         title: pending.title,
         type: "intensification",
         description: t("Returned: {reason}", {
@@ -47,7 +48,7 @@ export function RecurrenceCheck({ matchedBranchId, pending }: Props) {
       });
       setOperation({ kind: "quick-touch", branchId: matched.id });
     } else if (rec === "reopen") {
-      await updateBranch(matched.id, { status: "active", lastActivatedAt: new Date().toISOString() });
+      await updateBranch(matched.id, { status: "active", lastActivatedAt: appNow().toISOString() });
       setOperation({ kind: "quick-touch", branchId: matched.id });
     } else if (rec === "new-conflict") {
       await updateBranch(matched.id, { status: "active" });

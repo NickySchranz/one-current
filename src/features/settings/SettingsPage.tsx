@@ -16,6 +16,9 @@ export function SettingsSections() {
   const importData = useAppStore((s) => s.importData);
   const deleteEverything = useAppStore((s) => s.deleteEverything);
   const loadExampleData = useAppStore((s) => s.loadExampleData);
+  const timeSkewMs = useAppStore((s) => s.timeSkewMs);
+  const fastForward = useAppStore((s) => s.fastForward);
+  const resetTimeSkew = useAppStore((s) => s.resetTimeSkew);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
@@ -113,6 +116,38 @@ export function SettingsSections() {
         <button className="btn" onClick={() => void loadExampleData()}>
           {t("Load example threads")}
         </button>
+      </div>
+
+      <h2>{t("Testing")}</h2>
+      <div className="card">
+        <p className="hint">
+          {t(
+            "Move the app's clock forward to watch how threads behave when days pass without decisions. This only affects this session — reloading returns to real time.",
+          )}
+        </p>
+        <div className="filter-row">
+          <button className="btn" onClick={() => fastForward(6 * 60 * 60 * 1000)}>
+            {t("+6 hours")}
+          </button>
+          <button className="btn" onClick={() => fastForward(24 * 60 * 60 * 1000)}>
+            {t("+1 day")}
+          </button>
+          <button className="btn" onClick={() => fastForward(3 * 24 * 60 * 60 * 1000)}>
+            {t("+3 days")}
+          </button>
+        </div>
+        {timeSkewMs > 0 && (
+          <div className="filter-row">
+            <span role="status">
+              {t("The app is living {days} day(s) ahead.", {
+                days: (timeSkewMs / (24 * 60 * 60 * 1000)).toFixed(1),
+              })}
+            </span>
+            <button className="btn" onClick={resetTimeSkew}>
+              {t("Back to real time")}
+            </button>
+          </div>
+        )}
       </div>
 
       <h2>{t("Privacy")}</h2>

@@ -4,6 +4,7 @@ import type { BranchMerge, MergeDraft } from "@/domain/merges/types";
 import type { IntegratedAction } from "@/domain/actions/types";
 import type { BranchCommit } from "@/domain/moments/types";
 import { createBranch, easePull, type CreateBranchInput } from "@/domain/branches/logic";
+import { advanceSkew, appNow, getSkewMs, setSkewMs } from "@/domain/time/clock";
 import { addMomentToBranch, createMoment, type CreateMomentInput } from "@/domain/moments/logic";
 import { detectRecurrence, recordRecurrence } from "@/domain/branches/recurrence";
 import { applyMergeToBranch, createMerge, type CreateMergeInput } from "@/domain/merges/logic";
@@ -83,8 +84,17 @@ type AppState = {
   reclaim?: ReclaimEvent;
   /** A branch was just created: its line draws itself onto the timeline. */
   born?: { key: number; branchId: string };
+  /** The app's current moment (epoch ms). Refreshed on a slow tick so Now moves without reloading. */
+  nowTick: number;
+  /** How far ahead of real time the app is living (Testing only; resets on reload). */
+  timeSkewMs: number;
 
   init(): Promise<void>;
+  /** Re-read the clock so everything derived from "now" follows it. */
+  refreshNow(): void;
+  /** Move the app's clock forward (Testing only). */
+  fastForward(ms: number): void;
+  resetTimeSkew(): void;
   setView(view: View): void;
   /** Begin (or end, with idle) an operation over the timeline. Jumps to the timeline shell. */
   setOperation(operation: TimelineOperation): void;
@@ -134,7 +144,7 @@ type AppState = {
 };
 
 function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
+  return appNow().toISOString().slice(0, 10);
 }
 
 /** Operations happen in Now. */
@@ -177,6 +187,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches,
   theme: initialTheme(),
   language: initialLanguage(),
+  nowTick: appNow().getTime(),
+  timeSkewMs: 0,
 
   async init() {
     const data = await repo.loadAll();
@@ -187,7 +199,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       merges: data.merges,
       actions: data.actions,
       mergeDraft: draft,
-      window: weekWindow(),
+      nowTick: appNow().getTime(),
+      window: weekWindow(appNow()),
       view: { kind: "now" },
       // An interrupted merge is restored where it stopped — at the confirmation.
       operation: draft
@@ -205,7 +218,25 @@ export const useAppStore = create<AppState>((set, get) => ({
       view: operation.kind === "idle" ? s.view : nowView(s.view),
     })),
   returnToNow: () => {
-    set({ view: { kind: "now" }, window: weekWindow() });
+    set({ view: { kind: "now" }, window: weekWindow(appNow()) });
+  },
+
+  refreshNow: () => set({ nowTick: appNow().getTime() }),
+  fastForward: (ms) => {
+    advanceSkew(ms);
+    set({
+      timeSkewMs: getSkewMs(),
+      nowTick: appNow().getTime(),
+      window: weekWindow(appNow()),
+    });
+  },
+  resetTimeSkew: () => {
+    setSkewMs(0);
+    set({
+      timeSkewMs: 0,
+      nowTick: appNow().getTime(),
+      window: weekWindow(appNow()),
+    });
   },
 
   async requestBranch(input) {
@@ -226,12 +257,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   async createBranchNow(input) {
-    const branch = createBranch(input);
+    const branch = createBranch(input, appNow());
     await repo.saveBranch(branch);
     // The new line draws itself in immediately; whatever tray is open stays open.
     set((s) => ({
       branches: [...s.branches, branch],
-      window: weekWindow(),
+      window: weekWindow(appNow()),
       view: nowView(s.view),
       born: { key: Date.now(), branchId: branch.id },
     }));
@@ -265,7 +296,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const branch = get().branches.find((b) => b.id === input.branchId);
     if (!branch) throw new Error("Branch not found");
     const moment = createMoment(input);
-    const next = addMomentToBranch(branch, moment);
+    const next = addMomentToBranch(branch, moment, appNow());
     await repo.saveBranch(next);
     set((s) => ({ branches: s.branches.map((b) => (b.id === next.id ? next : b)) }));
     return moment;
@@ -281,7 +312,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       ...patch,
       pull: easePull(branch.pull),
       lastDecisionOn: todayIso(),
-      lastActivatedAt: new Date().toISOString(),
+      lastActivatedAt: appNow().toISOString(),
     };
     await repo.saveBranch(next);
     // "Nothing can be done" and a planned action are mutually exclusive:
@@ -307,7 +338,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   async reopenBranch(branchId) {
     const branch = get().branches.find((b) => b.id === branchId);
     if (!branch) return;
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const yesterday = new Date(appNow().getTime() - 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
     const next: PsychologicalBranch = {
       ...recordRecurrence(branch),
       status: "active",
@@ -366,7 +399,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const draft: MergeDraft = {
       id: newId("dr"),
       branchIds,
-      startedAt: new Date().toISOString(),
+      startedAt: appNow().toISOString(),
       stage: "carrying",
       partial: {},
     };
@@ -394,8 +427,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   async completeMerge(input) {
-    const merge = createMerge(input);
-    const updated = input.branches.map((b) => applyMergeToBranch(b, merge));
+    const merge = createMerge(input, appNow());
+    const updated = input.branches.map((b) => applyMergeToBranch(b, merge, appNow()));
     await repo.saveMerge(merge);
     await repo.saveBranches(updated);
     if (merge.action) await repo.saveAction(merge.action);
@@ -484,7 +517,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       branches: data.branches,
       merges: data.merges,
       actions: data.actions,
-      window: weekWindow(),
+      window: weekWindow(appNow()),
     });
   },
   async loadExampleData() {
@@ -499,7 +532,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       actions: [...s.actions, ...data.actions],
       view: nowView(s.view),
       operation: { kind: "idle" },
-      window: weekWindow(),
+      window: weekWindow(appNow()),
     }));
   },
   async deleteEverything() {
@@ -511,7 +544,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       mergeDraft: undefined,
       view: { kind: "now" },
       operation: { kind: "idle" },
-      window: weekWindow(),
+      window: weekWindow(appNow()),
     });
   },
 }));

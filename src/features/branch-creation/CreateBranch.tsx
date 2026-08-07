@@ -4,6 +4,7 @@ import { useT } from "@/i18n/i18n";
 import type { ForkPeriodChoice, Pull } from "@/domain/branches/types";
 import { ANXIETIES, suggestLockedFeelings } from "@/domain/feelings/logic";
 import { FeelingPicker } from "@/features/branch-touch/FeelingPicker";
+import { appNow } from "@/domain/time/clock";
 
 type WhenId = "today" | "this-week" | "this-month" | "earlier";
 type EarlierId = "date" | "period" | "unsure";
@@ -96,6 +97,22 @@ export function CreateBranch() {
             aria-label={t("Name the thread")}
           />
         </div>
+        <div className="field loudness-field">
+          <label htmlFor="create-loudness">{t("How loud is it right now?")}</label>
+          <input
+            id="create-loudness"
+            className="loudness-slider"
+            type="range"
+            min={1}
+            max={5}
+            step={0.1}
+            value={pull}
+            aria-valuetext={
+              pull === 1 ? t("Quiet") : t("Loudness {level} of 5", { level: Math.round(pull) })
+            }
+            onChange={(e) => setPull(Number(e.target.value) as Pull)}
+          />
+        </div>
         <div className="field">
           <label>{t("Since when?")}</label>
           <div className="tag-row" role="group" aria-label={t("When this began")}>
@@ -133,7 +150,7 @@ export function CreateBranch() {
                 <input
                   id="approx-date"
                   type="date"
-                  max={new Date().toISOString().slice(0, 10)}
+                  max={appNow().toISOString().slice(0, 10)}
                   value={approxDate}
                   onChange={(e) => setApproxDate(e.target.value)}
                 />
@@ -156,7 +173,7 @@ export function CreateBranch() {
                     id="period-year"
                     type="number"
                     min={1930}
-                    max={new Date().getFullYear()}
+                    max={appNow().getFullYear()}
                     value={periodYear}
                     onChange={(e) => setPeriodYear(e.target.value)}
                   />
@@ -165,16 +182,6 @@ export function CreateBranch() {
             )}
           </>
         )}
-        <div className="field">
-          <label>{t("How strongly does it pull right now?")}</label>
-          <div className="pull-scale" role="group" aria-label={t("Emotional pull from one to five")}>
-            {([1, 2, 3, 4, 5] as Pull[]).map((p) => (
-              <button key={p} type="button" aria-pressed={pull === p} onClick={() => setPull(p)}>
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
         <div className="field">
           <label>{t("What does it make you feel? (optional)")}</label>
           <FeelingPicker

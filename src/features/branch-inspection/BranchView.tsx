@@ -5,6 +5,7 @@ import type { Controllability, PsychologicalBranch } from "@/domain/branches/typ
 import { ANXIETIES, suggestLockedFeelings } from "@/domain/feelings/logic";
 import { describeBranch } from "@/visualization/a11y/describe";
 import { useT } from "@/i18n/i18n";
+import { appNow } from "@/domain/time/clock";
 import { TagListEditor } from "@/ui/TagListEditor";
 import { FeelingPicker } from "@/features/branch-touch/FeelingPicker";
 import { MomentList } from "../branch-moments/MomentList";
@@ -82,7 +83,7 @@ export function BranchView({ branchId }: Props) {
       month: "long",
       year: "numeric",
     });
-  const today = new Date().toLocaleDateString(undefined, { month: "long", day: "numeric" });
+  const today = appNow().toLocaleDateString(undefined, { month: "long", day: "numeric" });
 
   const diffSelected = new Set((branch.diffSelections ?? []) as DiffChangeId[]);
   const pr = branch.preserveRelease ?? {

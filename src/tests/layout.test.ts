@@ -236,4 +236,15 @@ describe("screen reader descriptions", () => {
     expect(text).toContain("Pull level four");
     expect(text).not.toMatch(/HEAD|rebase|commit hash/i);
   });
+
+  it("speaks a fractional pull (fine slider steps) as the nearest whole word", () => {
+    const text = describeBranch(mk({ title: "Lost fitness", pull: 3.4, forkDate: "2026-05-02" }));
+    expect(text).toContain("Pull level three");
+    expect(
+      describeTimeline([mk({ id: "f1", title: "Rent", pull: 4.6, forkDate: "2026-06-05" })], {
+        start: "2025-01-01",
+        end: "2026-08-04",
+      }),
+    ).toContain("pull level five");
+  });
 });

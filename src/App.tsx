@@ -14,10 +14,24 @@ export default function App() {
   const theme = useAppStore((s) => s.theme);
   const reducedMotion = useAppStore((s) => s.reducedMotion);
   const init = useAppStore((s) => s.init);
+  const refreshNow = useAppStore((s) => s.refreshNow);
 
   useEffect(() => {
     void init();
   }, [init]);
+
+  // The timeline lives: Now keeps moving while the app stays open.
+  useEffect(() => {
+    const id = setInterval(refreshNow, 30_000);
+    const onVisible = () => {
+      if (!document.hidden) refreshNow();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [refreshNow]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

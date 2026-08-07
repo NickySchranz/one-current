@@ -134,6 +134,32 @@
   --main-flow-dash: 1 30;
 }
 
+/* ---------- Demonfire: ember dark; every open thread is a small dragon */
+[data-theme="demonfire"] {
+  --bg: #161013;
+  --bg-raised: #221317;
+  --bg-sunken: #100a0d;
+  --ink: #ecd9cd;
+  --ink-soft: #a98d7e;
+  --ink-faint: #6d5850;
+  --line-main: #e0b9a0;
+  --line-axis: #3a2620;
+  --accent: #c65a33;
+  --accent-ink: #fff1e8;
+  --accent-soft: #3d2018;
+  --danger: #d3543e;
+  --focus: #e08a4e;
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.55), 0 8px 28px rgb(0 0 0 / 0.5);
+  --font-body: "Palatino Linotype", Palatino, "Book Antiqua", "URW Palladio L", serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --btn-radius: 6px;
+  --flow-duration: 1.6s;
+  --flow-dash: 2 8;
+  --main-flow-duration: 2.2s;
+  --main-flow-dash: 2 16;
+}
+
 * { box-sizing: border-box; }
 
 html, body, #root { height: 100%; }
@@ -626,7 +652,14 @@ textarea { min-height: 5rem; resize: vertical; }
   animation: none;
   stroke-dashoffset: 0;
 }
-.branch-hit { fill: none; stroke: transparent; stroke-width: 22; cursor: pointer; }
+.branch-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 22;
+  cursor: pointer;
+  /* the anxiety dial drags vertically from here: keep the browser's pan away */
+  touch-action: none;
+}
 .branch-label {
   font-size: 12.5px;
   font-weight: 550;
@@ -636,7 +669,7 @@ textarea { min-height: 5rem; resize: vertical; }
   cursor: pointer;
 }
 .branch-label.selected { font-weight: 700; }
-.branch-endpoint { cursor: pointer; }
+.branch-endpoint { cursor: pointer; touch-action: none; }
 /* a decision was taken on this line today */
 .acted-check {
   fill: none;
@@ -658,6 +691,83 @@ textarea { min-height: 5rem; resize: vertical; }
 @keyframes flow {
   from { stroke-dashoffset: 15; }
   to { stroke-dashoffset: 0; }
+}
+/* anxiety made visible: the strokes slither via a rAF wave (see useSquiggle);
+   reduced motion is handled in React, so no CSS is needed here */
+
+/* the floating readout while the thumb dials a thread's anxiety */
+.anxiety-chip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  color: var(--ink);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 4;
+}
+.anxiety-chip-dots { display: inline-flex; gap: 3px; }
+.anxiety-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+}
+.anxiety-dot.on { background: var(--accent); }
+
+/* one quiet slider: how loud the thread is — the same thing as its pull */
+.loudness-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.loudness-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 28px;
+  margin: 2px 0;
+  background: transparent;
+  cursor: pointer;
+}
+.loudness-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+}
+.loudness-slider::-moz-range-track {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+}
+.loudness-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  margin-top: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+}
+.loudness-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+}
+.loudness-slider:focus-visible {
+  outline: 2px solid var(--focus, var(--accent));
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 .pulse {
   animation: pulse 2.2s ease-in-out infinite;
@@ -779,6 +889,26 @@ textarea { min-height: 5rem; resize: vertical; }
 [data-theme="porcelain"] h2 { font-weight: 500; font-style: italic; }
 [data-theme="porcelain"] .now-glow { animation: none; opacity: 0.14; }
 [data-theme="porcelain"] .card { border: 1px solid var(--line-axis); }
+
+/* Demonfire: warm embers, a Now that smoulders, dragons at the line ends */
+[data-theme="demonfire"] .btn {
+  background: linear-gradient(var(--bg-raised), var(--bg-sunken));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+[data-theme="demonfire"] .btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line-axis));
+  color: var(--accent);
+}
+[data-theme="demonfire"] .now-glow {
+  animation: ember 3.2s ease-in-out infinite;
+}
+@keyframes ember {
+  0%, 100% { opacity: 0.1; transform: scale(0.9); }
+  40% { opacity: 0.32; transform: scale(1.12); }
+  60% { opacity: 0.2; transform: scale(1.02); }
+}
+.dragon-head { cursor: pointer; touch-action: none; }
 
 /* reduced motion outranks every theme's Now animation */
 [data-reduced-motion="true"] .now-glow { animation: none; }
@@ -961,19 +1091,6 @@ button.tag:hover { border-color: var(--ink-faint); }
 }
 .touch-input-row input { flex: 1; min-width: 0; }
 .touch-input-row .btn { flex: none; }
-.pull-scale { display: flex; gap: 0.35rem; }
-.pull-scale button {
-  flex: 1;
-  border: 1px solid var(--line-soft);
-  border-radius: var(--radius);
-  background: var(--bg-raised);
-}
-.pull-scale button[aria-pressed="true"] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
-
 .status-line {
   display: inline-flex;
   align-items: center;

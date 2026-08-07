@@ -24,11 +24,12 @@ export function sortMoments(moments: BranchCommit[]): BranchCommit[] {
 export function addMomentToBranch(
   branch: PsychologicalBranch,
   moment: BranchCommit,
+  now: Date = new Date(),
 ): PsychologicalBranch {
   return {
     ...branch,
     commits: sortMoments([...branch.commits, moment]),
-    lastActivatedAt: new Date().toISOString(),
+    lastActivatedAt: now.toISOString(),
   };
 }
 

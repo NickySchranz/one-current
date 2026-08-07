@@ -37,7 +37,8 @@ export type Controllability =
   | "outside-control"
   | "unclear";
 
-export type Pull = 1 | 2 | 3 | 4 | 5;
+/** How loud a thread is, from 1 (quiet) to 5. Fractional values are fine — the slider moves in fine steps. */
+export type Pull = number;
 
 export type PsychologicalBranch = {
   id: string;

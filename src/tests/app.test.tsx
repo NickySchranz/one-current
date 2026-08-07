@@ -4,10 +4,13 @@ import App from "@/App";
 import { repo } from "@/db/repository";
 import { useAppStore } from "@/stores/app-store";
 import { suggestLockedFeelings } from "@/domain/feelings/logic";
+import { appNow, setSkewMs } from "@/domain/time/clock";
 
 beforeEach(async () => {
   cleanup();
   await repo.deleteEverything();
+  // Fast-forward skew must never leak from one test into the next.
+  setSkewMs(0);
   useAppStore.setState({
     ready: false,
     branches: [],
@@ -17,6 +20,8 @@ beforeEach(async () => {
     view: { kind: "now" },
     operation: { kind: "idle" },
     reducedMotion: false,
+    nowTick: appNow().getTime(),
+    timeSkewMs: 0,
   });
 });
 
@@ -525,5 +530,143 @@ describe("app flows", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Everything" }));
     expect(await screen.findByText(/Nothing was recorded on this day/)).toBeTruthy();
+  });
+});
+
+const DAY = 24 * 60 * 60 * 1000;
+
+async function createThread(title: string, pull = 3) {
+  return useAppStore.getState().createBranchNow({
+    title,
+    kindChoiceId: "feared-future",
+    period: { kind: "today" },
+    pull: pull as 1 | 2 | 3 | 4 | 5,
+  });
+}
+
+describe("living time and loudness", () => {
+  it("fast-forward moves the app's clock and recenters the window; reset returns", async () => {
+    await renderReady();
+    const before = useAppStore.getState();
+    useAppStore.getState().fastForward(3 * DAY);
+    const after = useAppStore.getState();
+    expect(after.timeSkewMs).toBe(3 * DAY);
+    expect(after.nowTick - before.nowTick).toBeGreaterThanOrEqual(3 * DAY);
+    expect(Date.parse(after.window!.end)).toBeGreaterThan(Date.parse(before.window!.end));
+
+    useAppStore.getState().resetTimeSkew();
+    expect(useAppStore.getState().timeSkewMs).toBe(0);
+  });
+
+  it("a loud thread slithers; days without decisions make it louder; a decision stills it", async () => {
+    await renderReady();
+    const b = await createThread("The unpaid bill", 1);
+    // Skip the birth animation — a just-born line never trembles.
+    useAppStore.getState().clearBorn();
+    await waitFor(() => expect(document.querySelector(".branch-line")).toBeTruthy());
+    // Quiet (loudness 1): no tremor group.
+    expect(document.querySelector(".branch-tremor")).toBeFalsy();
+
+    await useAppStore.getState().updateBranch(b.id, { pull: 2 });
+    await waitFor(() => expect(document.querySelector(".branch-tremor")).toBeTruthy());
+    expect(
+      (document.querySelector(".branch-tremor") as SVGGElement).getAttribute("data-loudness"),
+    ).toBe("2");
+
+    // Two undecided days later it sounds louder (2 base + 1 drift).
+    useAppStore.getState().fastForward(2 * DAY);
+    await waitFor(() => {
+      const g = document.querySelector(".branch-tremor") as SVGGElement | null;
+      expect(g).toBeTruthy();
+      expect(g!.getAttribute("data-loudness")).toBe("3");
+    });
+
+    // Leaving it for today is a decision: the line rests, perfectly still.
+    await useAppStore.getState().easeBranch(b.id, {});
+    await waitFor(() => expect(document.querySelector(".branch-tremor")).toBeFalsy());
+    // And the decision eased the stored level one step.
+    expect(useAppStore.getState().branches[0].pull).toBe(1);
+  });
+
+  it("press a thread and slide up: loudness dials in steps and commits on release", async () => {
+    await renderReady();
+    const b = await createThread("The clinic call", 1);
+    await waitFor(() => expect(document.querySelector(".branch-hit")).toBeTruthy());
+    const hit = document.querySelector(".branch-hit")!;
+    const svg = document.querySelector(".timeline-svg")!;
+
+    fireEvent.pointerDown(hit, { pointerId: 1, clientX: 200, clientY: 300 });
+    fireEvent.pointerMove(svg, { pointerId: 1, clientX: 203, clientY: 224 }); // ~2 steps up
+    // The floating chip reads the level live.
+    expect(document.querySelector(".anxiety-chip")).toBeTruthy();
+    fireEvent.pointerUp(svg, { pointerId: 1, clientX: 203, clientY: 224 });
+
+    await waitFor(() =>
+      expect(useAppStore.getState().branches.find((x) => x.id === b.id)?.pull).toBe(3),
+    );
+    // Adjusting is a touch, not a decision: no menu opened, no decision recorded.
+    expect(useAppStore.getState().operation).toEqual({ kind: "idle" });
+    expect(useAppStore.getState().branches[0].lastDecisionOn).toBeUndefined();
+    expect(document.querySelector(".anxiety-chip")).toBeFalsy();
+  });
+
+  it("a plain tap still opens the quick menu; a horizontal drag still pans", async () => {
+    await renderReady();
+    const b = await createThread("The move");
+    await waitFor(() => expect(document.querySelector(".branch-hit")).toBeTruthy());
+    const hit = document.querySelector(".branch-hit")!;
+    const svg = document.querySelector(".timeline-svg")!;
+
+    // Horizontal drag from the thread: time pans, nothing committed.
+    const startWindow = useAppStore.getState().window;
+    fireEvent.pointerDown(hit, { pointerId: 2, clientX: 200, clientY: 300 });
+    fireEvent.pointerMove(svg, { pointerId: 2, clientX: 260, clientY: 303 });
+    fireEvent.pointerMove(svg, { pointerId: 2, clientX: 320, clientY: 303 });
+    fireEvent.pointerUp(svg, { pointerId: 2, clientX: 320, clientY: 303 });
+    expect(Date.parse(useAppStore.getState().window!.start)).toBeLessThan(
+      Date.parse(startWindow!.start),
+    );
+    expect(useAppStore.getState().branches[0].pull).toBe(3); // untouched
+
+    // A plain tap opens the quick menu as before.
+    fireEvent.pointerDown(hit, { pointerId: 3, clientX: 200, clientY: 300 });
+    fireEvent.pointerUp(svg, { pointerId: 3, clientX: 200, clientY: 300 });
+    fireEvent.click(hit);
+    expect(useAppStore.getState().operation).toEqual({ kind: "quick-touch", branchId: b.id });
+  });
+
+  it("the quick menu slider sets the loudness for keyboard hands", async () => {
+    await renderReady();
+    const b = await createThread("The lease");
+    useAppStore.getState().setOperation({ kind: "quick-touch", branchId: b.id });
+    const slider = await screen.findByRole("slider", {
+      name: "How loud is this thread right now?",
+    });
+    fireEvent.change(slider, { target: { value: "4" } });
+    await waitFor(() =>
+      expect(useAppStore.getState().branches.find((x) => x.id === b.id)?.pull).toBe(4),
+    );
+
+    // A decision today settles the loudness: the dial steps away until tomorrow.
+    await useAppStore.getState().easeBranch(b.id, {});
+    useAppStore.getState().setOperation({ kind: "idle" });
+    useAppStore.getState().setOperation({ kind: "quick-touch", branchId: b.id });
+    await screen.findByText("What does this thread need from you now?");
+    expect(
+      screen.queryByRole("slider", { name: "How loud is this thread right now?" }),
+    ).toBeFalsy();
+  });
+
+  it("demonfire turns open threads into dragon heads; other themes keep circles", async () => {
+    await renderReady();
+    await createThread("The old rivalry");
+    await waitFor(() => expect(document.querySelector(".branch-endpoint")).toBeTruthy());
+    expect(document.querySelector(".dragon-head")).toBeFalsy();
+
+    useAppStore.getState().setTheme("demonfire");
+    await waitFor(() => expect(document.querySelector(".dragon-head")).toBeTruthy());
+
+    useAppStore.getState().setTheme("riverbed");
+    await waitFor(() => expect(document.querySelector(".dragon-head")).toBeFalsy());
   });
 });

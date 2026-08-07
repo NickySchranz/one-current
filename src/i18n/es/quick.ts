@@ -22,8 +22,7 @@ export const quick: Record<string, string> = {
   "Name the period": "Nombra la etapa",
   "e.g. after the move, my first job": "p. ej. después de la mudanza, mi primer trabajo",
   "Around which year?": "¿Hacia qué año?",
-  "How strongly does it pull right now?": "¿Con qué fuerza tira ahora mismo?",
-  "Emotional pull from one to five": "Tirón emocional del uno al cinco",
+  "How loud is it right now?": "¿Cómo de fuerte suena ahora mismo?",
   Cancel: "Cancelar",
   "Start the thread": "Abrir el hilo",
   "Thread started. Its line just drew itself onto the timeline — it begins in your past and reaches Now.":
@@ -53,6 +52,10 @@ export const quick: Record<string, string> = {
 
   // ---- QuickBranchMenu ----
   "What does this thread need from you now?": "¿Qué necesita este hilo de ti ahora?",
+  "How loud is this thread right now?": "¿Cómo de fuerte suena este hilo ahora mismo?",
+  Quiet: "En silencio",
+  "Undecided days have made it louder.": "Los días sin decisión lo han hecho sonar más fuerte.",
+  "Loudness {level} of 5": "Suena a {level} de 5",
   Act: "Actuar",
   "Take one small step.": "Da un paso pequeño.",
   "Integrate": "Integrar",

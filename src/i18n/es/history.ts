@@ -125,6 +125,9 @@ export const history: Record<string, string> = {
   "Forest dark with amber fireflies.": "Oscuridad de bosque con luciérnagas ámbar.",
   "Gallery white, ink lines, one touch of red.":
     "Blanco de galería, líneas de tinta, un toque de rojo.",
+  Demonfire: "Fuego de dragón",
+  "Ember dark. Every open thread is a small dragon — face it kindly and it settles.":
+    "Oscuridad de brasas. Cada hilo abierto es un pequeño dragón: míralo con amabilidad y se calma.",
   Language: "Idioma",
   "Changes every word the app says. Your own words stay as you wrote them.":
     "Cambia cada palabra que dice la app. Tus propias palabras se quedan como las escribiste.",
@@ -135,6 +138,14 @@ export const history: Record<string, string> = {
   "See what a lived-in timeline looks like: nine example threads — drifting, resting, integrated — plus today's actions. You can delete them any time.":
     "Mira cómo se ve una línea de tiempo vivida: nueve hilos de ejemplo — a la deriva, en reposo, integrados — más las acciones de hoy. Puedes borrarlos cuando quieras.",
   "Load example threads": "Cargar hilos de ejemplo",
+  Testing: "Pruebas",
+  "Move the app's clock forward to watch how threads behave when days pass without decisions. This only affects this session — reloading returns to real time.":
+    "Adelanta el reloj de la app para ver cómo se comportan los hilos cuando pasan días sin decisiones. Solo afecta a esta sesión: al recargar vuelves al tiempo real.",
+  "+6 hours": "+6 horas",
+  "+1 day": "+1 día",
+  "+3 days": "+3 días",
+  "The app is living {days} day(s) ahead.": "La app vive {days} día(s) por delante.",
+  "Back to real time": "Volver al tiempo real",
   Privacy: "Privacidad",
   "Everything you write stays in this browser, stored locally on your device. Nothing is sent anywhere. Export a copy before switching devices.":
     "Todo lo que escribes se queda en este navegador, guardado localmente en tu dispositivo. No se envía nada a ninguna parte. Exporta una copia antes de cambiar de dispositivo.",

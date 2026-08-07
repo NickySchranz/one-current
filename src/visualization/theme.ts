@@ -41,6 +41,14 @@ export const THEMES = [
     paper: "#ffffff",
     accent: "#b23a2a",
   },
+  {
+    id: "demonfire",
+    name: "Demonfire",
+    hint: "Ember dark. Every open thread is a small dragon — face it kindly and it settles.",
+    mode: "dark",
+    paper: "#161013",
+    accent: "#c65a33",
+  },
 ] as const;
 
 export type ThemeId = (typeof THEMES)[number]["id"];

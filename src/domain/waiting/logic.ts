@@ -24,13 +24,14 @@ export function createWaitingContainer(
 export function applyWaitingToBranch(
   branch: PsychologicalBranch,
   container: WaitingContainer,
+  now: Date = new Date(),
 ): PsychologicalBranch {
   return {
     ...branch,
     status: "waiting-with-boundaries",
     waitingContainerId: container.id,
     pull: Math.min(branch.pull, 2) as PsychologicalBranch["pull"],
-    lastDecisionOn: new Date().toISOString().slice(0, 10),
+    lastDecisionOn: now.toISOString().slice(0, 10),
     storedQualities: [...new Set([...branch.storedQualities, ...container.reclaimedNow])],
   };
 }

@@ -27,6 +27,8 @@ export type BranchGeometry = {
   forkVisible: boolean;
   reachesNow: boolean;
   thickness: number;
+  /** How loud this line is today (1–5, drift included) — same metric as its pull. */
+  loudness: number;
   style: LineStyle;
   momentPoints: MomentPoint[];
   labelX: number;
@@ -61,10 +63,11 @@ export function buildBranchGeometry(
   assignment: LaneAssignment,
   window: TimeWindow,
   metrics: TimelineMetrics,
+  now: Date = new Date(),
 ): BranchGeometry {
   const { width, mainY, curveLength } = metrics;
   // Stronger felt pull pushes the line further from Now; decisions bring it back closer.
-  const pull = effectivePull(branch);
+  const pull = effectivePull(branch, now);
   const pullOffset = ((pull - 1) / 4) * 0.45 * metrics.laneGap;
   const laneY = laneToY(assignment.lane, metrics) + Math.sign(assignment.lane) * pullOffset;
   // The fork curve is only drawn while the fork moment is actually in view;
@@ -124,9 +127,10 @@ export function buildBranchGeometry(
     forkVisible,
     reachesNow: isOpen(branch),
     thickness: pullToThickness(pull),
+    loudness: pull,
     // Any decision today lets the line rest: fainter and still until tomorrow.
     style:
-      restingToday(branch) || (!closed && decidedToday(branch))
+      restingToday(branch, now) || (!closed && decidedToday(branch, now))
         ? applyResting(statusToLineStyle(branch.status))
         : statusToLineStyle(branch.status),
     momentPoints,

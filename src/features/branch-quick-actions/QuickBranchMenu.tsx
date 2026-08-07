@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { useT } from "@/i18n/i18n";
-import { isClosed } from "@/domain/branches/logic";
+import { effectivePull, isClosed } from "@/domain/branches/logic";
+import { decidedToday } from "@/domain/feelings/logic";
+import type { Pull } from "@/domain/branches/types";
+import { appNow } from "@/domain/time/clock";
 
 type Props = { branchId: string };
 
@@ -35,6 +38,7 @@ export function QuickBranchMenu({ branchId }: Props) {
   const setOperation = useAppStore((s) => s.setOperation);
   const reopenBranch = useAppStore((s) => s.reopenBranch);
   const easeBranch = useAppStore((s) => s.easeBranch);
+  const updateBranch = useAppStore((s) => s.updateBranch);
   const [eased, setEased] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const t = useT();
@@ -42,7 +46,7 @@ export function QuickBranchMenu({ branchId }: Props) {
   // Leaving the line for today: its label and actions step off the timeline
   // until tomorrow — a decision, mutually exclusive with a planned action.
   const leaveForToday = () =>
-    void easeBranch(branchId, { leftOn: new Date().toISOString().slice(0, 10) }).then(() =>
+    void easeBranch(branchId, { leftOn: appNow().toISOString().slice(0, 10) }).then(() =>
       setEased(true),
     );
 
@@ -121,6 +125,37 @@ export function QuickBranchMenu({ branchId }: Props) {
       <p className="touch-sheet-title">
         <strong>{branch.title}</strong>
       </p>
+      {/* first, the one dial: how loud is it — the same thing as its pull.
+          Setting it is a touch, not a decision — it never quiets the day
+          counter. Once a decision has been taken today, the line rests and
+          the dial steps away until tomorrow (or until the thread reopens). */}
+      {!decidedToday(branch, appNow()) && (
+        <div className="loudness-field">
+          <label className="hint" htmlFor="quick-loudness">
+            {t("How loud is this thread right now?")}
+          </label>
+          <input
+            id="quick-loudness"
+            className="loudness-slider"
+            type="range"
+            min={1}
+            max={5}
+            step={0.1}
+            value={branch.pull}
+            aria-valuetext={
+              branch.pull === 1
+                ? t("Quiet")
+                : t("Loudness {level} of 5", { level: Math.round(branch.pull) })
+            }
+            onChange={(e) =>
+              void updateBranch(branchId, { pull: Number(e.target.value) as Pull })
+            }
+          />
+          {effectivePull(branch, appNow()) > branch.pull && (
+            <span className="hint">{t("Undecided days have made it louder.")}</span>
+          )}
+        </div>
+      )}
       <p className="prompt">{t("What does this thread need from you now?")}</p>
       <div className="quick-menu">
         {ACTIONS.map((a) => (

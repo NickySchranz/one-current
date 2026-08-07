@@ -113,5 +113,7 @@ function statusText(branch: PsychologicalBranch, t: Translate): string {
 
 const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 export function numberWord(n: number): string {
-  return n >= 0 && n < WORDS.length ? WORDS[n] : String(n);
+  // Pull can be fractional (the slider moves in fine steps): speak the nearest whole number.
+  const whole = Math.round(n);
+  return whole >= 0 && whole < WORDS.length ? WORDS[whole] : String(whole);
 }

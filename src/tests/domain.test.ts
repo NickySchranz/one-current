@@ -7,6 +7,8 @@ import {
   branchEndDate,
   reducePullAfterMerge,
   mostActivated,
+  effectivePull,
+  easePull,
 } from "@/domain/branches/logic";
 import { createMoment, addMomentToBranch, beliefsFormed } from "@/domain/moments/logic";
 import { buildBranchDiff, mergeableContent } from "@/domain/branches/diff";
@@ -365,5 +367,38 @@ describe("energy split across lines", () => {
     const after = energySplit([decided], NOW);
     expect(after.parts[0].share).toBeLessThan(before.parts[0].share);
     expect(after.mainShare).toBeGreaterThan(before.mainShare);
+  });
+});
+
+describe("loudness of a line (its pull)", () => {
+  it("holds its base through the first undecided day, then grows one step per day", () => {
+    const b = mkBranch({ pull: 2, lastDecisionOn: "2026-08-04" });
+    expect(effectivePull(b, NOW)).toBe(2); // decided today
+    expect(effectivePull(b, new Date("2026-08-05T12:00:00Z"))).toBe(2); // one day of grace
+    expect(effectivePull(b, new Date("2026-08-06T12:00:00Z"))).toBe(3);
+    expect(effectivePull(b, new Date("2026-08-07T12:00:00Z"))).toBe(4);
+    expect(effectivePull(b, new Date("2026-08-20T12:00:00Z"))).toBe(5); // never past 5
+  });
+
+  it("integrated lines and calm waiting hold at the base — no drift", () => {
+    const merged = mkBranch({
+      pull: 4,
+      status: "merged",
+      mergeDate: "2026-08-01",
+      lastDecisionOn: "2026-07-01",
+    });
+    expect(effectivePull(merged, NOW)).toBe(4);
+    const waiting = mkBranch({
+      pull: 2,
+      status: "waiting-with-boundaries",
+      lastDecisionOn: "2026-07-01",
+    });
+    expect(effectivePull(waiting, NOW)).toBe(2);
+  });
+
+  it("a decision eases the level one step, never below one", () => {
+    expect(easePull(3)).toBe(2);
+    expect(easePull(2)).toBe(1);
+    expect(easePull(1)).toBe(1); // quiet is the floor
   });
 });

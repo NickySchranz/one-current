@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { useT } from "@/i18n/i18n";
+import { appNow } from "@/domain/time/clock";
 
 type Props = { branchId: string };
 
@@ -23,7 +24,7 @@ export function QuickNote({ branchId }: Props) {
     try {
       await addMoment({
         branchId,
-        date: new Date().toISOString().slice(0, 10),
+        date: appNow().toISOString().slice(0, 10),
         title: text.trim(),
         type: "event",
       });

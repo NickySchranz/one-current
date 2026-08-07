@@ -4,8 +4,10 @@ import { buildTimelineLayout } from "@/visualization/main-line/layout";
 import { generateTicks, dateToX } from "@/visualization/zoom/time-scale";
 import { describeTimeline, describeBranch } from "@/visualization/a11y/describe";
 import { isClosed, mostActivated } from "@/domain/branches/logic";
-import type { PsychologicalBranch } from "@/domain/branches/types";
+import { decidedToday } from "@/domain/feelings/logic";
+import type { PsychologicalBranch, Pull } from "@/domain/branches/types";
 import { BranchLine } from "./BranchLine";
+import { useAnxietyDial } from "./useAnxietyDial";
 import { TimelineHelp } from "@/features/timeline-help/TimelineHelp";
 import { WholenessIndicator } from "./WholenessIndicator";
 import { branchColor } from "@/visualization/branch-lines/style";
@@ -24,6 +26,7 @@ function isEditableTarget(e: { target: EventTarget | null }): boolean {
 export function LifeTimeline() {
   const branches = useAppStore((s) => s.branches);
   const window_ = useAppStore((s) => s.window);
+  const nowTick = useAppStore((s) => s.nowTick);
   const typeFilter = useAppStore((s) => s.typeFilter);
   const statusFilter = useAppStore((s) => s.statusFilter);
   const setView = useAppStore((s) => s.setView);
@@ -37,6 +40,7 @@ export function LifeTimeline() {
   const born = useAppStore((s) => s.born);
   const clearBorn = useAppStore((s) => s.clearBorn);
   const reducedMotion = useAppStore((s) => s.reducedMotion);
+  const updateBranch = useAppStore((s) => s.updateBranch);
   const actions = useAppStore((s) => s.actions);
   const language = useAppStore((s) => s.language);
   const t = useT();
@@ -138,6 +142,17 @@ export function LifeTimeline() {
   const dragRef = useRef<{ x: number; moved: boolean } | null>(null);
   const pointersRef = useRef(new Set<number>());
 
+  // Press a thread, slide the thumb up or down: its loudness dials live.
+  const dial = useAnxietyDial({
+    svgRef,
+    onPanHandoff: (clientX) => {
+      dragRef.current = { x: clientX, moved: true };
+    },
+    onCommit: (branchId, level) => {
+      void updateBranch(branchId, { pull: level as Pull });
+    },
+  });
+
   // Wheel / trackpad: sideways scrolling moves through time — faster down by
   // the date labels, where a scrub is clearly about time. The lanes themselves
   // never zoom: every thread always fits the stage. Attached natively so we
@@ -177,6 +192,9 @@ export function LifeTimeline() {
   );
 
   const compact = size.width < 640;
+  // The app's sense of the present: ticks forward every half minute, jumps
+  // when the Testing controls fast-forward time.
+  const now = useMemo(() => new Date(nowTick), [nowTick]);
   const layout = useMemo(
     () =>
       buildTimelineLayout(visible, {
@@ -186,11 +204,12 @@ export function LifeTimeline() {
         height: Math.max(130, size.height - bottomInset),
         window: window_,
         compact,
+        now,
       }),
-    [visible, size, window_, compact, bottomInset],
+    [visible, size, window_, compact, bottomInset, now],
   );
 
-  const ticks = useMemo(() => generateTicks(layout.window), [layout.window]);
+  const ticks = useMemo(() => generateTicks(layout.window, now), [layout.window, now]);
   const summary = useMemo(
     () => describeTimeline(visible, layout.window, t),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
@@ -205,7 +224,7 @@ export function LifeTimeline() {
 
   // "Return to Now" appears once you have moved away from the default view:
   // the recent week with the right edge at the furthest future we extend.
-  const today = new Date().toISOString().slice(0, 10);
+  const today = now.toISOString().slice(0, 10);
   const span = Date.parse(layout.window.end) - Date.parse(layout.window.start);
   const restingEnd = Date.parse(today) + span / 2;
   const awayFromNow =
@@ -273,10 +292,16 @@ export function LifeTimeline() {
 
   function onPointerDown(e: React.PointerEvent) {
     pointersRef.current.add(e.pointerId);
+    // A press on a thread belongs to the anxiety dial until it picks an axis.
+    if (dial.onStagePointerDown(e.pointerId)) {
+      dragRef.current = null;
+      return;
+    }
     // One finger drags through time; a second finger simply pauses the drag.
     dragRef.current = pointersRef.current.size === 1 ? { x: e.clientX, moved: false } : null;
   }
   function onPointerMove(e: React.PointerEvent) {
+    if (dial.onPointerMove(e)) return;
     if (pointersRef.current.size !== 1) return;
     const d = dragRef.current;
     if (!d) return;
@@ -291,6 +316,13 @@ export function LifeTimeline() {
     }
   }
   function onPointerUp(e: React.PointerEvent) {
+    dial.onPointerUp(e);
+    pointersRef.current.delete(e.pointerId);
+    dragRef.current = null;
+  }
+  function onPointerCancel(e: React.PointerEvent) {
+    // Taken away by the system: revert the dial, commit nothing.
+    dial.onPointerCancel(e);
     pointersRef.current.delete(e.pointerId);
     dragRef.current = null;
   }
@@ -326,8 +358,9 @@ export function LifeTimeline() {
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
+          onPointerCancel={onPointerCancel}
           onPointerLeave={onPointerUp}
+          onClickCapture={dial.onClickCapture}
         >
           {/* today softly glows: this part of the line is where life is happening */}
           {layout.nowX - todayX > 0 && (
@@ -440,11 +473,25 @@ export function LifeTimeline() {
                 branch={branch}
                 geometry={g}
                 theme={theme}
+                nowMs={nowTick}
+                anxietyPreview={
+                  dial.preview?.branchId === branch.id ? dial.preview.level : undefined
+                }
+                onDialPointerDown={
+                  // A decision today settles the loudness too: the dial rests
+                  // with the line until tomorrow (or until it reopens).
+                  isClosed(branch) || decidedToday(branch, now)
+                    ? undefined
+                    : // The drag moves in whole levels; a fine-tuned fractional
+                      // pull starts from its nearest step.
+                      (e) => dial.onBranchPointerDown(branch.id, Math.round(branch.pull), e)
+                }
                 focused={i === focusIndex}
                 emphasizedId={top?.id}
                 highlighted={branch.id === focusedBranchId}
                 dimmed={!!focusedBranchId && branch.id !== focusedBranchId}
                 born={!reducedMotion && born?.branchId === branch.id}
+                reducedMotion={reducedMotion}
                 onSelect={() => setOperation({ kind: "quick-touch", branchId: branch.id })}
                 onSelectMoment={() => setOperation({ kind: "quick-touch", branchId: branch.id })}
                 onSelectMergePoint={() => {
@@ -498,6 +545,32 @@ export function LifeTimeline() {
             </text>
           </g>
         </svg>
+
+        {/* while the thumb dials a thread's loudness: its name and level, live */}
+        {dial.preview && (() => {
+          const b = byId.get(dial.preview.branchId);
+          if (!b) return null;
+          const title = b.title.length > 22 ? b.title.slice(0, 20) + "…" : b.title;
+          return (
+            <div
+              className="anxiety-chip"
+              ref={dial.chipRef}
+              style={{
+                transform: `translate(${dial.chipPos.current.x}px, ${dial.chipPos.current.y}px)`,
+              }}
+            >
+              <span className="anxiety-chip-title">{title}</span>
+              <span className="anxiety-chip-dots" aria-hidden="true">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <span key={n} className={`anxiety-dot ${n <= dial.preview!.level ? "on" : ""}`} />
+                ))}
+              </span>
+              <span className="visually-hidden" role="status" aria-live="polite">
+                {t("Loudness {level} of 5", { level: dial.preview.level })}
+              </span>
+            </div>
+          );
+        })()}
 
         {branches.length === 0 && (
           <div className="timeline-empty">

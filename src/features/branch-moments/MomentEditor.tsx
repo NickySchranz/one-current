@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { MomentType } from "@/domain/moments/types";
 import { useAppStore } from "@/stores/app-store";
 import { useT } from "@/i18n/i18n";
+import { appNow } from "@/domain/time/clock";
 
 const MOMENT_TYPES: { id: MomentType; label: string }[] = [
   { id: "event", label: "Something happened" },
@@ -21,7 +22,7 @@ export function MomentEditor({ branchId, onDone }: Props) {
   const t = useT();
   const addMoment = useAppStore((s) => s.addMoment);
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(appNow().toISOString().slice(0, 10));
   const [type, setType] = useState<MomentType>("event");
   const [belief, setBelief] = useState("");
   const [effect, setEffect] = useState<"stronger" | "lighter" | "different" | undefined>();
@@ -63,7 +64,7 @@ export function MomentEditor({ branchId, onDone }: Props) {
           id="moment-date"
           type="date"
           value={date}
-          max={new Date().toISOString().slice(0, 10)}
+          max={appNow().toISOString().slice(0, 10)}
           onChange={(e) => setDate(e.target.value)}
         />
       </div>

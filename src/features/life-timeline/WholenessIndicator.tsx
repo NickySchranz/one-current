@@ -19,6 +19,8 @@ export function WholenessIndicator({ activeLines }: Props) {
   const t = useT();
   const branches = useAppStore((s) => s.branches);
   const setOperation = useAppStore((s) => s.setOperation);
+  const nowTick = useAppStore((s) => s.nowTick);
+  const now = new Date(nowTick);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -33,10 +35,10 @@ export function WholenessIndicator({ activeLines }: Props) {
 
   // How much of you moves with your main line right now — the wholeness score.
   // Every decision (an action or "nothing can be done") raises it.
-  const wholeness = energySplit(branches).mainShare;
+  const wholeness = energySplit(branches, now).mainShare;
   const undecided = activeLines
-    .filter((b) => !decidedToday(b))
-    .sort((a, b) => effectivePull(b) - effectivePull(a));
+    .filter((b) => !decidedToday(b, now))
+    .sort((a, b) => effectivePull(b, now) - effectivePull(a, now));
 
   const word =
     wholeness >= 0.85
@@ -86,7 +88,7 @@ export function WholenessIndicator({ activeLines }: Props) {
           <path className="frag-base" d="M 2 10 L 20 10" />
           {activeLines.length === 0 && <path className="frag-base" d="M 20 10 L 54 10" />}
           {activeLines.slice(0, 6).map((b, i) => {
-            const isUndecided = !decidedToday(b);
+            const isUndecided = !decidedToday(b, now);
             const side = i % 2 === 0 ? 1 : -1;
             const fan = isUndecided ? side * (3 + i * 2.2) : side * 1.2;
             const y = Math.max(2, Math.min(18, 10 + fan));

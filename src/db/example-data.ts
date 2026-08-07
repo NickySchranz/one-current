@@ -16,7 +16,7 @@ function isoDaysAgo(n: number): string {
 }
 
 type BranchSeed = Partial<PsychologicalBranch> &
-  Pick<PsychologicalBranch, "title" | "type" | "orientation" | "forkDate" | "pull">;
+  Pick<PsychologicalBranch, "title" | "type" | "orientation" | "forkDate" | "loudness">;
 
 function branch(seed: BranchSeed): PsychologicalBranch {
   return {
@@ -63,7 +63,7 @@ export function buildExampleData(): {
     type: "event",
     orientation: "past",
     forkDate: daysAgo(24),
-    pull: 4,
+    loudness: 4,
     controllability: "influenceable",
     unmetNeeds: ["being heard"],
     anxieties: ["anger", "guilt"],
@@ -80,7 +80,7 @@ export function buildExampleData(): {
     type: "waiting",
     orientation: "outside-control",
     forkDate: daysAgo(18),
-    pull: 4,
+    loudness: 4,
     controllability: "outside-control",
     lastDecisionOn: daysAgo(2),
     anxieties: ["worry", "dread"],
@@ -96,7 +96,7 @@ export function buildExampleData(): {
     type: "projection",
     orientation: "future",
     forkDate: daysAgo(9),
-    pull: 5,
+    loudness: 5,
     controllability: "influenceable",
     unmetNeeds: ["security"],
     anxieties: ["worry", "overwhelm"],
@@ -112,7 +112,7 @@ export function buildExampleData(): {
     type: "identity",
     orientation: "future",
     forkDate: daysAgo(45),
-    pull: 3,
+    loudness: 3,
     controllability: "changeable",
     anxieties: ["envy", "restlessness"],
     occupies: ["confidence", "self-trust", "presence"],
@@ -128,7 +128,7 @@ export function buildExampleData(): {
     orientation: "relationship",
     forkDate: daysAgo(70),
     forkLabel: "since his birthday",
-    pull: 3,
+    loudness: 3,
     controllability: "influenceable",
     lastDecisionOn: daysAgo(3),
     anxieties: ["loneliness", "sadness"],
@@ -142,7 +142,7 @@ export function buildExampleData(): {
     orientation: "past",
     forkDate: daysAgo(420),
     forkLabel: "since the breakup",
-    pull: 2,
+    loudness: 2,
     controllability: "outside-control",
     lastDecisionOn: today,
     anxieties: ["regret", "sadness"],
@@ -158,7 +158,7 @@ export function buildExampleData(): {
     type: "body",
     orientation: "body",
     forkDate: daysAgo(30),
-    pull: 2,
+    loudness: 2,
     controllability: "changeable",
     leftOn: today,
     lastDecisionOn: today,
@@ -175,7 +175,7 @@ export function buildExampleData(): {
     forkDate: daysAgo(300),
     forkLabel: "since the sourdough summer",
     mergeDate: daysAgo(1),
-    pull: 1,
+    loudness: 1,
     controllability: "changeable",
     storedQualities: ["playfulness", "patience"],
     lastDecisionOn: daysAgo(1),
@@ -190,7 +190,7 @@ export function buildExampleData(): {
     orientation: "past",
     status: "merged",
     forkDate: daysAgo(160),
-    pull: 1,
+    loudness: 1,
     controllability: "outside-control",
     mergeDate: daysAgo(11),
     lastDecisionOn: daysAgo(11),
@@ -222,7 +222,7 @@ export function buildExampleData(): {
     status: "merged",
     forkDate: daysAgo(900),
     forkLabel: "the failed year",
-    pull: 1,
+    loudness: 1,
     controllability: "outside-control",
     mergeDate: daysAgo(120),
     lastDecisionOn: daysAgo(120),

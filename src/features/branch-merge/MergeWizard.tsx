@@ -231,7 +231,7 @@ export function MergeWizard({ branchIds }: Props) {
           checked={outcome === "partly-merged"}
           onChange={(e) => setOutcome(e.target.checked ? "partly-merged" : "merged")}
         />
-        {t("Only part of it integrates for now — the rest stays with less pull")}
+        {t("Only part of it integrates for now — the rest stays with less loudness")}
       </label>
 
       <div className="stage-nav">

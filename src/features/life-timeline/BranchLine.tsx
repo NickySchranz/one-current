@@ -26,9 +26,9 @@ type Props = {
   reducedMotion?: boolean;
   /** The app's current moment (epoch ms) — moves live, jumps on fast-forward. */
   nowMs?: number;
-  /** While the anxiety dial is being dragged: the level under the thumb. */
-  anxietyPreview?: number;
-  /** A press starts here; sliding up or down dials this thread's anxiety. */
+  /** While the loudness dial is being dragged: the level under the thumb. */
+  loudnessPreview?: number;
+  /** A press starts here; sliding up or down dials this thread's loudness. */
   onDialPointerDown?: (e: React.PointerEvent) => void;
   onSelect: () => void;
   onSelectMoment: (momentId: string) => void;
@@ -47,7 +47,7 @@ export const BranchLine = memo(function BranchLine({
   born = false,
   reducedMotion = false,
   nowMs,
-  anxietyPreview,
+  loudnessPreview,
   onDialPointerDown,
   onSelect,
   onSelectMoment,
@@ -62,7 +62,7 @@ export const BranchLine = memo(function BranchLine({
   // The line slithers with its loudness — a wave travelling toward Now, wider
   // and faster the louder it is. Both ends stay anchored; a decision today
   // quiets it. The hit path keeps the true geometry and feeds the sampler.
-  const loudness = Math.max(1, Math.min(5, anxietyPreview ?? g.loudness));
+  const loudness = Math.max(1, Math.min(5, loudnessPreview ?? g.loudness));
   const trembling =
     g.inWindow &&
     !reducedMotion &&
@@ -182,8 +182,9 @@ export const BranchLine = memo(function BranchLine({
           <DragonHead
             x={g.endX - 3}
             y={g.endY}
-            scale={0.8 + (g.thickness - 2) * 0.16}
+            scale={1.4 + (g.thickness - 2) * 0.24}
             color={color}
+            loudness={loudness}
             onClick={(e) => {
               e.stopPropagation();
               onSelect();

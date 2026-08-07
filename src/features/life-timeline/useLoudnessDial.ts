@@ -2,10 +2,10 @@ import { useRef, useState } from "react";
 
 /** Movement below this is still a tap; beyond it the gesture picks an axis. */
 const DECIDE_PX = 8;
-/** Vertical pixels per anxiety step — up is louder, down is quieter. */
+/** Vertical pixels per loudness step — up is louder, down is quieter. */
 const STEP_PX = 36;
 
-export type AnxietyPreview = { branchId: string; level: number };
+export type LoudnessPreview = { branchId: string; level: number };
 
 type DialState =
   | { phase: "idle" }
@@ -40,13 +40,13 @@ type Options = {
  * menu; a horizontal drag still pans through time. Adjusting is a touch,
  * not a decision — the thread's day counter is untouched.
  */
-export function useAnxietyDial({ svgRef, onPanHandoff, onCommit }: Options) {
+export function useLoudnessDial({ svgRef, onPanHandoff, onCommit }: Options) {
   const stateRef = useRef<DialState>({ phase: "idle" });
   // A finished drag must not fire the click that follows it.
   const consumedRef = useRef(false);
   const chipRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 0, y: 0 });
-  const [preview, setPreview] = useState<AnxietyPreview | null>(null);
+  const [preview, setPreview] = useState<LoudnessPreview | null>(null);
 
   function reset() {
     stateRef.current = { phase: "idle" };
@@ -108,7 +108,7 @@ export function useAnxietyDial({ svgRef, onPanHandoff, onCommit }: Options) {
       const dy = e.clientY - s.startY;
       if (Math.hypot(dx, dy) <= DECIDE_PX) return true; // still a tap
       if (Math.abs(dy) >= Math.abs(dx)) {
-        // Vertical wins: the thumb is dialing anxiety now.
+        // Vertical wins: the thumb is dialing loudness now.
         try {
           svgRef.current?.setPointerCapture?.(e.pointerId);
         } catch {

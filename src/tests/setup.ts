@@ -9,7 +9,7 @@ class RO {
 (globalThis as Record<string, unknown>).ResizeObserver ??= RO;
 
 // jsdom has no PointerEvent; without it, fireEvent.pointerDown/Move loses
-// clientX/clientY and the anxiety-dial gesture math never sees coordinates.
+// clientX/clientY and the loudness-dial gesture math never sees coordinates.
 if (typeof window !== "undefined" && !window.PointerEvent) {
   class PointerEventPolyfill extends MouseEvent {
     pointerId: number;

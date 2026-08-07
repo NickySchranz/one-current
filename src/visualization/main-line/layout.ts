@@ -30,10 +30,12 @@ export type LayoutOptions = {
   now?: Date;
 };
 
-// Every thread stays visible: lanes squeeze as far as needed rather than
-// letting any line fall outside the stage. They never spread to fill it
-// either — the band stays compact around the main line, air above and below.
-const MIN_LANE_GAP = 18;
+// Every thread keeps its room: lanes squeeze only down to a readable gap.
+// When even that does not fit the stage, the canvas grows taller instead and
+// the stage scrolls — more threads, never a cramped band. Lanes never spread
+// to fill space either: the band stays compact around the main line.
+const MIN_LANE_GAP = 34;
+const MIN_LANE_GAP_COMPACT = 28;
 const MAX_LANE_GAP = 56;
 const TOP_PAD = 58; // clear of the wholeness chip, with room for the Now label
 const BOTTOM_PAD = 48; // room for the axis labels
@@ -67,18 +69,21 @@ export function buildTimelineLayout(
   let bottomPad = BOTTOM_PAD;
 
   if (options.height && options.height > 0) {
-    // Fit the available space: lanes squeeze first, then the padding gives
-    // way, so every thread stays on stage even above an open sheet.
+    // Fit the available space: lanes squeeze first (never below a readable
+    // gap), then the padding gives way — and if the threads still do not fit,
+    // the canvas grows past the stage and the stage scrolls.
     height = options.height;
+    const minGap = options.compact ? MIN_LANE_GAP_COMPACT : MIN_LANE_GAP;
     laneGap = Math.min(
       MAX_LANE_GAP,
-      Math.max(MIN_LANE_GAP, Math.floor((height - topPad - bottomPad) / Math.max(total, 2))),
+      Math.max(minGap, Math.floor((height - topPad - bottomPad) / Math.max(total, 2))),
     );
     const overflow = topPad + total * laneGap + bottomPad - height;
     if (overflow > 0) {
       const shaveTop = Math.min(TOP_PAD - MIN_TOP_PAD, Math.ceil(overflow / 2));
       topPad -= shaveTop;
       bottomPad -= Math.min(BOTTOM_PAD - MIN_BOTTOM_PAD, overflow - shaveTop);
+      height = Math.max(height, topPad + total * laneGap + bottomPad);
     }
   } else {
     height = Math.max(topPad + total * laneGap + bottomPad, options.compact ? 200 : 260);

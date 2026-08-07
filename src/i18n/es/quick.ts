@@ -68,8 +68,8 @@ export const quick: Record<string, string> = {
     "Suéltalo. Se queda en la línea sin tirar de ti.",
   "Understand this thread": "Comprender este hilo",
   "Too heavy to carry alone": "Demasiado pesado para cargarlo a solas",
-  "Nothing can be done about it right now — and you have said so. Its pull eases; the line simply stays until something changes.":
-    "Ahora mismo no se puede hacer nada — y tú lo has dicho. Su tirón se afloja; la línea simplemente se queda hasta que algo cambie.",
+  "Nothing can be done about it right now — and you have said so. Its loudness eases; the line simply stays until something changes.":
+    "Ahora mismo no se puede hacer nada — y tú lo has dicho. Su volumen baja; la línea simplemente se queda hasta que algo cambie.",
   "This thread is complete for now. If it returns, you can meet the new version of it.":
     "Este hilo está completo por ahora. Si vuelve, podrás encontrarte con su nueva versión.",
   "It is back on my mind": "Ha vuelto a mi cabeza",

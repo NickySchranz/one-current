@@ -1,6 +1,6 @@
 import type { PsychologicalBranch } from "@/domain/branches/types";
-import { effectivePull, isClosed } from "@/domain/branches/logic";
-import { statusToLineStyle, pullToThickness } from "@/visualization/branch-lines/style";
+import { effectiveLoudness, isClosed } from "@/domain/branches/logic";
+import { statusToLineStyle, loudnessToThickness } from "@/visualization/branch-lines/style";
 import { useT } from "@/i18n/i18n";
 
 type Props = { branch: PsychologicalBranch; color: string };
@@ -42,7 +42,7 @@ export function BranchContextStrip({ branch, color }: Props) {
           }
           fill="none"
           stroke={color}
-          strokeWidth={pullToThickness(effectivePull(branch))}
+          strokeWidth={loudnessToThickness(effectiveLoudness(branch))}
           strokeDasharray={style.dashArray}
           opacity={style.opacity}
           strokeLinecap="round"

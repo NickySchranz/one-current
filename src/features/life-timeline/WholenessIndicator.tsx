@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import type { PsychologicalBranch } from "@/domain/branches/types";
-import { effectivePull } from "@/domain/branches/logic";
+import { effectiveLoudness } from "@/domain/branches/logic";
 import { decidedToday, energySplit } from "@/domain/feelings/logic";
 import { useT } from "@/i18n/i18n";
 
@@ -38,7 +38,7 @@ export function WholenessIndicator({ activeLines }: Props) {
   const wholeness = energySplit(branches, now).mainShare;
   const undecided = activeLines
     .filter((b) => !decidedToday(b, now))
-    .sort((a, b) => effectivePull(b, now) - effectivePull(a, now));
+    .sort((a, b) => effectiveLoudness(b, now) - effectiveLoudness(a, now));
 
   const word =
     wholeness >= 0.85

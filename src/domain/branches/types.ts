@@ -38,7 +38,7 @@ export type Controllability =
   | "unclear";
 
 /** How loud a thread is, from 1 (quiet) to 5. Fractional values are fine — the slider moves in fine steps. */
-export type Pull = number;
+export type Loudness = number;
 
 export type PsychologicalBranch = {
   id: string;
@@ -51,7 +51,7 @@ export type PsychologicalBranch = {
   forkDate: string;
   /** Human label for approximate periods, e.g. "around spring 2024". */
   forkLabel?: string;
-  pull: Pull;
+  loudness: Loudness;
   originalBelief?: string;
   currentBelief?: string;
   storedQualities: string[];
@@ -63,7 +63,7 @@ export type PsychologicalBranch = {
   occupies?: string[];
   /** ISO date on which the user decided nothing can move today; the line rests, visibly weaker, until the next day. */
   leftOn?: string;
-  /** ISO date of the most recent decision about this branch. Undecided days let the pull drift upward. */
+  /** ISO date of the most recent decision about this branch. Undecided days let the loudness drift upward. */
   lastDecisionOn?: string;
   commits: BranchCommit[];
   mergeIds: string[];

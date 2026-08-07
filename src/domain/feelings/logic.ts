@@ -1,5 +1,5 @@
 import type { PsychologicalBranch } from "../branches/types";
-import { effectivePull, isClosed, isOpen, isWaiting, isoDate } from "../branches/logic";
+import { effectiveLoudness, isClosed, isOpen, isWaiting, isoDate } from "../branches/logic";
 
 /**
  * The shared vocabulary of feelings a line can occupy. Tap to choose — never
@@ -130,7 +130,7 @@ const MAIN_BASE = 12;
 
 /**
  * How today's energy is split across the lines. Undecided open lines draw
- * energy proportional to their felt pull; a decision today (or calm waiting)
+ * energy proportional to their felt loudness; a decision today (or calm waiting)
  * shrinks their draw sharply — the reclaimed energy returns to the main line.
  */
 export function energySplit(
@@ -140,7 +140,7 @@ export function energySplit(
   const loads = branches
     .filter(isOpen)
     .map((branch) => {
-      let load: number = effectivePull(branch, now);
+      let load: number = effectiveLoudness(branch, now);
       if (isWaiting(branch)) load *= 0.25;
       else if (decidedToday(branch, now)) load *= 0.3;
       return { branch, load };

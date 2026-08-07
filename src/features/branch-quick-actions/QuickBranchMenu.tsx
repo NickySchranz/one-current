@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { useT } from "@/i18n/i18n";
-import { effectivePull, isClosed } from "@/domain/branches/logic";
+import { effectiveLoudness, isClosed } from "@/domain/branches/logic";
 import { decidedToday } from "@/domain/feelings/logic";
-import type { Pull } from "@/domain/branches/types";
+import type { Loudness } from "@/domain/branches/types";
 import { appNow } from "@/domain/time/clock";
 
 type Props = { branchId: string };
@@ -40,6 +40,10 @@ export function QuickBranchMenu({ branchId }: Props) {
   const easeBranch = useAppStore((s) => s.easeBranch);
   const updateBranch = useAppStore((s) => s.updateBranch);
   const [eased, setEased] = useState(false);
+  // The sheet opens as a peek: the thread's name and its loudness dial only.
+  // Pulling it up (or tapping the question) reveals the decisions.
+  const [expanded, setExpanded] = useState(false);
+  const touchRef = useRef<{ x: number; y: number } | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const t = useT();
 
@@ -81,7 +85,7 @@ export function QuickBranchMenu({ branchId }: Props) {
         </p>
         <p className="calm-note">
           {t(
-            "Nothing can be done about it right now — and you have said so. Its pull eases; the line simply stays until something changes.",
+            "Nothing can be done about it right now — and you have said so. Its loudness eases; the line simply stays until something changes.",
           )}
         </p>
         <button className="btn btn-primary" onClick={() => setOperation({ kind: "idle" })}>
@@ -120,16 +124,41 @@ export function QuickBranchMenu({ branchId }: Props) {
     );
   }
 
+  // Once today's decision is taken the dial rests, so there is nothing to
+  // peek at — the sheet opens straight onto the decisions.
+  const decided = decidedToday(branch, appNow());
+  const showAll = expanded || decided;
+
   return (
-    <div className="panel" ref={rootRef}>
+    <div
+      className="panel"
+      ref={rootRef}
+      // A vertical swipe on the sheet moves between peek and full: up reveals
+      // the decisions, down tucks them away again. Sideways stays the slider's.
+      onTouchStart={(e) => {
+        const t0 = e.touches[0];
+        touchRef.current = t0 ? { x: t0.clientX, y: t0.clientY } : null;
+      }}
+      onTouchEnd={(e) => {
+        const start = touchRef.current;
+        touchRef.current = null;
+        const t0 = e.changedTouches[0];
+        if (!start || !t0) return;
+        const dx = t0.clientX - start.x;
+        const dy = t0.clientY - start.y;
+        if (Math.abs(dy) <= Math.abs(dx)) return;
+        if (dy < -40) setExpanded(true);
+        else if (dy > 40 && expanded) setExpanded(false);
+      }}
+    >
       <p className="touch-sheet-title">
         <strong>{branch.title}</strong>
       </p>
-      {/* first, the one dial: how loud is it — the same thing as its pull.
+      {/* first, the one dial: how loud is it — the same thing as its loudness.
           Setting it is a touch, not a decision — it never quiets the day
           counter. Once a decision has been taken today, the line rests and
           the dial steps away until tomorrow (or until the thread reopens). */}
-      {!decidedToday(branch, appNow()) && (
+      {!decided && (
         <div className="loudness-field">
           <label className="hint" htmlFor="quick-loudness">
             {t("How loud is this thread right now?")}
@@ -141,52 +170,65 @@ export function QuickBranchMenu({ branchId }: Props) {
             min={1}
             max={5}
             step={0.1}
-            value={branch.pull}
+            value={branch.loudness}
             aria-valuetext={
-              branch.pull === 1
+              branch.loudness === 1
                 ? t("Quiet")
-                : t("Loudness {level} of 5", { level: Math.round(branch.pull) })
+                : t("Loudness {level} of 5", { level: Math.round(branch.loudness) })
             }
             onChange={(e) =>
-              void updateBranch(branchId, { pull: Number(e.target.value) as Pull })
+              void updateBranch(branchId, { loudness: Number(e.target.value) as Loudness })
             }
           />
-          {effectivePull(branch, appNow()) > branch.pull && (
+          {effectiveLoudness(branch, appNow()) > branch.loudness && (
             <span className="hint">{t("Undecided days have made it louder.")}</span>
           )}
         </div>
       )}
-      <p className="prompt">{t("What does this thread need from you now?")}</p>
-      <div className="quick-menu">
-        {ACTIONS.map((a) => (
-          <button
-            key={a.kind}
-            className="quick-menu-item"
-            onClick={() => setOperation({ kind: a.kind, branchId })}
-          >
-            <strong>{t(a.label)}</strong>
-            <span className="hint">{t(a.hint)}</span>
-          </button>
-        ))}
-        <button className="quick-menu-item" onClick={leaveForToday}>
-          <strong>{t("Can't do anything about it now")}</strong>
-          <span className="hint">
-            {t("Set it down. It stays on the line without pulling at you.")}
+      {!showAll ? (
+        // The peek: the question itself is the handle — tap it (or pull the
+        // sheet up) and the decisions unfold.
+        <button className="peek-more" onClick={() => setExpanded(true)}>
+          {t("What does this thread need from you now?")}
+          <span className="peek-chevron" aria-hidden="true">
+            ▴
           </span>
         </button>
-      </div>
-      <button
-        className="btn btn-quiet understand-link"
-        onClick={() => setOperation({ kind: "understanding", branchId })}
-      >
-        {t("Understand this thread")}
-      </button>
-      <button
-        className="btn btn-quiet understand-link"
-        onClick={() => setOperation({ kind: "seeking-support", branchId })}
-      >
-        {t("Too heavy to carry alone")}
-      </button>
+      ) : (
+        <>
+          <p className="prompt">{t("What does this thread need from you now?")}</p>
+          <div className="quick-menu">
+            {ACTIONS.map((a) => (
+              <button
+                key={a.kind}
+                className="quick-menu-item"
+                onClick={() => setOperation({ kind: a.kind, branchId })}
+              >
+                <strong>{t(a.label)}</strong>
+                <span className="hint">{t(a.hint)}</span>
+              </button>
+            ))}
+            <button className="quick-menu-item" onClick={leaveForToday}>
+              <strong>{t("Can't do anything about it now")}</strong>
+              <span className="hint">
+                {t("Set it down. It stays on the line without pulling at you.")}
+              </span>
+            </button>
+          </div>
+          <button
+            className="btn btn-quiet understand-link"
+            onClick={() => setOperation({ kind: "understanding", branchId })}
+          >
+            {t("Understand this thread")}
+          </button>
+          <button
+            className="btn btn-quiet understand-link"
+            onClick={() => setOperation({ kind: "seeking-support", branchId })}
+          >
+            {t("Too heavy to carry alone")}
+          </button>
+        </>
+      )}
     </div>
   );
 }

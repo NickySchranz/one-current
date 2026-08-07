@@ -3,7 +3,7 @@ import { useEffect, type RefObject } from "react";
 // Loudness made visible: a sine wave travels along the line from the fork
 // toward Now, so the stroke slithers like a snake while both ends stay
 // anchored. Louder = wider, faster, tighter wavelength. The scale is the
-// thread's pull (1–5): a quiet thread (1) lies perfectly still.
+// thread's loudness (1–5): a quiet thread (1) lies perfectly still.
 const AMP = [0, 0, 1.8, 2.6, 3.4, 4.2]; // px, half-width of the wave
 const SPEED = [0, 0, 0.8, 1.3, 2.1, 3.2]; // wave cycles per second
 const LAMBDA = [56, 56, 56, 48, 40, 34]; // px of line per wave cycle (stays long while the wave fades in)

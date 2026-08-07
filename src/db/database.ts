@@ -23,6 +23,15 @@ export class OneCurrentDB extends Dexie {
     });
     // Projects are no longer managed here — real work lives with your tasks.
     this.version(2).stores({ projects: null });
+    // One metric: what was stored as "pull" (and briefly "anxietyLevel")
+    // is the thread's loudness.
+    this.version(3).upgrade((tx) =>
+      tx.table("branches").toCollection().modify((b: Record<string, unknown>) => {
+        if (b.loudness === undefined) b.loudness = b.pull ?? 3;
+        delete b.pull;
+        delete b.anxietyLevel;
+      }),
+    );
   }
 }
 

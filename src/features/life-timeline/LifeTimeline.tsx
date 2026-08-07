@@ -5,9 +5,9 @@ import { generateTicks, dateToX } from "@/visualization/zoom/time-scale";
 import { describeTimeline, describeBranch } from "@/visualization/a11y/describe";
 import { isClosed, mostActivated } from "@/domain/branches/logic";
 import { decidedToday } from "@/domain/feelings/logic";
-import type { PsychologicalBranch, Pull } from "@/domain/branches/types";
+import type { PsychologicalBranch, Loudness } from "@/domain/branches/types";
 import { BranchLine } from "./BranchLine";
-import { useAnxietyDial } from "./useAnxietyDial";
+import { useLoudnessDial } from "./useLoudnessDial";
 import { TimelineHelp } from "@/features/timeline-help/TimelineHelp";
 import { WholenessIndicator } from "./WholenessIndicator";
 import { branchColor } from "@/visualization/branch-lines/style";
@@ -68,6 +68,7 @@ export function LifeTimeline() {
   }, [born, clearBorn, reducedMotion]);
 
   const stageRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ width: 960, height: 480 });
   // When the quick tray rises over the stage as a bottom sheet, the lanes move
@@ -143,13 +144,13 @@ export function LifeTimeline() {
   const pointersRef = useRef(new Set<number>());
 
   // Press a thread, slide the thumb up or down: its loudness dials live.
-  const dial = useAnxietyDial({
+  const dial = useLoudnessDial({
     svgRef,
     onPanHandoff: (clientX) => {
       dragRef.current = { x: clientX, moved: true };
     },
     onCommit: (branchId, level) => {
-      void updateBranch(branchId, { pull: level as Pull });
+      void updateBranch(branchId, { loudness: level as Loudness });
     },
   });
 
@@ -161,12 +162,13 @@ export function LifeTimeline() {
     const el = svgRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
+      // Vertical wheel stays native: it scrolls the stage when the threads
+      // have grown taller than it. Only sideways scrubbing is ours.
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
       e.preventDefault();
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0;
-      if (delta === 0) return;
       const rect = el.getBoundingClientRect();
       const nearDates = e.clientY > rect.bottom - 56;
-      panBy((delta / Math.max(1, el.clientWidth)) * (nearDates ? 4 : 1));
+      panBy((e.deltaX / Math.max(1, el.clientWidth)) * (nearDates ? 4 : 1));
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
@@ -208,6 +210,18 @@ export function LifeTimeline() {
       }),
     [visible, size, window_, compact, bottomInset, now],
   );
+
+  // With many threads the canvas grows taller than the stage and scrolls.
+  // Whenever its shape changes, settle the view around the main line so Now
+  // is what you see first; from there you scroll to the outer lanes.
+  useEffect(() => {
+    const sc = scrollRef.current;
+    if (!sc) return;
+    const overflow = layout.height - sc.clientHeight;
+    if (overflow > 0) {
+      sc.scrollTop = Math.max(0, Math.min(overflow, layout.mainY - sc.clientHeight / 2));
+    }
+  }, [layout.height, layout.mainY]);
 
   const ticks = useMemo(() => generateTicks(layout.window, now), [layout.window, now]);
   const summary = useMemo(
@@ -292,7 +306,7 @@ export function LifeTimeline() {
 
   function onPointerDown(e: React.PointerEvent) {
     pointersRef.current.add(e.pointerId);
-    // A press on a thread belongs to the anxiety dial until it picks an axis.
+    // A press on a thread belongs to the loudness dial until it picks an axis.
     if (dial.onStagePointerDown(e.pointerId)) {
       dragRef.current = null;
       return;
@@ -346,6 +360,9 @@ export function LifeTimeline() {
         {/* how split the present is: strands fan out per undecided line and
             come home as decisions are taken — tap it for the day's forecast */}
         <WholenessIndicator activeLines={activeLines} />
+        {/* the canvas may be taller than the stage: this container scrolls it,
+            while the +, help and wholeness chip stay pinned to the stage */}
+        <div className="timeline-scroll" ref={scrollRef}>
         <svg
           ref={svgRef}
           className="timeline-svg"
@@ -474,7 +491,7 @@ export function LifeTimeline() {
                 geometry={g}
                 theme={theme}
                 nowMs={nowTick}
-                anxietyPreview={
+                loudnessPreview={
                   dial.preview?.branchId === branch.id ? dial.preview.level : undefined
                 }
                 onDialPointerDown={
@@ -483,8 +500,8 @@ export function LifeTimeline() {
                   isClosed(branch) || decidedToday(branch, now)
                     ? undefined
                     : // The drag moves in whole levels; a fine-tuned fractional
-                      // pull starts from its nearest step.
-                      (e) => dial.onBranchPointerDown(branch.id, Math.round(branch.pull), e)
+                      // loudness starts from its nearest step.
+                      (e) => dial.onBranchPointerDown(branch.id, Math.round(branch.loudness), e)
                 }
                 focused={i === focusIndex}
                 emphasizedId={top?.id}
@@ -545,6 +562,7 @@ export function LifeTimeline() {
             </text>
           </g>
         </svg>
+        </div>
 
         {/* while the thumb dials a thread's loudness: its name and level, live */}
         {dial.preview && (() => {
@@ -553,16 +571,16 @@ export function LifeTimeline() {
           const title = b.title.length > 22 ? b.title.slice(0, 20) + "…" : b.title;
           return (
             <div
-              className="anxiety-chip"
+              className="loudness-chip"
               ref={dial.chipRef}
               style={{
                 transform: `translate(${dial.chipPos.current.x}px, ${dial.chipPos.current.y}px)`,
               }}
             >
-              <span className="anxiety-chip-title">{title}</span>
-              <span className="anxiety-chip-dots" aria-hidden="true">
+              <span className="loudness-chip-title">{title}</span>
+              <span className="loudness-chip-dots" aria-hidden="true">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <span key={n} className={`anxiety-dot ${n <= dial.preview!.level ? "on" : ""}`} />
+                  <span key={n} className={`loudness-dot ${n <= dial.preview!.level ? "on" : ""}`} />
                 ))}
               </span>
               <span className="visually-hidden" role="status" aria-live="polite">

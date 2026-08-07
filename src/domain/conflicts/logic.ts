@@ -47,7 +47,7 @@ const RULES: ConflictRule[] = [
   },
   {
     type: "urgency-vs-reality",
-    matches: (a, b) => a.pull >= 4 && b.pull >= 4 && isBody(b),
+    matches: (a, b) => a.loudness >= 4 && b.loudness >= 4 && isBody(b),
     demandA: (b) => `${b.title}: treat this as an emergency.`,
     demandB: (b) => `${b.title}: the body says slow down.`,
   },

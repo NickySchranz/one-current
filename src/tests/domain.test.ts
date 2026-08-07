@@ -1,14 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   createBranch,
   resolveForkDate,
   isOpen,
   isClosed,
   branchEndDate,
-  reducePullAfterMerge,
+  reduceLoudnessAfterMerge,
   mostActivated,
-  effectivePull,
-  easePull,
+  effectiveLoudness,
+  easeLoudness,
 } from "@/domain/branches/logic";
 import { createMoment, addMomentToBranch, beliefsFormed } from "@/domain/moments/logic";
 import { buildBranchDiff, mergeableContent } from "@/domain/branches/diff";
@@ -35,14 +35,14 @@ function mkBranch(over: Partial<PsychologicalBranch> = {}): PsychologicalBranch 
 describe("branch creation", () => {
   it("creates an active branch forking today", () => {
     const b = createBranch(
-      { title: "  Career uncertainty ", kindChoiceId: "feared-future", period: { kind: "today" }, pull: 4 },
+      { title: "  Career uncertainty ", kindChoiceId: "feared-future", period: { kind: "today" }, loudness: 4 },
       NOW,
     );
     expect(b.title).toBe("Career uncertainty");
     expect(b.status).toBe("active");
     expect(b.type).toBe("projection");
     expect(b.orientation).toBe("future");
-    expect(b.pull).toBe(4);
+    expect(b.loudness).toBe(4);
     expect(b.forkDate).toBe("2026-08-04");
     expect(isOpen(b)).toBe(true);
   });
@@ -152,7 +152,7 @@ describe("merging", () => {
   };
 
   it("merges one branch: it ends at a merge point and keeps history", () => {
-    const b = mkBranch({ pull: 5 });
+    const b = mkBranch({ loudness: 5 });
     const merge = createMerge(
       { branches: [b], preserveRelease: pr, conflicts: [], resolution: "done", released: ["checking"], resultStatus: "merged" },
       NOW,
@@ -163,7 +163,7 @@ describe("merging", () => {
     expect(after.mergeDate).toBe("2026-08-04");
     expect(after.mergeIds).toContain(merge.id);
     expect(after.storedQualities).toContain("direction");
-    expect(after.pull).toBe(1);
+    expect(after.loudness).toBe(1);
   });
 
   it("refuses to complete with unresolved conflicts", () => {
@@ -206,8 +206,8 @@ describe("merging", () => {
     expect(merge.action?.title).toBe("One grounded evening");
   });
 
-  it("partly-merged branches stay open with reduced pull", () => {
-    const b = mkBranch({ pull: 4 });
+  it("partly-merged branches stay open with reduced loudness", () => {
+    const b = mkBranch({ loudness: 4 });
     const merge = createMerge(
       { branches: [b], preserveRelease: pr, conflicts: [], resolution: "some", released: [], resultStatus: "partly-merged" },
       NOW,
@@ -215,19 +215,19 @@ describe("merging", () => {
     const after = applyMergeToBranch(b, merge, NOW);
     expect(after.status).toBe("partly-integrated");
     expect(isOpen(after)).toBe(true);
-    expect(after.pull).toBe(3);
+    expect(after.loudness).toBe(3);
   });
 
-  it("reduces pull after merge without going below one", () => {
-    expect(reducePullAfterMerge(5, "merged")).toBe(1);
-    expect(reducePullAfterMerge(1, "waiting")).toBe(1);
-    expect(reducePullAfterMerge(4, "waiting")).toBe(2);
+  it("reduces loudness after merge without going below one", () => {
+    expect(reduceLoudnessAfterMerge(5, "merged")).toBe(1);
+    expect(reduceLoudnessAfterMerge(1, "waiting")).toBe(1);
+    expect(reduceLoudnessAfterMerge(4, "waiting")).toBe(2);
   });
 });
 
 describe("deliberate waiting", () => {
   it("creates a waiting container and calms the branch", () => {
-    const b = mkBranch({ pull: 5, title: "Permit application" });
+    const b = mkBranch({ loudness: 5, title: "Permit application" });
     const container = createWaitingContainer(
       {
         branchId: b.id,
@@ -243,7 +243,7 @@ describe("deliberate waiting", () => {
     );
     const after = applyWaitingToBranch(b, container);
     expect(after.status).toBe("waiting-with-boundaries");
-    expect(after.pull).toBeLessThanOrEqual(2);
+    expect(after.loudness).toBeLessThanOrEqual(2);
     expect(after.waitingContainerId).toBe(container.id);
     expect(after.storedQualities).toContain("stability");
     expect(isReviewDue(container, NOW)).toBe(false);
@@ -295,9 +295,9 @@ describe("recurrence", () => {
 
 describe("activation", () => {
   it("finds the most activated branch", () => {
-    const calm = mkBranch({ id: "a", pull: 2 });
-    const loud = mkBranch({ id: "b", pull: 5, status: "activated" });
-    const waiting = mkBranch({ id: "c", pull: 5, status: "waiting-with-boundaries" });
+    const calm = mkBranch({ id: "a", loudness: 2 });
+    const loud = mkBranch({ id: "b", loudness: 5, status: "activated" });
+    const waiting = mkBranch({ id: "c", loudness: 5, status: "waiting-with-boundaries" });
     expect(mostActivated([calm, loud, waiting])?.id).toBe("b");
   });
 });
@@ -350,9 +350,9 @@ describe("energy split across lines", () => {
     expect(s.parts).toEqual([]);
   });
 
-  it("stronger pull takes a bigger share; shares sum to one", () => {
-    const heavy = mkBranch({ id: "heavy", pull: 5, lastDecisionOn: "2026-08-03" });
-    const light = mkBranch({ id: "light", pull: 1, lastDecisionOn: "2026-08-03" });
+  it("stronger loudness takes a bigger share; shares sum to one", () => {
+    const heavy = mkBranch({ id: "heavy", loudness: 5, lastDecisionOn: "2026-08-03" });
+    const light = mkBranch({ id: "light", loudness: 1, lastDecisionOn: "2026-08-03" });
     const s = energySplit([heavy, light], NOW);
     expect(s.parts[0].branch.id).toBe("heavy");
     expect(s.parts[0].share).toBeGreaterThan(s.parts[1].share);
@@ -361,44 +361,66 @@ describe("energy split across lines", () => {
   });
 
   it("deciding today shrinks a line's share of your energy", () => {
-    const undecided = mkBranch({ id: "u", pull: 4, lastDecisionOn: "2026-08-03" });
+    const undecided = mkBranch({ id: "u", loudness: 4, lastDecisionOn: "2026-08-03" });
     const before = energySplit([undecided], NOW);
-    const decided = mkBranch({ id: "u", pull: 4, lastDecisionOn: "2026-08-04" });
+    const decided = mkBranch({ id: "u", loudness: 4, lastDecisionOn: "2026-08-04" });
     const after = energySplit([decided], NOW);
     expect(after.parts[0].share).toBeLessThan(before.parts[0].share);
     expect(after.mainShare).toBeGreaterThan(before.mainShare);
   });
 });
 
-describe("loudness of a line (its pull)", () => {
+describe("loudness of a line", () => {
   it("holds its base through the first undecided day, then grows one step per day", () => {
-    const b = mkBranch({ pull: 2, lastDecisionOn: "2026-08-04" });
-    expect(effectivePull(b, NOW)).toBe(2); // decided today
-    expect(effectivePull(b, new Date("2026-08-05T12:00:00Z"))).toBe(2); // one day of grace
-    expect(effectivePull(b, new Date("2026-08-06T12:00:00Z"))).toBe(3);
-    expect(effectivePull(b, new Date("2026-08-07T12:00:00Z"))).toBe(4);
-    expect(effectivePull(b, new Date("2026-08-20T12:00:00Z"))).toBe(5); // never past 5
+    const b = mkBranch({ loudness: 2, lastDecisionOn: "2026-08-04" });
+    expect(effectiveLoudness(b, NOW)).toBe(2); // decided today
+    expect(effectiveLoudness(b, new Date("2026-08-05T12:00:00Z"))).toBe(2); // one day of grace
+    expect(effectiveLoudness(b, new Date("2026-08-06T12:00:00Z"))).toBe(3);
+    expect(effectiveLoudness(b, new Date("2026-08-07T12:00:00Z"))).toBe(4);
+    expect(effectiveLoudness(b, new Date("2026-08-20T12:00:00Z"))).toBe(5); // never past 5
   });
 
   it("integrated lines and calm waiting hold at the base — no drift", () => {
     const merged = mkBranch({
-      pull: 4,
+      loudness: 4,
       status: "merged",
       mergeDate: "2026-08-01",
       lastDecisionOn: "2026-07-01",
     });
-    expect(effectivePull(merged, NOW)).toBe(4);
+    expect(effectiveLoudness(merged, NOW)).toBe(4);
     const waiting = mkBranch({
-      pull: 2,
+      loudness: 2,
       status: "waiting-with-boundaries",
       lastDecisionOn: "2026-07-01",
     });
-    expect(effectivePull(waiting, NOW)).toBe(2);
+    expect(effectiveLoudness(waiting, NOW)).toBe(2);
   });
 
   it("a decision eases the level one step, never below one", () => {
-    expect(easePull(3)).toBe(2);
-    expect(easePull(2)).toBe(1);
-    expect(easePull(1)).toBe(1); // quiet is the floor
+    expect(easeLoudness(3)).toBe(2);
+    expect(easeLoudness(2)).toBe(1);
+    expect(easeLoudness(1)).toBe(1); // quiet is the floor
+  });
+});
+
+describe("the app clock", () => {
+  it("runs faster than real time when a rate is set, without jumping at changes", async () => {
+    const { appNow, setRate, setSkewMs } = await import("@/domain/time/clock");
+    vi.useFakeTimers();
+    try {
+      setSkewMs(0);
+      setRate(3600); // an hour per second
+      const start = appNow().getTime();
+      vi.advanceTimersByTime(1000);
+      expect(appNow().getTime() - start).toBe(3600 * 1000);
+      // Slowing back down folds the elapsed time in — the clock never jumps.
+      setRate(1);
+      expect(appNow().getTime() - start).toBe(3600 * 1000);
+      vi.advanceTimersByTime(1000);
+      expect(appNow().getTime() - start).toBe(3600 * 1000 + 1000);
+    } finally {
+      vi.useRealTimers();
+      setSkewMs(0);
+    }
   });
 });

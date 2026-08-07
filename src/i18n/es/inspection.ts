@@ -143,8 +143,8 @@ export const inspection: Record<string, string> = {
   "In your own words, what did this time away give you?":
     "En tus propias palabras, ¿qué te dio este tiempo aparte?",
   "One small step to carry it (optional)": "Un pequeño paso para llevarlo (opcional)",
-  "Only part of it integrates for now — the rest stays with less pull":
-    "Solo una parte vuelve por ahora — el resto se queda con menos tirón",
+  "Only part of it integrates for now — the rest stays with less loudness":
+    "Solo una parte vuelve por ahora — el resto se queda sonando más bajo",
   "Set aside for now": "Dejar a un lado por ahora",
   "1 conflict to settle first": "1 conflicto por resolver antes",
   "{n} conflicts to settle first": "{n} conflictos por resolver antes",

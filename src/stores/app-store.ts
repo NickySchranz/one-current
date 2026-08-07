@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import type { ForkPeriodChoice, PsychologicalBranch, Pull } from "@/domain/branches/types";
+import type { ForkPeriodChoice, PsychologicalBranch, Loudness } from "@/domain/branches/types";
 import type { BranchMerge, MergeDraft } from "@/domain/merges/types";
 import type { IntegratedAction } from "@/domain/actions/types";
 import type { BranchCommit } from "@/domain/moments/types";
-import { createBranch, easePull, type CreateBranchInput } from "@/domain/branches/logic";
-import { advanceSkew, appNow, getSkewMs, setSkewMs } from "@/domain/time/clock";
+import { createBranch, easeLoudness, type CreateBranchInput } from "@/domain/branches/logic";
+import { advanceSkew, appNow, getSkewMs, setRate, setSkewMs } from "@/domain/time/clock";
 import { addMomentToBranch, createMoment, type CreateMomentInput } from "@/domain/moments/logic";
 import { detectRecurrence, recordRecurrence } from "@/domain/branches/recurrence";
 import { applyMergeToBranch, createMerge, type CreateMergeInput } from "@/domain/merges/logic";
@@ -88,12 +88,16 @@ type AppState = {
   nowTick: number;
   /** How far ahead of real time the app is living (Testing only; resets on reload). */
   timeSkewMs: number;
+  /** App-milliseconds per real millisecond (Testing only; 1 = real time). */
+  timeRate: number;
 
   init(): Promise<void>;
   /** Re-read the clock so everything derived from "now" follows it. */
   refreshNow(): void;
   /** Move the app's clock forward (Testing only). */
   fastForward(ms: number): void;
+  /** Let the app's clock run faster than real time (Testing only). */
+  setTimeRate(rate: number): void;
   resetTimeSkew(): void;
   setView(view: View): void;
   /** Begin (or end, with idle) an operation over the timeline. Jumps to the timeline shell. */
@@ -107,9 +111,9 @@ type AppState = {
   updateBranch(id: string, patch: Partial<PsychologicalBranch>): Promise<void>;
   deleteBranch(id: string): Promise<void>;
   addMoment(input: CreateMomentInput): Promise<BranchCommit>;
-  /** Any decision about a branch loosens its pull; optionally applies a patch alongside. */
+  /** Any decision about a branch loosens its loudness; optionally applies a patch alongside. */
   easeBranch(id: string, patch?: Partial<PsychologicalBranch>): Promise<void>;
-  /** One small step today for a single branch; eases its pull. */
+  /** One small step today for a single branch; eases its loudness. */
   createTodayAction(branchId: string, step: string): Promise<void>;
   /** An action was done: it settles into the past instead of waiting ahead. */
   markActionDone(actionId: string): Promise<void>;
@@ -189,6 +193,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   language: initialLanguage(),
   nowTick: appNow().getTime(),
   timeSkewMs: 0,
+  timeRate: 1,
 
   async init() {
     const data = await repo.loadAll();
@@ -221,7 +226,22 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ view: { kind: "now" }, window: weekWindow(appNow()) });
   },
 
-  refreshNow: () => set({ nowTick: appNow().getTime() }),
+  refreshNow: () => {
+    const nowMs = appNow().getTime();
+    set((s) => {
+      // While time runs fast, the camera drifts with it: the window slides by
+      // the same amount the clock moved, so Now stays in view as days stream by.
+      const delta = nowMs - s.nowTick;
+      const window =
+        s.timeRate > 1 && s.window && delta > 0
+          ? {
+              start: new Date(Date.parse(s.window.start) + delta).toISOString(),
+              end: new Date(Date.parse(s.window.end) + delta).toISOString(),
+            }
+          : s.window;
+      return { nowTick: nowMs, timeSkewMs: getSkewMs(), window };
+    });
+  },
   fastForward: (ms) => {
     advanceSkew(ms);
     set({
@@ -230,9 +250,20 @@ export const useAppStore = create<AppState>((set, get) => ({
       window: weekWindow(appNow()),
     });
   },
+  setTimeRate: (rate) => {
+    setRate(rate);
+    set({
+      timeRate: rate,
+      timeSkewMs: getSkewMs(),
+      nowTick: appNow().getTime(),
+      // Entering fast time recenters on Now so the movement is visible.
+      window: rate > 1 ? weekWindow(appNow()) : get().window,
+    });
+  },
   resetTimeSkew: () => {
     setSkewMs(0);
     set({
+      timeRate: 1,
       timeSkewMs: 0,
       nowTick: appNow().getTime(),
       window: weekWindow(appNow()),
@@ -310,7 +341,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const next: PsychologicalBranch = {
       ...branch,
       ...patch,
-      pull: easePull(branch.pull),
+      loudness: easeLoudness(branch.loudness),
       lastDecisionOn: todayIso(),
       lastActivatedAt: appNow().toISOString(),
     };
@@ -345,7 +376,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       ...recordRecurrence(branch),
       status: "active",
       mergeDate: undefined,
-      pull: Math.max(2, branch.pull) as Pull,
+      loudness: Math.max(2, branch.loudness) as Loudness,
       // Reopening is a reactivation, not a decision: dated yesterday so the
       // line holds its feelings again today without instantly drifting.
       lastDecisionOn: yesterday,
@@ -454,7 +485,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       ...branch,
       status: "converted-to-project",
       mergeDate: today,
-      pull: 1,
+      loudness: 1,
       lastDecisionOn: today,
       leftOn: undefined,
     };
@@ -580,4 +611,4 @@ export function filterBranches(
   });
 }
 
-export type { CreateBranchInput, Pull, ForkPeriodChoice };
+export type { CreateBranchInput, Loudness, ForkPeriodChoice };

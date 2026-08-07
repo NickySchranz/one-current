@@ -6,7 +6,7 @@ import {
   type BranchStatus,
   type ForkPeriodChoice,
   type PsychologicalBranch,
-  type Pull,
+  type Loudness,
 } from "./types";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -43,7 +43,7 @@ export type CreateBranchInput = {
   title: string;
   kindChoiceId: string;
   period: ForkPeriodChoice;
-  pull?: Pull;
+  loudness?: Loudness;
   description?: string;
   /** What it makes you feel (tap-only, chosen at creation). */
   anxieties?: string[];
@@ -65,7 +65,7 @@ export function createBranch(input: CreateBranchInput, now: Date = new Date()): 
     status: "active",
     forkDate,
     forkLabel,
-    pull: input.pull ?? 3,
+    loudness: input.loudness ?? 3,
     anxieties: input.anxieties,
     occupies: input.occupies,
     storedQualities: [],
@@ -98,9 +98,9 @@ export function branchEndDate(branch: PsychologicalBranch, now: Date = new Date(
   return isoDate(now);
 }
 
-/** Any honest decision about a branch — acting, noting, or deliberately leaving it — loosens its pull a little. */
-export function easePull(pull: Pull): Pull {
-  return Math.max(1, pull - 1) as Pull;
+/** Any honest decision about a branch — acting, noting, or deliberately leaving it — loosens its loudness a little. */
+export function easeLoudness(loudness: Loudness): Loudness {
+  return Math.max(1, loudness - 1) as Loudness;
 }
 
 /** Whole days since the last decision about this branch (creation counts as the first decision). */
@@ -110,23 +110,23 @@ export function daysSinceDecision(branch: PsychologicalBranch, now: Date = new D
 }
 
 /**
- * The pull as felt today: each undecided day (after one day of grace) pulls the
+ * The loudness as felt today: each undecided day (after one day of grace) pulls the
  * branch harder and further from Now. Any decision resets the clock and eases it.
  * Waiting and closed branches do not drift — their state is already a decision.
  */
-export function effectivePull(branch: PsychologicalBranch, now: Date = new Date()): Pull {
-  if (isClosed(branch) || branch.status === "waiting-with-boundaries") return branch.pull;
+export function effectiveLoudness(branch: PsychologicalBranch, now: Date = new Date()): Loudness {
+  if (isClosed(branch) || branch.status === "waiting-with-boundaries") return branch.loudness;
   const drift = Math.max(0, daysSinceDecision(branch, now) - 1);
-  return Math.min(5, branch.pull + drift) as Pull;
+  return Math.min(5, branch.loudness + drift) as Loudness;
 }
 
-/** Merging reduces the branch's active pull; the residue stays honest, not zero by decree. */
-export function reducePullAfterMerge(pull: Pull, resultStatus: string): Pull {
+/** Merging reduces the branch's active loudness; the residue stays honest, not zero by decree. */
+export function reduceLoudnessAfterMerge(loudness: Loudness, resultStatus: string): Loudness {
   if (resultStatus === "merged") return 1;
   if (resultStatus === "waiting" || resultStatus === "converted-to-project") {
-    return Math.max(1, pull - 2) as Pull;
+    return Math.max(1, loudness - 2) as Loudness;
   }
-  return Math.max(1, pull - 1) as Pull;
+  return Math.max(1, loudness - 1) as Loudness;
 }
 
 export function statusAfterMerge(resultStatus: string): BranchStatus {
@@ -159,7 +159,7 @@ export function activationScore(branch: PsychologicalBranch): number {
     "converted-to-project": 0.5,
     "waiting-with-boundaries": 0.2,
   };
-  return (statusWeight[branch.status] ?? 0) * 10 + effectivePull(branch);
+  return (statusWeight[branch.status] ?? 0) * 10 + effectiveLoudness(branch);
 }
 
 export function mostActivated(branches: PsychologicalBranch[]): PsychologicalBranch | undefined {

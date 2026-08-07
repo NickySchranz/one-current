@@ -22,6 +22,7 @@ beforeEach(async () => {
     reducedMotion: false,
     nowTick: appNow().getTime(),
     timeSkewMs: 0,
+    timeRate: 1,
   });
 });
 
@@ -49,14 +50,14 @@ describe("app flows", () => {
       title: "Visa decision",
       kindChoiceId: "feared-future",
       period: { kind: "today" },
-      pull: 3,
+      loudness: 3,
     });
     await useAppStore.getState().createTodayAction(decided.id, "Send the one email");
     const idle = await useAppStore.getState().createBranchNow({
       title: "The unread letter",
       kindChoiceId: "feared-future",
       period: { kind: "today" },
-      pull: 2,
+      loudness: 2,
     });
 
     // The Actions destination opens the panel over the timeline.
@@ -92,7 +93,7 @@ describe("app flows", () => {
       title: "Old worry",
       kindChoiceId: "feared-future",
       period: { kind: "today" },
-      pull: 2,
+      loudness: 2,
     });
     await useAppStore.getState().updateBranch(branch.id, {
       status: "merged",
@@ -110,7 +111,7 @@ describe("app flows", () => {
 
     const input = await screen.findByLabelText("Name the thread");
     fireEvent.change(input, { target: { value: "Career direction" } });
-    // "Today" is the default; the pull sits at 3 — nothing else is required.
+    // "Today" is the default; the loudness sits at 3 — nothing else is required.
     fireEvent.click(screen.getByRole("button", { name: "Start the thread" }));
 
     await waitFor(() => expect(useAppStore.getState().branches).toHaveLength(1));
@@ -152,6 +153,9 @@ describe("app flows", () => {
       target: { value: "Visa decision" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Start the thread" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: /What does this thread need from you now\?/ }),
+    );
     fireEvent.click(await screen.findByRole("button", { name: /^Act Take one small step/ }));
 
     fireEvent.change(await screen.findByLabelText("The smallest honest step"), {
@@ -169,7 +173,7 @@ describe("app flows", () => {
       title: "Lost fitness",
       kindChoiceId: "body",
       period: { kind: "this-month" },
-      pull: 4,
+      loudness: 4,
     });
     await waitFor(() => {
       const status = screen.getAllByRole("status")[0];
@@ -230,6 +234,15 @@ describe("app flows", () => {
     });
     useAppStore.getState().setOperation({ kind: "quick-touch", branchId: branch.id });
 
+    // The sheet opens as a peek: the slider first, the decisions folded away.
+    expect(
+      await screen.findByRole("slider", { name: "How loud is this thread right now?" }),
+    ).toBeTruthy();
+    expect(screen.queryByText("Take one small step.")).toBeFalsy();
+    fireEvent.click(
+      screen.getByRole("button", { name: /What does this thread need from you now\?/ }),
+    );
+
     expect(await screen.findByText("Take one small step.")).toBeTruthy();
     expect(
       screen.getByText("Fold what it gave you back into your one line."),
@@ -259,7 +272,7 @@ describe("app flows", () => {
       title: "Old flat decision",
       kindChoiceId: "something-happened",
       period: { kind: "this-month" },
-      pull: 3,
+      loudness: 3,
     });
     useAppStore.getState().setOperation({ kind: "quick-merge", branchId: branch.id });
 
@@ -280,13 +293,16 @@ describe("app flows", () => {
       title: "Visa decision",
       kindChoiceId: "outside-control",
       period: { kind: "this-week" },
-      pull: 4,
+      loudness: 4,
     });
     useAppStore.getState().setOperation({ kind: "quick-touch", branchId: branch.id });
     fireEvent.click(
+      await screen.findByRole("button", { name: /What does this thread need from you now\?/ }),
+    );
+    fireEvent.click(
       await screen.findByRole("button", { name: /Can't do anything about it now/ }),
     );
-    await waitFor(() => expect(useAppStore.getState().branches[0].pull).toBeLessThan(4));
+    await waitFor(() => expect(useAppStore.getState().branches[0].loudness).toBeLessThan(4));
     expect(await screen.findByText(/Nothing can be done about it right now/)).toBeTruthy();
     // The line is still open — nothing was merged.
     expect(useAppStore.getState().merges).toHaveLength(0);
@@ -298,7 +314,7 @@ describe("app flows", () => {
       title: "Old argument",
       kindChoiceId: "something-happened",
       period: { kind: "this-month" },
-      pull: 4,
+      loudness: 4,
     });
     useAppStore.getState().setOperation({ kind: "quick-merge", branchId: branch.id });
 
@@ -322,7 +338,7 @@ describe("app flows", () => {
       title: "Unsent letter",
       kindChoiceId: "something-happened",
       period: { kind: "this-month" },
-      pull: 3,
+      loudness: 3,
     });
 
     await useAppStore.getState().startMerge([branch.id]);
@@ -342,7 +358,7 @@ describe("app flows", () => {
       title: "Old friendship",
       kindChoiceId: "relationship",
       period: { kind: "this-month" },
-      pull: 3,
+      loudness: 3,
     });
     useAppStore.getState().setOperation({ kind: "understanding", branchId: branch.id });
 
@@ -486,7 +502,7 @@ describe("app flows", () => {
       title: "Old flat decision",
       kindChoiceId: "something-happened",
       period: { kind: "this-month" },
-      pull: 3,
+      loudness: 3,
     });
     await useAppStore.getState().updateBranch(branch.id, { occupies: ["calm", "sleep"] });
     useAppStore.getState().setOperation({ kind: "idle" });
@@ -535,12 +551,12 @@ describe("app flows", () => {
 
 const DAY = 24 * 60 * 60 * 1000;
 
-async function createThread(title: string, pull = 3) {
+async function createThread(title: string, loudness = 3) {
   return useAppStore.getState().createBranchNow({
     title,
     kindChoiceId: "feared-future",
     period: { kind: "today" },
-    pull: pull as 1 | 2 | 3 | 4 | 5,
+    loudness: loudness as 1 | 2 | 3 | 4 | 5,
   });
 }
 
@@ -558,6 +574,23 @@ describe("living time and loudness", () => {
     expect(useAppStore.getState().timeSkewMs).toBe(0);
   });
 
+  it("time can run faster than real time, and the camera drifts with it", async () => {
+    await renderReady();
+    useAppStore.getState().setTimeRate(86400);
+    expect(useAppStore.getState().timeRate).toBe(86400);
+
+    // Simulate one refresh after a day of app time has streamed by.
+    useAppStore.setState({ nowTick: useAppStore.getState().nowTick - DAY });
+    const before = useAppStore.getState().window!;
+    useAppStore.getState().refreshNow();
+    const after = useAppStore.getState().window!;
+    expect(Date.parse(after.end) - Date.parse(before.end)).toBeGreaterThanOrEqual(DAY);
+    expect(Date.parse(after.start) - Date.parse(before.start)).toBeGreaterThanOrEqual(DAY);
+
+    useAppStore.getState().resetTimeSkew();
+    expect(useAppStore.getState().timeRate).toBe(1);
+  });
+
   it("a loud thread slithers; days without decisions make it louder; a decision stills it", async () => {
     await renderReady();
     const b = await createThread("The unpaid bill", 1);
@@ -567,7 +600,7 @@ describe("living time and loudness", () => {
     // Quiet (loudness 1): no tremor group.
     expect(document.querySelector(".branch-tremor")).toBeFalsy();
 
-    await useAppStore.getState().updateBranch(b.id, { pull: 2 });
+    await useAppStore.getState().updateBranch(b.id, { loudness: 2 });
     await waitFor(() => expect(document.querySelector(".branch-tremor")).toBeTruthy());
     expect(
       (document.querySelector(".branch-tremor") as SVGGElement).getAttribute("data-loudness"),
@@ -585,7 +618,7 @@ describe("living time and loudness", () => {
     await useAppStore.getState().easeBranch(b.id, {});
     await waitFor(() => expect(document.querySelector(".branch-tremor")).toBeFalsy());
     // And the decision eased the stored level one step.
-    expect(useAppStore.getState().branches[0].pull).toBe(1);
+    expect(useAppStore.getState().branches[0].loudness).toBe(1);
   });
 
   it("press a thread and slide up: loudness dials in steps and commits on release", async () => {
@@ -598,16 +631,16 @@ describe("living time and loudness", () => {
     fireEvent.pointerDown(hit, { pointerId: 1, clientX: 200, clientY: 300 });
     fireEvent.pointerMove(svg, { pointerId: 1, clientX: 203, clientY: 224 }); // ~2 steps up
     // The floating chip reads the level live.
-    expect(document.querySelector(".anxiety-chip")).toBeTruthy();
+    expect(document.querySelector(".loudness-chip")).toBeTruthy();
     fireEvent.pointerUp(svg, { pointerId: 1, clientX: 203, clientY: 224 });
 
     await waitFor(() =>
-      expect(useAppStore.getState().branches.find((x) => x.id === b.id)?.pull).toBe(3),
+      expect(useAppStore.getState().branches.find((x) => x.id === b.id)?.loudness).toBe(3),
     );
     // Adjusting is a touch, not a decision: no menu opened, no decision recorded.
     expect(useAppStore.getState().operation).toEqual({ kind: "idle" });
     expect(useAppStore.getState().branches[0].lastDecisionOn).toBeUndefined();
-    expect(document.querySelector(".anxiety-chip")).toBeFalsy();
+    expect(document.querySelector(".loudness-chip")).toBeFalsy();
   });
 
   it("a plain tap still opens the quick menu; a horizontal drag still pans", async () => {
@@ -626,7 +659,7 @@ describe("living time and loudness", () => {
     expect(Date.parse(useAppStore.getState().window!.start)).toBeLessThan(
       Date.parse(startWindow!.start),
     );
-    expect(useAppStore.getState().branches[0].pull).toBe(3); // untouched
+    expect(useAppStore.getState().branches[0].loudness).toBe(3); // untouched
 
     // A plain tap opens the quick menu as before.
     fireEvent.pointerDown(hit, { pointerId: 3, clientX: 200, clientY: 300 });
@@ -644,7 +677,7 @@ describe("living time and loudness", () => {
     });
     fireEvent.change(slider, { target: { value: "4" } });
     await waitFor(() =>
-      expect(useAppStore.getState().branches.find((x) => x.id === b.id)?.pull).toBe(4),
+      expect(useAppStore.getState().branches.find((x) => x.id === b.id)?.loudness).toBe(4),
     );
 
     // A decision today settles the loudness: the dial steps away until tomorrow.

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createBranch } from "@/domain/branches/logic";
 import type { PsychologicalBranch } from "@/domain/branches/types";
 import { assignLanes, laneCount } from "@/visualization/branch-lines/lanes";
-import { pullToThickness, statusToLineStyle, branchColor } from "@/visualization/branch-lines/style";
+import { loudnessToThickness, statusToLineStyle, branchColor } from "@/visualization/branch-lines/style";
 import { buildBranchGeometry } from "@/visualization/branch-lines/paths";
 import { buildTimelineLayout } from "@/visualization/main-line/layout";
 import { dateToX, defaultWindow, generateTicks, zoomWindow, panWindow } from "@/visualization/zoom/time-scale";
@@ -106,9 +106,9 @@ describe("lane assignment", () => {
 });
 
 describe("line style", () => {
-  it("maps pull to thickness monotonically", () => {
-    expect(pullToThickness(1)).toBeLessThan(pullToThickness(3));
-    expect(pullToThickness(3)).toBeLessThan(pullToThickness(5));
+  it("maps loudness to thickness monotonically", () => {
+    expect(loudnessToThickness(1)).toBeLessThan(loudnessToThickness(3));
+    expect(loudnessToThickness(3)).toBeLessThan(loudnessToThickness(5));
   });
 
   it("status maps to distinct, non-colour indicators", () => {
@@ -135,7 +135,7 @@ describe("branch geometry", () => {
   const decidedToday = new Date().toISOString().slice(0, 10);
 
   it("open branches run from the fork to Now at the right edge", () => {
-    const b = mk({ id: "g1", forkDate: "2025-06-01", pull: 1, lastDecisionOn: decidedToday });
+    const b = mk({ id: "g1", forkDate: "2025-06-01", loudness: 1, lastDecisionOn: decidedToday });
     const g = buildBranchGeometry(b, { branchId: "g1", lane: 1, startDate: "2025-06-01", endDate: "2026-08-04" }, window, metrics);
     expect(g.forkX).toBeGreaterThan(0);
     expect(g.endX).toBe(1000);
@@ -144,9 +144,9 @@ describe("branch geometry", () => {
     expect(g.laneY).toBe(56 + 52);
   });
 
-  it("undecided pull pushes the line further from the main line", () => {
-    const calm = mk({ id: "g4", forkDate: "2025-06-01", pull: 1, lastDecisionOn: decidedToday });
-    const heavy = mk({ id: "g5", forkDate: "2025-06-01", pull: 5 });
+  it("undecided loudness pushes the line further from the main line", () => {
+    const calm = mk({ id: "g4", forkDate: "2025-06-01", loudness: 1, lastDecisionOn: decidedToday });
+    const heavy = mk({ id: "g5", forkDate: "2025-06-01", loudness: 5 });
     const lane = { branchId: "x", lane: 1, startDate: "2025-06-01", endDate: "2026-08-04" };
     const gCalm = buildBranchGeometry(calm, { ...lane, branchId: "g4" }, window, metrics);
     const gHeavy = buildBranchGeometry(heavy, { ...lane, branchId: "g5" }, window, metrics);
@@ -198,6 +198,15 @@ describe("timeline layout", () => {
     expect(open?.endX).toBe(layout.nowX);
   });
 
+  it("with many threads the canvas grows past the stage instead of cramming lanes", () => {
+    const branches = Array.from({ length: 14 }, (_, i) =>
+      mk({ id: `m${i}`, forkDate: "2026-05-01" }),
+    );
+    const layout = buildTimelineLayout(branches, { width: 900, height: 400, now: NOW });
+    expect(layout.metrics.laneGap).toBeGreaterThanOrEqual(34);
+    expect(layout.height).toBeGreaterThan(400);
+  });
+
   it("compact mode stacks lanes closer for small screens", () => {
     const branches = [mk({ id: "c1" }), mk({ id: "c2" })];
     const normal = buildTimelineLayout(branches, { width: 900, now: NOW });
@@ -209,15 +218,15 @@ describe("timeline layout", () => {
 describe("screen reader descriptions", () => {
   it("summarises the timeline in plain speech", () => {
     const branches = [
-      mk({ id: "s1", title: "Relationship separation", forkDate: "2026-02-10", pull: 5 }),
-      mk({ id: "s2", title: "Career uncertainty", forkDate: "2026-06-05", pull: 3 }),
-      mk({ id: "s3", title: "Lost fitness", forkDate: "2026-05-02", pull: 4 }),
+      mk({ id: "s1", title: "Relationship separation", forkDate: "2026-02-10", loudness: 5 }),
+      mk({ id: "s2", title: "Career uncertainty", forkDate: "2026-06-05", loudness: 3 }),
+      mk({ id: "s3", title: "Lost fitness", forkDate: "2026-05-02", loudness: 4 }),
     ];
     const text = describeTimeline(branches, { start: "2025-01-01", end: "2026-08-04" });
     expect(text).toContain("Main life timeline from January 2025 to the present.");
     expect(text).toContain("Three active threads reach today.");
-    expect(text).toContain("Relationship separation began in February 2026 and has pull level five.");
-    expect(text).toContain("Career uncertainty began in June 2026 and has pull level three.");
+    expect(text).toContain("Relationship separation began in February 2026 and has loudness level five.");
+    expect(text).toContain("Career uncertainty began in June 2026 and has loudness level three.");
   });
 
   it("counts legacy waiting branches as active and mentions merged ones", () => {
@@ -231,20 +240,20 @@ describe("screen reader descriptions", () => {
   });
 
   it("describes a single branch without technical language", () => {
-    const text = describeBranch(mk({ title: "Lost fitness", pull: 4, forkDate: "2026-05-02" }));
+    const text = describeBranch(mk({ title: "Lost fitness", loudness: 4, forkDate: "2026-05-02" }));
     expect(text).toContain("Lost fitness");
-    expect(text).toContain("Pull level four");
+    expect(text).toContain("Loudness level four");
     expect(text).not.toMatch(/HEAD|rebase|commit hash/i);
   });
 
-  it("speaks a fractional pull (fine slider steps) as the nearest whole word", () => {
-    const text = describeBranch(mk({ title: "Lost fitness", pull: 3.4, forkDate: "2026-05-02" }));
-    expect(text).toContain("Pull level three");
+  it("speaks a fractional loudness (fine slider steps) as the nearest whole word", () => {
+    const text = describeBranch(mk({ title: "Lost fitness", loudness: 3.4, forkDate: "2026-05-02" }));
+    expect(text).toContain("Loudness level three");
     expect(
-      describeTimeline([mk({ id: "f1", title: "Rent", pull: 4.6, forkDate: "2026-06-05" })], {
+      describeTimeline([mk({ id: "f1", title: "Rent", loudness: 4.6, forkDate: "2026-06-05" })], {
         start: "2025-01-01",
         end: "2026-08-04",
       }),
-    ).toContain("pull level five");
+    ).toContain("loudness level five");
   });
 });

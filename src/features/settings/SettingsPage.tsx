@@ -17,7 +17,8 @@ export function SettingsSections() {
   const deleteEverything = useAppStore((s) => s.deleteEverything);
   const loadExampleData = useAppStore((s) => s.loadExampleData);
   const timeSkewMs = useAppStore((s) => s.timeSkewMs);
-  const fastForward = useAppStore((s) => s.fastForward);
+  const timeRate = useAppStore((s) => s.timeRate);
+  const setTimeRate = useAppStore((s) => s.setTimeRate);
   const resetTimeSkew = useAppStore((s) => s.resetTimeSkew);
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -122,21 +123,29 @@ export function SettingsSections() {
       <div className="card">
         <p className="hint">
           {t(
-            "Move the app's clock forward to watch how threads behave when days pass without decisions. This only affects this session — reloading returns to real time.",
+            "Let the app's clock run faster than real time and watch how threads grow louder when days pass without decisions. This only affects this session — reloading returns to real time.",
           )}
         </p>
-        <div className="filter-row">
-          <button className="btn" onClick={() => fastForward(6 * 60 * 60 * 1000)}>
-            {t("+6 hours")}
+        <div className="filter-row" role="group" aria-label={t("How fast time passes")}>
+          <button className="btn" aria-pressed={timeRate === 1} onClick={() => setTimeRate(1)}>
+            {t("Real time")}
           </button>
-          <button className="btn" onClick={() => fastForward(24 * 60 * 60 * 1000)}>
-            {t("+1 day")}
+          <button
+            className="btn"
+            aria-pressed={timeRate === 3600}
+            onClick={() => setTimeRate(3600)}
+          >
+            {t("An hour per second")}
           </button>
-          <button className="btn" onClick={() => fastForward(3 * 24 * 60 * 60 * 1000)}>
-            {t("+3 days")}
+          <button
+            className="btn"
+            aria-pressed={timeRate === 86400}
+            onClick={() => setTimeRate(86400)}
+          >
+            {t("A day per second")}
           </button>
         </div>
-        {timeSkewMs > 0 && (
+        {timeSkewMs > 60_000 && (
           <div className="filter-row">
             <span role="status">
               {t("The app is living {days} day(s) ahead.", {

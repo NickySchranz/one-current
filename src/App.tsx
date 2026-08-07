@@ -15,14 +15,16 @@ export default function App() {
   const reducedMotion = useAppStore((s) => s.reducedMotion);
   const init = useAppStore((s) => s.init);
   const refreshNow = useAppStore((s) => s.refreshNow);
+  const timeRate = useAppStore((s) => s.timeRate);
 
   useEffect(() => {
     void init();
   }, [init]);
 
   // The timeline lives: Now keeps moving while the app stays open.
+  // When the Testing clock runs fast, tick fast enough to watch it flow.
   useEffect(() => {
-    const id = setInterval(refreshNow, 30_000);
+    const id = setInterval(refreshNow, timeRate > 1 ? 250 : 30_000);
     const onVisible = () => {
       if (!document.hidden) refreshNow();
     };
@@ -31,7 +33,7 @@ export default function App() {
       clearInterval(id);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [refreshNow]);
+  }, [refreshNow, timeRate]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

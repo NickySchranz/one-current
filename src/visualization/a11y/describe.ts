@@ -26,7 +26,7 @@ function monthYear(iso: string): string {
 /**
  * Complete non-visual equivalent of the branching timeline.
  * Example: "Main life timeline from January 2025 to the present. Three active threads
- * reach today. Relationship separation began in February 2026 and has pull level five."
+ * reach today. Relationship separation began in February 2026 and has loudness level five."
  */
 export function describeTimeline(
   branches: PsychologicalBranch[],
@@ -50,10 +50,10 @@ export function describeTimeline(
 
   for (const b of open) {
     parts.push(
-      t("{title} began {when} and has pull level {pull}.", {
+      t("{title} began {when} and has loudness level {loudness}.", {
         title: b.title,
         when: b.forkLabel ? b.forkLabel : t("in {month}", { month: monthYear(b.forkDate) }),
-        pull: t(numberWord(b.pull)).toLowerCase(),
+        loudness: t(numberWord(b.loudness)).toLowerCase(),
       }),
     );
   }
@@ -80,7 +80,7 @@ export function describeBranch(branch: PsychologicalBranch, t: Translate = fallb
     t("Began {when}.", {
       when: branch.forkLabel ?? t("in {month}", { month: monthYear(branch.forkDate) }),
     }),
-    t("Pull level {pull}.", { pull: t(numberWord(branch.pull)).toLowerCase() }),
+    t("Loudness level {loudness}.", { loudness: t(numberWord(branch.loudness)).toLowerCase() }),
   ];
   if (branch.commits.length > 0) {
     parts.push(
@@ -113,7 +113,7 @@ function statusText(branch: PsychologicalBranch, t: Translate): string {
 
 const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 export function numberWord(n: number): string {
-  // Pull can be fractional (the slider moves in fine steps): speak the nearest whole number.
+  // Loudness can be fractional (the slider moves in fine steps): speak the nearest whole number.
   const whole = Math.round(n);
   return whole >= 0 && whole < WORDS.length ? WORDS[whole] : String(whole);
 }

@@ -139,11 +139,12 @@ export const history: Record<string, string> = {
     "Mira cómo se ve una línea de tiempo vivida: nueve hilos de ejemplo — a la deriva, en reposo, integrados — más las acciones de hoy. Puedes borrarlos cuando quieras.",
   "Load example threads": "Cargar hilos de ejemplo",
   Testing: "Pruebas",
-  "Move the app's clock forward to watch how threads behave when days pass without decisions. This only affects this session — reloading returns to real time.":
-    "Adelanta el reloj de la app para ver cómo se comportan los hilos cuando pasan días sin decisiones. Solo afecta a esta sesión: al recargar vuelves al tiempo real.",
-  "+6 hours": "+6 horas",
-  "+1 day": "+1 día",
-  "+3 days": "+3 días",
+  "Let the app's clock run faster than real time and watch how threads grow louder when days pass without decisions. This only affects this session — reloading returns to real time.":
+    "Deja que el reloj de la app corra más rápido que el tiempo real y mira cómo los hilos suenan más fuerte cuando pasan días sin decisiones. Solo afecta a esta sesión: al recargar vuelves al tiempo real.",
+  "How fast time passes": "Cómo de rápido pasa el tiempo",
+  "Real time": "Tiempo real",
+  "An hour per second": "Una hora por segundo",
+  "A day per second": "Un día por segundo",
   "The app is living {days} day(s) ahead.": "La app vive {days} día(s) por delante.",
   "Back to real time": "Volver al tiempo real",
   Privacy: "Privacidad",

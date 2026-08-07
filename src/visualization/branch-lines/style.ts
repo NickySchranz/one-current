@@ -1,9 +1,9 @@
-import type { BranchStatus, Pull, PsychologicalBranch } from "@/domain/branches/types";
+import type { BranchStatus, Loudness, PsychologicalBranch } from "@/domain/branches/types";
 import { themeMode, type ThemeId } from "../theme";
 
-/** Emotional pull maps to line thickness: heavier branches are visibly heavier lines. */
-export function pullToThickness(pull: Pull): number {
-  return 1.25 + pull * 0.75; // 2 .. 5 px
+/** Emotional loudness maps to line thickness: heavier branches are visibly heavier lines. */
+export function loudnessToThickness(loudness: Loudness): number {
+  return 1.25 + loudness * 0.75; // 2 .. 5 px
 }
 
 export type LineStyle = {

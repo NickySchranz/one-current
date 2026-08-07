@@ -37,9 +37,14 @@ export const repo = {
       throw new Error("This file is not a One Current export.");
     }
     const d = parsed.data;
+    // Older exports stored loudness as "pull" (briefly "anxietyLevel").
+    const branches = (d.branches ?? []).map((b: Record<string, unknown>) => {
+      const { pull, anxietyLevel, ...rest } = b;
+      return { loudness: rest.loudness ?? pull ?? anxietyLevel ?? 3, ...rest };
+    });
     await db.transaction("rw", [db.branches, db.merges, db.waiting, db.actions, db.drafts], async () => {
       await Promise.all([
-        db.branches.bulkPut(d.branches ?? []),
+        db.branches.bulkPut(branches),
         db.merges.bulkPut(d.merges ?? []),
         db.waiting.bulkPut(d.waiting ?? []),
         db.actions.bulkPut(d.actions ?? []),

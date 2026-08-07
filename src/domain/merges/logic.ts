@@ -1,5 +1,5 @@
 import { newId } from "../ids";
-import { isoDate, reducePullAfterMerge, statusAfterMerge } from "../branches/logic";
+import { isoDate, reduceLoudnessAfterMerge, statusAfterMerge } from "../branches/logic";
 import type { PsychologicalBranch } from "../branches/types";
 import type { PreserveRelease } from "../branches/diff";
 import type { MergeConflict } from "../conflicts/types";
@@ -60,7 +60,7 @@ export function applyMergeToBranch(
   return {
     ...branch,
     status,
-    pull: reducePullAfterMerge(branch.pull, merge.resultStatus),
+    loudness: reduceLoudnessAfterMerge(branch.loudness, merge.resultStatus),
     lastDecisionOn: isoDate(now),
     mergeIds: [...branch.mergeIds, merge.id],
     mergeDate: closes ? isoDate(now) : branch.mergeDate,

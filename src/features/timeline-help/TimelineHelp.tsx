@@ -32,7 +32,7 @@ export function TimelineHelp() {
             <strong>{t("Reading the lines")}</strong>
             <br />
             {t(
-              "solid = active · curved back = integrated · thicker = stronger pull · faint ✓ = decided today",
+              "solid = active · curved back = integrated · thicker = louder · faint ✓ = decided today",
             )}
           </p>
           <p className="hint" style={{ margin: 0 }}>

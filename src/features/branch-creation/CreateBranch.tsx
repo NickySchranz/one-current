@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { useT } from "@/i18n/i18n";
-import type { ForkPeriodChoice, Pull } from "@/domain/branches/types";
+import type { ForkPeriodChoice, Loudness } from "@/domain/branches/types";
 import { ANXIETIES, suggestLockedFeelings } from "@/domain/feelings/logic";
 import { FeelingPicker } from "@/features/branch-touch/FeelingPicker";
 import { appNow } from "@/domain/time/clock";
@@ -32,7 +32,7 @@ export function CreateBranch() {
   const t = useT();
 
   const [title, setTitle] = useState("");
-  const [pull, setPull] = useState<Pull>(3);
+  const [loudness, setLoudness] = useState<Loudness>(3);
   const [whenId, setWhenId] = useState<WhenId>("today");
   const [earlierId, setEarlierId] = useState<EarlierId>("date");
   const [approxDate, setApproxDate] = useState("");
@@ -66,7 +66,7 @@ export function CreateBranch() {
         title,
         kindChoiceId: "unnamed",
         period: p,
-        pull,
+        loudness,
         anxieties: anxieties.length > 0 ? anxieties : undefined,
         occupies: anxieties.length > 0 ? suggestLockedFeelings(anxieties) : undefined,
       });
@@ -106,11 +106,11 @@ export function CreateBranch() {
             min={1}
             max={5}
             step={0.1}
-            value={pull}
+            value={loudness}
             aria-valuetext={
-              pull === 1 ? t("Quiet") : t("Loudness {level} of 5", { level: Math.round(pull) })
+              loudness === 1 ? t("Quiet") : t("Loudness {level} of 5", { level: Math.round(loudness) })
             }
-            onChange={(e) => setPull(Number(e.target.value) as Pull)}
+            onChange={(e) => setLoudness(Number(e.target.value) as Loudness)}
           />
         </div>
         <div className="field">

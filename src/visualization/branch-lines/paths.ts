@@ -1,10 +1,10 @@
 import type { PsychologicalBranch } from "@/domain/branches/types";
 import type { BranchCommit } from "@/domain/moments/types";
-import { effectivePull, isClosed, isOpen } from "@/domain/branches/logic";
+import { effectiveLoudness, isClosed, isOpen } from "@/domain/branches/logic";
 import { decidedToday } from "@/domain/feelings/logic";
 import { dateToX, dateToXRaw, type TimeWindow } from "../zoom/time-scale";
 import type { LaneAssignment } from "./lanes";
-import { applyResting, pullToThickness, restingToday, statusToLineStyle, type LineStyle } from "./style";
+import { applyResting, loudnessToThickness, restingToday, statusToLineStyle, type LineStyle } from "./style";
 
 export type MomentPoint = {
   moment: BranchCommit;
@@ -27,7 +27,7 @@ export type BranchGeometry = {
   forkVisible: boolean;
   reachesNow: boolean;
   thickness: number;
-  /** How loud this line is today (1–5, drift included) — same metric as its pull. */
+  /** How loud this line is today (1–5, drift included) — same metric as its loudness. */
   loudness: number;
   style: LineStyle;
   momentPoints: MomentPoint[];
@@ -66,9 +66,9 @@ export function buildBranchGeometry(
   now: Date = new Date(),
 ): BranchGeometry {
   const { width, mainY, curveLength } = metrics;
-  // Stronger felt pull pushes the line further from Now; decisions bring it back closer.
-  const pull = effectivePull(branch, now);
-  const pullOffset = ((pull - 1) / 4) * 0.45 * metrics.laneGap;
+  // Stronger felt loudness pushes the line further from Now; decisions bring it back closer.
+  const loudness = effectiveLoudness(branch, now);
+  const pullOffset = ((loudness - 1) / 4) * 0.45 * metrics.laneGap;
   const laneY = laneToY(assignment.lane, metrics) + Math.sign(assignment.lane) * pullOffset;
   // The fork curve is only drawn while the fork moment is actually in view;
   // otherwise the branch enters from the left as a parallel line.
@@ -126,8 +126,8 @@ export function buildBranchGeometry(
     endsOnMain,
     forkVisible,
     reachesNow: isOpen(branch),
-    thickness: pullToThickness(pull),
-    loudness: pull,
+    thickness: loudnessToThickness(loudness),
+    loudness: loudness,
     // Any decision today lets the line rest: fainter and still until tomorrow.
     style:
       restingToday(branch, now) || (!closed && decidedToday(branch, now))

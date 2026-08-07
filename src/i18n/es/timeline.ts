@@ -27,8 +27,8 @@ export const timeline: Record<string, string> = {
   Help: "Ayuda",
   "Reading the timeline": "Cómo leer la línea de tiempo",
   "Reading the lines": "Cómo leer las líneas",
-  "solid = active · curved back = integrated · thicker = stronger pull · faint ✓ = decided today":
-    "sólida = activa · curva de vuelta = integrada · más gruesa = más tirón · ✓ tenue = decidido hoy",
+  "solid = active · curved back = integrated · thicker = louder · faint ✓ = decided today":
+    "sólida = activa · curva de vuelta = integrada · más gruesa = suena más fuerte · ✓ tenue = decidido hoy",
   "Moving around": "Moverse",
   "drag or scroll sideways = move through time · along the dates = move faster":
     "arrastra o desplázate a lo ancho = moverse por el tiempo · junto a las fechas = más rápido",
@@ -68,8 +68,8 @@ export const timeline: Record<string, string> = {
   "No active threads reach today.": "Ningún hilo activo llega a hoy.",
   "One active thread reaches today.": "Un hilo activo llega a hoy.",
   "{n} active threads reach today.": "{n} hilos activos llegan a hoy.",
-  "{title} began {when} and has pull level {pull}.":
-    "{title} se abrió {when} y tiene un tirón de nivel {pull}.",
+  "{title} began {when} and has loudness level {loudness}.":
+    "{title} se abrió {when} y suena a nivel {loudness}.",
   "in {month}": "en {month}",
   "{title} is currently the most activated thread.":
     "{title} es ahora mismo el hilo más activado.",
@@ -80,7 +80,7 @@ export const timeline: Record<string, string> = {
 
   // one thread described
   "Began {when}.": "Se abrió {when}.",
-  "Pull level {pull}.": "Tirón de nivel {pull}.",
+  "Loudness level {loudness}.": "Suena a nivel {loudness}.",
   "One moment recorded.": "Un momento registrado.",
   "{n} moments recorded.": "{n} momentos registrados.",
   "Carries {list}.": "Lleva {list}.",

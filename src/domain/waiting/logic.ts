@@ -30,7 +30,7 @@ export function applyWaitingToBranch(
     ...branch,
     status: "waiting-with-boundaries",
     waitingContainerId: container.id,
-    pull: Math.min(branch.pull, 2) as PsychologicalBranch["pull"],
+    loudness: Math.min(branch.loudness, 2) as PsychologicalBranch["loudness"],
     lastDecisionOn: now.toISOString().slice(0, 10),
     storedQualities: [...new Set([...branch.storedQualities, ...container.reclaimedNow])],
   };

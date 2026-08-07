@@ -657,7 +657,7 @@ textarea { min-height: 5rem; resize: vertical; }
   stroke: transparent;
   stroke-width: 22;
   cursor: pointer;
-  /* the anxiety dial drags vertically from here: keep the browser's pan away */
+  /* the loudness dial drags vertically from here: keep the browser's pan away */
   touch-action: none;
 }
 .branch-label {
@@ -692,11 +692,11 @@ textarea { min-height: 5rem; resize: vertical; }
   from { stroke-dashoffset: 15; }
   to { stroke-dashoffset: 0; }
 }
-/* anxiety made visible: the strokes slither via a rAF wave (see useSquiggle);
+/* loudness made visible: the strokes slither via a rAF wave (see useSquiggle);
    reduced motion is handled in React, so no CSS is needed here */
 
-/* the floating readout while the thumb dials a thread's anxiety */
-.anxiety-chip {
+/* the floating readout while the thumb dials a thread's loudness */
+.loudness-chip {
   position: absolute;
   left: 0;
   top: 0;
@@ -714,16 +714,16 @@ textarea { min-height: 5rem; resize: vertical; }
   white-space: nowrap;
   z-index: 4;
 }
-.anxiety-chip-dots { display: inline-flex; gap: 3px; }
-.anxiety-dot {
+.loudness-chip-dots { display: inline-flex; gap: 3px; }
+.loudness-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--line);
 }
-.anxiety-dot.on { background: var(--accent); }
+.loudness-dot.on { background: var(--accent); }
 
-/* one quiet slider: how loud the thread is — the same thing as its pull */
+/* one quiet slider: how loud the thread is — one metric for the whole thread */
 .loudness-field {
   display: flex;
   flex-direction: column;
@@ -1209,7 +1209,17 @@ button.tag:hover { border-color: var(--ink-faint); }
   flex-direction: column;
   overflow: hidden;
 }
-.timeline-stage .timeline-svg { flex: 1; }
+/* The canvas can outgrow the stage when many threads are open; this inner
+   container scrolls it vertically while the stage chrome stays pinned. */
+.timeline-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.timeline-stage .timeline-svg { flex: none; }
 .timeline-svg:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .timeline-empty {
@@ -1412,6 +1422,28 @@ button.tag:hover { border-color: var(--ink-faint); }
 .quick-menu-item:hover { border-color: var(--line-axis); }
 .quick-menu-item .hint { margin: 0; font-size: 0.8rem; }
 .understand-link { margin-top: 0.2rem; }
+
+/* The sheet's peek state: the question doubles as the handle that unfolds
+   the decisions — quiet, full width, with a small upward cue. */
+.peek-more {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: var(--touch);
+  margin: 0.3rem 0 0;
+  padding: 0.45rem 0.65rem;
+  border: 1px dashed var(--line-soft);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.92rem;
+  text-align: left;
+  cursor: pointer;
+}
+.peek-more:hover { border-color: var(--line-axis); }
+.peek-chevron { opacity: 0.55; font-size: 0.8rem; }
 
 /* ---------- quick tray: a light panel, the timeline stays interactive ---------- */
 .quick-tray {

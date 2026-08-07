@@ -22,15 +22,14 @@ const STATUS_PHRASES: Record<string, string> = {
   "partly merged": "partly integrated",
 };
 
-function dayIso(offset: number): string {
-  return new Date(Date.now() + offset * DAY).toISOString().slice(0, 10);
-}
-
 /** Recent days, threads integrated, recurring patterns, and past merges. */
 export function HistoryView() {
   const t = useT();
   const language = useAppStore((s) => s.language);
   const branches = useAppStore((s) => s.branches);
+  const nowTick = useAppStore((s) => s.nowTick);
+  const dayIso = (offset: number) =>
+    new Date(nowTick + offset * DAY).toISOString().slice(0, 10);
   const merges = useAppStore((s) => s.merges);
   const setView = useAppStore((s) => s.setView);
   // 0 = today; step back as far as you like.
@@ -51,7 +50,7 @@ export function HistoryView() {
       ? t("Today")
       : dayOffset === -1
         ? t("Yesterday")
-        : new Date(Date.now() + dayOffset * DAY).toLocaleDateString(locale, {
+        : new Date(nowTick + dayOffset * DAY).toLocaleDateString(locale, {
             weekday: "short",
             day: "numeric",
             month: "short",
@@ -87,7 +86,7 @@ export function HistoryView() {
           if (start == null || end == null) return;
           const delta = end - start;
           if (Math.abs(delta) < 48) return;
-          // Pull the days like a strip of paper: right reveals earlier days.
+          // Slide the days like a strip of paper: right reveals earlier days.
           if (delta > 0) setDayOffset((o) => o - 1);
           else setDayOffset((o) => Math.min(0, o + 1));
         }}

@@ -8,6 +8,15 @@
   name="description"
   content="One Current is a calm, private timeline of your life. Everything that pulls on your attention becomes a thread branching off one main line — and every thread can be brought back."
 />
+<meta property="og:title" content="One Current — one line, one life" />
+<meta property="og:description" content="A calm, private timeline of your life. Everything that pulls on your attention becomes a visible thread — and every thread can be brought back." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="img/timeline-desktop.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="../icons/icon-192.png" />
+<link rel="manifest" href="../manifest.webmanifest" />
+<meta name="theme-color" content="#faf9f6" />
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png" />
 <style>
   :root {
     --bg: #faf9f6;
@@ -15,15 +24,19 @@
     --ink: #26251f;
     --ink-soft: #6b6a61;
     --accent: #3f6f5f;
+    --accent-deep: #35604f;
     --accent-soft: #e4ede9;
-    --danger: #9c4a3c;
     --line: #e3e1d9;
     --radius: 10px;
     --radius-lg: 16px;
+    --shadow-sm: 0 1px 2px rgba(38, 37, 31, 0.06), 0 4px 14px rgba(38, 37, 31, 0.06);
+    --shadow-md: 0 2px 6px rgba(38, 37, 31, 0.08), 0 16px 40px rgba(38, 37, 31, 0.12);
+    --shadow-lg: 0 4px 10px rgba(38, 37, 31, 0.1), 0 32px 80px rgba(38, 37, 31, 0.2);
     --font-body: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
       source-sans-pro, sans-serif;
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
@@ -32,119 +45,195 @@
     line-height: 1.6;
     font-size: 17px;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   a { color: var(--accent); }
+  img { user-select: none; }
   .wrap {
-    max-width: 960px;
+    max-width: 1020px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 24px;
   }
+  section { scroll-margin-top: 84px; }
+
+  /* buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border: 0;
+    border-radius: var(--radius);
+    padding: 11px 22px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(38, 37, 31, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover { background: var(--accent-deep); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(38, 37, 31, 0.2); }
+  .btn:active { transform: translateY(0); }
+  .btn.quiet {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    box-shadow: none;
+  }
+  .btn.quiet:hover { background: #d9e6e0; box-shadow: none; }
 
   /* header */
   header.site {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(250, 249, 246, 0.82);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid rgba(227, 225, 217, 0.8);
+  }
+  header.site .bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 0;
+    gap: 18px;
+    height: 62px;
   }
   .brand {
     display: flex;
     align-items: center;
     gap: 10px;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
   }
   .brand svg { display: block; }
-  .btn {
-    display: inline-block;
-    background: var(--accent);
-    color: #fff;
-    text-decoration: none;
-    border-radius: var(--radius);
-    padding: 10px 20px;
-    font-weight: 600;
-    font-size: 0.95rem;
+  nav.primary {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+    margin-right: 6px;
   }
-  .btn.quiet {
-    background: var(--accent-soft);
-    color: var(--accent);
+  nav.primary a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 8px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  nav.primary a:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
+  header.site .btn { padding: 8px 16px; font-size: 0.88rem; }
+
+  /* device frame */
+  .device {
+    background: #1d1c19;
+    border-radius: 38px;
+    padding: 10px;
+    box-shadow: var(--shadow-lg);
+  }
+  .device img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 29px;
   }
 
   /* hero */
+  .hero-band {
+    background:
+      radial-gradient(900px 420px at 82% -10%, rgba(63, 111, 95, 0.1), transparent 68%),
+      radial-gradient(700px 380px at 8% 108%, rgba(63, 111, 95, 0.07), transparent 70%);
+    border-bottom: 1px solid var(--line);
+  }
   .hero {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
-    gap: 48px;
+    gap: 56px;
     align-items: center;
-    padding: 56px 0 72px;
+    padding: 72px 0 84px;
   }
   .hero h1 {
-    font-size: clamp(1.9rem, 4.5vw, 2.7rem);
-    line-height: 1.2;
-    margin: 0 0 18px;
-    letter-spacing: -0.01em;
+    font-size: clamp(2rem, 4.6vw, 3rem);
+    line-height: 1.14;
+    margin: 0 0 20px;
+    letter-spacing: -0.022em;
+    font-weight: 750;
   }
   .hero p.lead {
-    font-size: 1.12rem;
+    font-size: 1.14rem;
     color: var(--ink-soft);
-    margin: 0 0 28px;
+    margin: 0 0 30px;
+    max-width: 34em;
   }
   .hero .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-  .hero .note { font-size: 0.85rem; color: var(--ink-soft); margin-top: 14px; }
-  .phone {
+  .hero .note { font-size: 0.85rem; color: var(--ink-soft); margin-top: 16px; }
+  .hero .note strong { color: var(--ink); font-weight: 600; }
+  .hero .device {
     justify-self: center;
-    width: min(300px, 80vw);
-    border-radius: 28px;
-    border: 1px solid var(--line);
-    box-shadow: 0 24px 60px rgba(38, 37, 31, 0.14);
-    overflow: hidden;
-    background: var(--bg-raised);
+    width: min(320px, 82vw);
   }
-  .phone img { display: block; width: 100%; height: auto; }
 
   /* sections */
-  section { padding: 56px 0; }
+  section .inner { padding: 76px 0; }
   section.alt { background: var(--bg-raised); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   h2 {
-    font-size: clamp(1.4rem, 3vw, 1.8rem);
-    margin: 0 0 10px;
-    letter-spacing: -0.01em;
+    font-size: clamp(1.5rem, 3.2vw, 2rem);
+    margin: 0 0 12px;
+    letter-spacing: -0.018em;
+    font-weight: 700;
   }
   .kicker {
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     font-size: 0.72rem;
     font-weight: 700;
     color: var(--accent);
-    margin: 0 0 8px;
+    margin: 0 0 10px;
   }
   .sub {
     color: var(--ink-soft);
-    max-width: 620px;
-    margin: 0 0 36px;
+    max-width: 640px;
+    margin: 0 0 44px;
+    font-size: 1.02rem;
   }
 
   /* how it works steps */
   .step {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    gap: 48px;
     align-items: center;
-    padding: 28px 0;
+    padding: 36px 0;
   }
   .step + .step { border-top: 1px solid var(--line); }
   .step:nth-child(even) .step-media { order: -1; }
   .step h3 {
-    margin: 0 0 8px;
-    font-size: 1.15rem;
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 12px;
   }
   .step h3 .num {
-    color: var(--accent);
-    font-size: 0.85rem;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font-size: 0.8rem;
     font-weight: 700;
+    transform: translateY(4px);
   }
   .step p { color: var(--ink-soft); margin: 0 0 10px; }
   .step-media img {
@@ -153,103 +242,191 @@
     height: auto;
     border-radius: var(--radius-lg);
     border: 1px solid var(--line);
-    box-shadow: 0 12px 32px rgba(38, 37, 31, 0.1);
+    box-shadow: var(--shadow-md);
   }
   .caption {
     font-size: 0.82rem;
     color: var(--ink-soft);
-    margin-top: 8px;
+    margin-top: 10px;
     text-align: center;
   }
 
-  /* why cards */
+  /* cards */
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px;
   }
   .card {
     background: var(--bg-raised);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    padding: 22px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
   }
-  section.alt .card { background: var(--bg); }
-  .card h3 { margin: 0 0 8px; font-size: 1rem; }
-  .card p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+  section.alt .card { background: var(--bg); box-shadow: none; }
+  .card h3 { margin: 0 0 8px; font-size: 1.02rem; letter-spacing: -0.01em; }
+  .card p { margin: 0; color: var(--ink-soft); font-size: 0.94rem; }
 
-  /* desktop shot */
-  .wide-shot img {
-    display: block;
-    width: 100%;
-    height: auto;
+  /* theme gallery */
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 22px;
+  }
+  .theme-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 22px 22px 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .theme-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .theme-card h3 { margin: 0 0 6px; font-size: 1.02rem; letter-spacing: -0.01em; }
+  .theme-card p { margin: 0 0 18px; color: var(--ink-soft); font-size: 0.9rem; }
+  .theme-card .shot {
+    margin-top: auto;
+    padding: 0 16px;
+  }
+  .theme-card .shot .device {
+    border-radius: 30px 30px 0 0;
+    padding: 8px 8px 0;
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05), 0 10px 40px rgba(38, 37, 31, 0.22);
+  }
+  .theme-card .shot .device img {
+    border-radius: 22px 22px 0 0;
+    aspect-ratio: 39 / 58;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  /* install sheet */
+  .install-sheet {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 37, 31, 0.42);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .install-sheet[hidden] { display: none; }
+  .install-card {
+    background: var(--bg-raised);
     border-radius: var(--radius-lg);
     border: 1px solid var(--line);
-    box-shadow: 0 16px 44px rgba(38, 37, 31, 0.12);
+    max-width: 420px;
+    width: 100%;
+    padding: 26px 26px 22px;
+    box-shadow: var(--shadow-lg);
   }
+  .install-card h3 { margin: 0 0 10px; font-size: 1.15rem; }
+  .install-card p { color: var(--ink-soft); margin: 0 0 12px; font-size: 0.95rem; }
+  .install-card ol { margin: 0 0 16px; padding-left: 20px; color: var(--ink-soft); font-size: 0.95rem; }
+  .install-card ol li { margin-bottom: 6px; }
+  .install-card .share-glyph {
+    display: inline-block;
+    vertical-align: -3px;
+  }
+  .install-card .row { display: flex; gap: 10px; justify-content: flex-end; }
 
   /* privacy */
   .privacy {
     text-align: center;
-    max-width: 560px;
+    max-width: 580px;
     margin: 0 auto;
   }
   .privacy p { color: var(--ink-soft); }
 
   /* footer */
   footer {
+    background: #22211c;
+    color: #f4f2ea;
     text-align: center;
-    padding: 64px 20px 80px;
+    padding: 80px 24px 56px;
   }
-  footer h2 { margin-bottom: 20px; }
-  footer .small { font-size: 0.82rem; color: var(--ink-soft); margin-top: 24px; }
+  footer h2 { margin: 0 0 24px; color: #f4f2ea; }
+  footer .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  footer .btn { background: #f4f2ea; color: var(--ink); box-shadow: none; }
+  footer .btn:hover { background: #ffffff; }
+  footer .btn.quiet { background: rgba(244, 242, 234, 0.14); color: #f4f2ea; }
+  footer .btn.quiet:hover { background: rgba(244, 242, 234, 0.22); }
+  footer .small { font-size: 0.85rem; color: rgba(244, 242, 234, 0.6); margin: 28px auto 0; max-width: 460px; }
+  footer .legal {
+    margin-top: 44px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(244, 242, 234, 0.14);
+    font-size: 0.8rem;
+    color: rgba(244, 242, 234, 0.45);
+  }
 
-  @media (max-width: 760px) {
-    .hero { grid-template-columns: 1fr; padding: 32px 0 48px; gap: 36px; }
-    .step { grid-template-columns: 1fr; gap: 20px; }
+  @media (max-width: 860px) {
+    nav.primary { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 44px 0 56px; gap: 44px; }
+    .step { grid-template-columns: 1fr; gap: 22px; padding: 30px 0; }
     .step:nth-child(even) .step-media { order: 0; }
-    .step-media { max-width: 420px; margin: 0 auto; width: 100%; }
-    section { padding: 44px 0; }
+    .step-media { max-width: 440px; margin: 0 auto; width: 100%; }
+    section .inner { padding: 56px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn, .theme-card { transition: none; }
+    .btn:hover, .theme-card:hover { transform: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <header class="site">
-    <div class="brand">
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="#top">
       <svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true">
         <path d="M2 13 C8 13 8 5 15 5 C22 5 22 13 28 13" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
         <circle cx="24" cy="13" r="3" fill="var(--accent)"/>
       </svg>
       One Current
-    </div>
-    <a class="btn quiet" href="../">Open the app</a>
-  </header>
+    </a>
+    <nav class="primary" aria-label="Sections">
+      <a href="#what">What it is</a>
+      <a href="#how">How it works</a>
+      <a href="#themes">Themes</a>
+      <a href="#privacy">Privacy</a>
+    </nav>
+    <a class="btn" href="../">Open the app</a>
+  </div>
+</header>
 
-  <div class="hero">
-    <div>
-      <h1>Your life is one line.<br />Everything else is a thread that can come back.</h1>
-      <p class="lead">
-        One Current is a calm, private timeline of your life. Whatever pulls at your
-        attention — an unanswered message, a worry, a decision you keep postponing —
-        becomes a visible thread branching off your main line. You see it, you decide
-        what it needs, the line changes, and you return to your life.
-      </p>
-      <div class="cta-row">
-        <a class="btn" href="../">Open One Current</a>
-        <a class="btn quiet" href="#how">How it works</a>
+<div class="hero-band" id="top">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Your life is one line. Everything else is a thread that can come back.</h1>
+        <p class="lead">
+          One Current is a calm, private timeline of your life. Whatever pulls at your
+          attention — an unanswered message, a worry, a decision you keep postponing —
+          becomes a visible thread branching off your main line. You see it, you decide
+          what it needs, the line changes, and you return to your life.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="../">Open One Current</a>
+          <button class="btn quiet" type="button" data-install>Download the app</button>
+        </div>
+        <p class="note"><strong>Free.</strong> No account, no ads — nothing leaves your browser.</p>
       </div>
-      <p class="note">Free, no account, nothing leaves your browser.</p>
-    </div>
-    <div class="phone">
-      <img src="img/timeline-mobile.png" alt="One Current on a phone: a dark main line marked Now, with colored threads running alongside it and a small wholeness chip in the corner." />
+      <div class="device">
+        <img src="img/timeline-mobile.png" alt="One Current on a phone: a dark main line marked Now, with colored threads running alongside it and a small wholeness chip in the corner." />
+      </div>
     </div>
   </div>
 </div>
 
 <section class="alt" id="what">
-  <div class="wrap">
+  <div class="wrap inner">
     <p class="kicker">What it is</p>
     <h2>A picture of where your attention actually is</h2>
     <p class="sub">
@@ -277,12 +454,20 @@
         <h3>Integration</h3>
         <p>Threads are not deleted or suppressed. When one has given you what it can, it curves back into your main line and travels with you.</p>
       </div>
+      <div class="card">
+        <h3>Six living themes</h3>
+        <p>From quiet Riverbed to koi ponds, balloons, cats, anglerfish, ghosts and dragons — each open thread becomes a small creature that settles when you decide.</p>
+      </div>
+      <div class="card">
+        <h3>In your language</h3>
+        <p>The whole app speaks English or Spanish — every word it says changes, while your own words stay exactly as you wrote them.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="how">
-  <div class="wrap">
+  <div class="wrap inner">
     <p class="kicker">How it works</p>
     <h2>The whole loop takes about a minute</h2>
     <p class="sub">
@@ -319,6 +504,10 @@
           that touch is not a commitment to do anything.
         </p>
         <p>
+          Or skip the sheet entirely: press the thread and slide your thumb up
+          or down, and its loudness dials right there on the timeline.
+        </p>
+        <p>
           Loudness is honest over time, too. A thread left undecided grows
           louder day by day, and the line shows it — thicker, more restless —
           until you give it a decision.
@@ -335,7 +524,9 @@
         <h3><span class="num">3</span> Decide what it needs today</h3>
         <p>
           When you want to do more, pull the sheet up and answer one question:
-          <em>what does this thread need from you now?</em>
+          <em>what does this thread need from you now?</em> While you decide,
+          your main line leans over to meet the thread you chose, so the two
+          read together above the sheet — nothing else moves.
         </p>
         <p>
           <strong>Act</strong> — take one small step.
@@ -412,7 +603,7 @@
 </section>
 
 <section class="alt" id="why">
-  <div class="wrap">
+  <div class="wrap inner">
     <p class="kicker">Why it helps</p>
     <h2>Built around a few quiet convictions</h2>
     <p class="sub">
@@ -468,34 +659,76 @@
 </section>
 
 <section id="themes">
-  <div class="wrap">
+  <div class="wrap inner">
     <p class="kicker">Themes</p>
     <h2>Choose how your threads look at you</h2>
     <p class="sub">
-      Riverbed, Porcelain, Midnight, Duskwood — and Demonfire, where every open
-      thread is a small dragon facing you. It grows fiercer the louder the
-      thread gets, and the moment you give it an honest decision, it settles
-      back into a calm circle. Facing your demons, one small step at a time.
+      Five quiet looks — Riverbed, Midnight, Sunprint, Duskwood, Porcelain —
+      and six living ones, where every open thread ends in a small creature
+      facing you at Now. Each one grows more restless the louder its thread
+      gets, and the moment you give it an honest decision, it settles.
     </p>
-    <div class="step">
-      <div>
+    <div class="themes-grid">
+      <div class="theme-card">
         <h3>Demonfire</h3>
-        <p>
-          Ember dark. The dragons are not there to frighten you — they are
-          there so you can see exactly what you are up against, and watch it
-          calm down when you meet it kindly.
-        </p>
+        <p>Ember dark. Every open thread is a small dragon — face it kindly and it settles.</p>
+        <div class="shot">
+          <div class="device">
+            <img src="img/demonfire.png" loading="lazy" alt="The Demonfire theme on a phone: a dark ember timeline where each open thread ends in a small dragon head in the thread's colour, with glowing eyes, beside the Now marker." />
+          </div>
+        </div>
       </div>
-      <div class="step-media">
-        <img src="img/demonfire.png" alt="The Demonfire theme: a dark ember timeline where each open thread ends in a small dragon head in the thread's colour, with glowing eyes, beside the Now marker." />
-        <p class="caption">Every open thread is a demon you can actually face.</p>
+      <div class="theme-card">
+        <h3>Koi pond</h3>
+        <p>Still water. Every open thread is a koi nosing at Now — feed it a decision and the pond settles.</p>
+        <div class="shot">
+          <div class="device">
+            <img src="img/koipond.png" loading="lazy" alt="The Koi pond theme on a phone: a pale water-green timeline where each open thread ends in a koi fish nosing at the Now marker, ripples spreading around the loudest ones." />
+          </div>
+        </div>
+      </div>
+      <div class="theme-card">
+        <h3>Carnival</h3>
+        <p>Cream and bunting. Every open thread is a balloon — the longer it waits, the tighter it swells.</p>
+        <div class="shot">
+          <div class="device">
+            <img src="img/carnival.png" loading="lazy" alt="The Carnival theme on a phone: a cream timeline with bunting colours where each open thread ends in a balloon, the longest-waiting ones swollen tight." />
+          </div>
+        </div>
+      </div>
+      <div class="theme-card">
+        <h3>Catnap</h3>
+        <p>Lavender and soft paws. Every open thread is a cat watching you — answer it and it curls up.</p>
+        <div class="shot">
+          <div class="device">
+            <img src="img/catnap.png" loading="lazy" alt="The Catnap theme on a phone: a soft lavender timeline where each open thread ends in a small cat's face watching you, ears flattening as threads grow louder." />
+          </div>
+        </div>
+      </div>
+      <div class="theme-card">
+        <h3>Abyss</h3>
+        <p>Deep-sea black. Every open thread is an anglerfish — the louder it grows, the brighter its lure.</p>
+        <div class="shot">
+          <div class="device">
+            <img src="img/abyss.png" loading="lazy" alt="The Abyss theme on a phone: a deep-sea black timeline where each open thread ends in an anglerfish, its glowing lure brighter on the loudest threads." />
+          </div>
+        </div>
+      </div>
+      <div class="theme-card">
+        <h3>Gravemist</h3>
+        <p>Fog and lantern light. Every open thread is a small ghost — its wail widens until you answer.</p>
+        <div class="shot">
+          <div class="device">
+            <img src="img/gravemist.png" loading="lazy" alt="The Gravemist theme on a phone: a foggy lantern-lit timeline where each open thread ends in a small ghost, mouths widening on the threads left longest." />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <section class="alt" id="privacy">
-  <div class="wrap privacy">
+  <div class="wrap inner privacy">
     <p class="kicker">Privacy</p>
     <h2>Everything stays in your browser</h2>
     <p>
@@ -510,10 +743,108 @@
 <footer>
   <div class="wrap">
     <h2>See your one current.</h2>
-    <a class="btn" href="../">Open One Current</a>
-    <p class="small">Works on your phone and your desktop. No installation, no sign-up.</p>
+    <div class="cta-row">
+      <a class="btn" href="../">Open One Current</a>
+      <button class="btn quiet" type="button" data-install>Download the app</button>
+    </div>
+    <p class="small">Works on your phone and your desktop. Add it to your home screen and it opens like any app — still private, still yours.</p>
+    <p class="legal">One Current — a calm, private timeline of your life.</p>
   </div>
 </footer>
+
+<div class="install-sheet" id="install-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="install-title">
+  <div class="install-card">
+    <h3 id="install-title">Add One Current to your phone</h3>
+    <div data-install-ios hidden>
+      <p>One Current installs straight from Safari — no app store needed:</p>
+      <ol>
+        <li>Open <a href="../">the app</a> in <strong>Safari</strong>.</li>
+        <li>Tap the <strong>Share</strong> button
+          <svg class="share-glyph" width="16" height="18" viewBox="0 0 16 18" aria-hidden="true"><path d="M8 1 v10 M4.5 4.5 L8 1 l3.5 3.5 M2 8 v7.5 h12 V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>.
+        </li>
+        <li>Choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li>
+      </ol>
+      <p>It opens full screen with its own icon, and everything you write stays on your device.</p>
+    </div>
+    <div data-install-generic hidden>
+      <p>One Current installs straight from your browser — no app store needed:</p>
+      <ol>
+        <li>Open <a href="../">the app</a> in your browser.</li>
+        <li>Open the browser menu (⋮ or the install icon in the address bar).</li>
+        <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
+      </ol>
+      <p>It opens in its own window with its own icon, and everything you write stays on your device.</p>
+    </div>
+    <div data-install-standalone hidden>
+      <p>You are already using the installed app — One Current is on your home screen.</p>
+    </div>
+    <div class="row">
+      <button class="btn quiet" type="button" data-install-close>Close</button>
+      <a class="btn" href="../">Open the app</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // "Download the app": a web app installs, it does not download. On
+  // Chromium the real install prompt appears; on iOS Safari there is no
+  // programmatic way to add a home-screen web app, so the sheet walks
+  // through Share -> Add to Home Screen instead.
+  (function () {
+    var deferredPrompt = null;
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    var sheet = document.getElementById("install-sheet");
+    var panes = {
+      ios: sheet.querySelector("[data-install-ios]"),
+      generic: sheet.querySelector("[data-install-generic]"),
+      standalone: sheet.querySelector("[data-install-standalone]"),
+    };
+    function showSheet(which) {
+      for (var k in panes) panes[k].hidden = k !== which;
+      sheet.hidden = false;
+    }
+    function isIOS() {
+      return (
+        /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+      );
+    }
+    function isStandalone() {
+      return (
+        (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+        window.navigator.standalone === true
+      );
+    }
+
+    var buttons = document.querySelectorAll("[data-install]");
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener("click", function () {
+        if (isStandalone()) return showSheet("standalone");
+        if (deferredPrompt) {
+          var p = deferredPrompt;
+          deferredPrompt = null;
+          p.prompt();
+          return;
+        }
+        showSheet(isIOS() ? "ios" : "generic");
+      });
+    }
+
+    sheet.querySelector("[data-install-close]").addEventListener("click", function () {
+      sheet.hidden = true;
+    });
+    sheet.addEventListener("click", function (e) {
+      if (e.target === sheet) sheet.hidden = true;
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") sheet.hidden = true;
+    });
+  })();
+</script>
 
 </body>
 </html>

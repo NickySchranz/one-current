@@ -71,7 +71,12 @@ export function buildBranchGeometry(
   const { width, mainY, curveLength } = metrics;
   // Stronger felt loudness pushes the line further from Now; decisions bring it back closer.
   const loudness = effectiveLoudness(branch, now);
-  const pullOffset = ((loudness - 1) / 4) * 0.45 * metrics.laneGap;
+  // The pull never closes the gap to the next lane below what its label,
+  // thickness and slither need: on crowded timelines the pull fades before
+  // any two threads can touch. Only the focused main-line lean may overlap.
+  const LANE_CLEARANCE = 26;
+  const maxPull = Math.min(0.45 * metrics.laneGap, Math.max(0, metrics.laneGap - LANE_CLEARANCE));
+  const pullOffset = ((loudness - 1) / 4) * maxPull;
   const laneY = laneToY(assignment.lane, metrics) + Math.sign(assignment.lane) * pullOffset;
   // The fork curve is only drawn while the fork moment is actually in view;
   // otherwise the branch enters from the left as a parallel line.

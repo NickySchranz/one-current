@@ -207,6 +207,24 @@ describe("timeline layout", () => {
     expect(layout.height).toBeGreaterThan(400);
   });
 
+  it("threads never overlap: crowded, loud lanes keep clear of each other", () => {
+    // Fourteen undecided threads at full loudness on a small phone stage —
+    // the pull toward the outside fades before any two lanes can touch.
+    const branches = Array.from({ length: 14 }, (_, i) =>
+      mk({ id: `o${i}`, forkDate: "2026-05-01", loudness: 5 }),
+    );
+    const layout = buildTimelineLayout(branches, {
+      width: 360,
+      height: 400,
+      compact: true,
+      now: NOW,
+    });
+    const ys = layout.geometries.map((g) => g.laneY).sort((a, b) => a - b);
+    for (let i = 1; i < ys.length; i++) {
+      expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(24);
+    }
+  });
+
   it("compact mode stacks lanes closer for small screens", () => {
     const branches = [mk({ id: "c1" }), mk({ id: "c2" })];
     const normal = buildTimelineLayout(branches, { width: 900, now: NOW });

@@ -6,7 +6,9 @@
  * its thread.
  *
  * The pup carries the thread's mood. Quiet: a happy blep, blushing cheeks,
- * a wagging tail. Middling: alert, mouth just open. Loud (4–5): a proper
+ * a wagging tail and, every few seconds, a little hop of joy — each pup on
+ * its own clock, so a happy pack pops one at a time. Middling: alert, mouth
+ * just open. Loud (4–5): a proper
  * pomeranian tantrum — ears pinned back, angry brows, jaw open mid-bark with
  * tiny teeth, and bark marks snapping at both sides. Any honest decision
  * calms it back into a plain circle.
@@ -14,6 +16,8 @@
  * Drawn sitting front-on, roughly 16×15 units before scaling. The fluff is
  * built from scalloped rings so the coat reads as fur, not a circle.
  */
+
+import { useRef } from "react";
 
 const FUR = "#dd8f4a";
 const FUR_DEEP = "#c1712f";
@@ -108,6 +112,8 @@ export function Pomeranian({
   const earPin = Math.max(0, g - 2) * 7; // ears fold outward as it gets louder
   const eyeRy = barking ? 0.75 : 0.95;
   const mood = !reducedMotion && barking ? " is-barking" : !reducedMotion && happy ? " is-happy" : "";
+  // a stable random phase per pup: happy hops land one at a time, not in chorus
+  const hopDelay = useRef(`${(-Math.random() * 5.2).toFixed(2)}s`);
 
   return (
     <g
@@ -117,6 +123,8 @@ export function Pomeranian({
     >
       {/* generous invisible hit area — ears, tail and bark marks are thin */}
       <circle cx={0} cy={-0.5} r={9.5} fill="transparent" stroke="none" />
+
+      <g className="pom-whole" style={{ animationDelay: hopDelay.current }}>
 
       {/* tail: a plume over the back, white at the tip; it wags when happy */}
       <g className="pom-tail" pointerEvents="none">
@@ -234,6 +242,8 @@ export function Pomeranian({
           <path d={BARK_R2} opacity={0.65} />
         </g>
       )}
+
+      </g>
     </g>
   );
 }

@@ -304,6 +304,302 @@
     object-position: top;
   }
 
+  /* pro mode */
+  section.pro {
+    background:
+      radial-gradient(800px 400px at 85% 0%, rgba(63, 111, 95, 0.16), transparent 65%),
+      #22211c;
+    color: #f4f2ea;
+    border-top: 1px solid #1a1916;
+    border-bottom: 1px solid #1a1916;
+  }
+  section.pro h2 { color: #f4f2ea; }
+  section.pro .kicker { color: #8fbfa9; display: flex; align-items: center; gap: 10px; }
+  section.pro .sub { color: rgba(244, 242, 234, 0.62); }
+  .pro-badge {
+    display: inline-block;
+    border: 1px solid rgba(230, 195, 122, 0.55);
+    border-radius: 999px;
+    padding: 2px 11px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    color: #e6c37a;
+    background: rgba(230, 195, 122, 0.1);
+  }
+  .pro-loop {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 26px;
+    align-items: center;
+    margin: 8px 0 44px;
+    padding: 26px 28px;
+    background: rgba(244, 242, 234, 0.04);
+    border: 1px solid rgba(244, 242, 234, 0.1);
+    border-radius: var(--radius-lg);
+  }
+  .pro-node { text-align: center; }
+  .pro-node svg { display: block; margin: 0 auto 10px; }
+  .pro-node strong { display: block; font-size: 0.98rem; letter-spacing: -0.01em; }
+  .pro-node span { display: block; font-size: 0.8rem; color: rgba(244, 242, 234, 0.55); margin-top: 2px; }
+  .pro-arrows { display: grid; gap: 16px; min-width: 220px; }
+  .pro-arrow { text-align: center; font-size: 0.8rem; color: rgba(244, 242, 234, 0.65); }
+  .pro-arrow svg { display: block; width: 100%; height: 10px; margin-bottom: 5px; }
+  .pro-arrow line { stroke: rgba(244, 242, 234, 0.45); stroke-width: 1.4; stroke-dasharray: 3 4; }
+  .pro-arrow polygon { fill: rgba(244, 242, 234, 0.6); }
+  .pro-session { text-align: center; font-size: 0.78rem; color: #8fbfa9; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+  section.pro .cards { margin-bottom: 44px; }
+  section.pro .card {
+    background: rgba(244, 242, 234, 0.05);
+    border-color: rgba(244, 242, 234, 0.12);
+    box-shadow: none;
+  }
+  section.pro .card h3 { color: #f4f2ea; display: flex; align-items: baseline; gap: 10px; }
+  section.pro .card h3 .num {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(143, 191, 169, 0.16);
+    color: #8fbfa9;
+    font-size: 0.76rem;
+    font-weight: 700;
+    transform: translateY(5px);
+  }
+  section.pro .card p { color: rgba(244, 242, 234, 0.62); }
+  .pro-subhead { margin: 0 0 10px; font-size: 1.25rem; letter-spacing: -0.01em; }
+  .pro-privacy {
+    border: 1px solid rgba(143, 191, 169, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 22px 26px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .pro-privacy svg { flex: none; margin-top: 3px; }
+  .pro-privacy p { margin: 0; font-size: 0.92rem; color: rgba(244, 242, 234, 0.68); }
+  .pro-privacy p strong { color: #f4f2ea; }
+
+  /* companion app design mockup (web) */
+  .pro-shot {
+    margin: 26px 0 10px;
+    border: 1px solid rgba(244, 242, 234, 0.14);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.5);
+    font-size: 0.8rem;
+  }
+  .pro-shot-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #2e2c26;
+    padding: 9px 14px;
+  }
+  .pro-shot-dots { display: flex; gap: 6px; flex: none; }
+  .pro-shot-dots i { width: 10px; height: 10px; border-radius: 50%; background: rgba(244, 242, 234, 0.2); }
+  .pro-shot-url {
+    flex: 1;
+    max-width: 440px;
+    margin: 0 auto;
+    background: rgba(244, 242, 234, 0.08);
+    border-radius: 8px;
+    padding: 4px 14px;
+    font-size: 0.7rem;
+    color: rgba(244, 242, 234, 0.55);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pro-shot-body {
+    display: grid;
+    grid-template-columns: 205px 1fr;
+    background: #f7f4ec;
+    color: #46412f;
+    min-height: 380px;
+  }
+  .pro-side {
+    background: #efeadd;
+    border-right: 1px solid #e2dcc9;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pro-side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.86rem; color: #35311f; margin-bottom: 4px; }
+  .pro-side-lock {
+    align-self: flex-start;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #5c7d6b;
+    background: rgba(92, 125, 107, 0.13);
+    border-radius: 999px;
+    padding: 2px 9px;
+    margin-bottom: 14px;
+  }
+  .pro-side-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #a49c85; margin: 0 0 6px; }
+  .pro-client {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 9px;
+    border-radius: 9px;
+    color: #55503c;
+  }
+  .pro-client.active { background: #fdfbf4; box-shadow: 0 1px 4px rgba(61, 55, 35, 0.12); }
+  .pro-client i {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #fdfbf4;
+    background: #7d9a89;
+  }
+  .pro-client:nth-child(4) i { background: #b08d5e; }
+  .pro-client:nth-child(5) i { background: #8d86ad; }
+  .pro-client strong { display: block; font-size: 0.76rem; }
+  .pro-client span { display: block; font-size: 0.64rem; color: #a49c85; }
+  .pro-side-foot { margin-top: auto; font-size: 0.62rem; color: #a49c85; line-height: 1.45; }
+  .pro-main { padding: 18px 22px 16px; display: flex; flex-direction: column; }
+  .pro-main-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .pro-main-top h4 { margin: 0; font-size: 0.95rem; color: #35311f; }
+  .pro-tabs { display: flex; gap: 4px; background: #ece7d8; border-radius: 999px; padding: 3px; }
+  .pro-tab { border-radius: 999px; padding: 4px 12px; font-size: 0.7rem; font-weight: 600; color: #86805f; white-space: nowrap; }
+  .pro-tab.active { background: #46412f; color: #f7f4ec; }
+  .pro-panels { display: grid; grid-template-columns: 1fr 1.15fr; gap: 14px; align-items: stretch; }
+  .pro-digest { display: flex; flex-direction: column; gap: 7px; }
+  .digest-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #fdfbf4;
+    border: 1px solid #eee8d8;
+    border-radius: 10px;
+    padding: 8px 11px;
+  }
+  .digest-row i {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+    font-size: 0.66rem;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .d-up { color: #b3572f; background: rgba(179, 87, 47, 0.12); }
+  .d-down { color: #4c7d64; background: rgba(76, 125, 100, 0.13); }
+  .d-check { color: #4c7d64; background: rgba(76, 125, 100, 0.13); }
+  .d-back { color: #8d86ad; background: rgba(141, 134, 173, 0.15); }
+  .d-belief { color: #b08d5e; background: rgba(176, 141, 94, 0.15); }
+  .digest-row strong { display: block; font-size: 0.76rem; color: #46412f; }
+  .digest-row span { display: block; font-size: 0.68rem; color: #948c72; margin-top: 1px; }
+  .pro-timeline {
+    background: #fdfbf4;
+    border: 1px solid #eee8d8;
+    border-radius: 10px;
+    padding: 12px 14px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .pro-timeline svg { width: 100%; height: auto; flex: 1; }
+  .pro-timeline figcaption { font-size: 0.66rem; color: #948c72; text-align: center; margin-top: 6px; }
+  .pro-compose {
+    margin-top: 14px;
+    border-top: 1px solid #e7e1d0;
+    padding-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .pro-compose p { margin: 0; font-size: 0.72rem; color: #948c72; }
+  .pro-compose p strong { color: #46412f; }
+  .pro-compose-btn {
+    flex: none;
+    background: #46412f;
+    color: #f7f4ec;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .pro-shot-caption { text-align: center; font-size: 0.78rem; color: rgba(244, 242, 234, 0.5); margin: 12px 0 44px; }
+
+  /* pricing */
+  .pro-pricing {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 0;
+    border: 1px solid rgba(230, 195, 122, 0.35);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background:
+      radial-gradient(500px 260px at 0% 0%, rgba(230, 195, 122, 0.1), transparent 70%),
+      rgba(244, 242, 234, 0.04);
+  }
+  .pro-price-main { padding: 32px 34px; border-right: 1px solid rgba(244, 242, 234, 0.1); }
+  .pro-price-kicker { margin: 0 0 6px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #e6c37a; }
+  .pro-price { margin: 0 0 6px; display: flex; align-items: baseline; gap: 7px; }
+  .pro-price strong { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.03em; color: #f4f2ea; }
+  .pro-price span { font-size: 0.9rem; color: rgba(244, 242, 234, 0.55); }
+  .pro-price-note { margin: 0 0 20px; font-size: 0.85rem; color: rgba(244, 242, 234, 0.62); }
+  .btn-gold {
+    background: linear-gradient(180deg, #ecd08e, #d8b160);
+    color: #2d2410;
+    border: none;
+    box-shadow: 0 8px 22px rgba(216, 177, 96, 0.28);
+  }
+  .btn-gold:hover { background: linear-gradient(180deg, #f2d99c, #e0bb6c); color: #2d2410; }
+  .pro-price-fine { margin: 12px 0 0; font-size: 0.7rem; color: rgba(244, 242, 234, 0.42); }
+  .pro-checks { list-style: none; margin: 0; padding: 30px 34px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+  .pro-checks li { display: flex; gap: 11px; align-items: flex-start; font-size: 0.88rem; color: rgba(244, 242, 234, 0.72); }
+  .pro-checks li::before {
+    content: "✓";
+    flex: none;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #e6c37a;
+    background: rgba(230, 195, 122, 0.14);
+    margin-top: 1px;
+  }
+  .pro-checks li strong { color: #f4f2ea; font-weight: 600; }
+
+  @media (max-width: 860px) {
+    .pro-loop { grid-template-columns: 1fr; gap: 18px; padding: 22px 18px; }
+    .pro-arrows { min-width: 0; }
+    .pro-shot-body { grid-template-columns: 1fr; min-height: 0; }
+    .pro-side { display: none; }
+    .pro-tabs { align-self: flex-start; }
+    .pro-tab { font-size: 0.62rem; padding: 4px 9px; }
+    .pro-panels { grid-template-columns: 1fr; }
+    .pro-pricing { grid-template-columns: 1fr; }
+    .pro-price-main { border-right: none; border-bottom: 1px solid rgba(244, 242, 234, 0.1); padding: 26px 22px; }
+    .pro-checks { padding: 24px 22px; }
+  }
+
   /* install sheet */
   .install-sheet {
     position: fixed;
@@ -394,6 +690,7 @@
     <nav class="primary" aria-label="Sections">
       <a href="#what">What it is</a>
       <a href="#how">How it works</a>
+      <a href="#pro">Pro mode</a>
       <a href="#themes">Themes</a>
       <a href="#privacy">Privacy</a>
     </nav>
@@ -654,6 +951,250 @@
           and makes reaching for support one of the normal answers.
         </p>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="pro" id="pro">
+  <div class="wrap inner">
+    <p class="kicker">Pro mode <span class="pro-badge">Paid upgrade</span></p>
+    <h2>Bring your timeline to your sessions</h2>
+    <p class="sub">
+      A therapy session often spends its first twenty minutes reconstructing the
+      week: what got louder, what you decided, what you avoided. Your timeline
+      already holds that picture. Pro mode lets you hand it to your psychologist —
+      deliberately, session by session — and lets them hand something gentle back.
+    </p>
+
+    <div class="pro-loop">
+      <div class="pro-node">
+        <svg width="34" height="52" viewBox="0 0 34 52" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="31" height="49" rx="7" fill="none" stroke="rgba(244,242,234,0.55)" stroke-width="1.6"/>
+          <path d="M 6 30 C 12 30 12 20 17 20 C 22 20 22 30 28 30" fill="none" stroke="#8fbfa9" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="24.5" cy="30" r="2.6" fill="#e0823f"/>
+        </svg>
+        <strong>Your One Current</strong>
+        <span>private, on your phone</span>
+      </div>
+      <div class="pro-arrows">
+        <div class="pro-arrow">
+          <svg viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="0" y1="5" x2="110" y2="5"/>
+            <polygon points="110,1 119,5 110,9"/>
+          </svg>
+          session snapshot — sealed, you choose its contents
+        </div>
+        <div class="pro-session">the session itself</div>
+        <div class="pro-arrow">
+          <svg viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="10" y1="5" x2="120" y2="5"/>
+            <polygon points="10,1 1,5 10,9"/>
+          </svg>
+          prompt pack — scanned as a QR at the end
+        </div>
+      </div>
+      <div class="pro-node">
+        <svg width="58" height="42" viewBox="0 0 58 42" aria-hidden="true">
+          <rect x="8" y="1.5" width="42" height="30" rx="4" fill="none" stroke="rgba(244,242,234,0.55)" stroke-width="1.6"/>
+          <path d="M 14 20 C 21 20 21 11 29 11 C 37 11 37 20 44 20" fill="none" stroke="#8fbfa9" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="39.5" cy="20" r="2.4" fill="#e0823f"/>
+          <path d="M 3 36 L 55 36 L 51 40 L 7 40 Z" fill="rgba(244,242,234,0.35)"/>
+        </svg>
+        <strong>Their companion app</strong>
+        <span>read-only, no account, no install</span>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3><span class="num">1</span> You choose what they see</h3>
+        <p>
+          Before a session, a quiet "bring this to your session" flow: include or
+          hold back each thread, one by one. What leaves your phone is a small
+          sealed package — encrypted, shared as a file or a link, with the
+          passphrase spoken aloud in the room.
+        </p>
+      </div>
+      <div class="card">
+        <h3><span class="num">2</span> The timeline on the table</h3>
+        <p>
+          Your psychologist opens it in under a minute — read-only, no account,
+          no install. Walking a thread together — where it forked, its moments,
+          what you believed then and believe now — gives the session a shape
+          beyond a blank "how was your week?"
+        </p>
+      </div>
+      <div class="card">
+        <h3><span class="num">3</span> They send something back</h3>
+        <p>
+          At the end, their app shows a QR code. You scan it, and their prompts
+          settle onto the threads they belong to, surfacing softly during the
+          week. The next session starts where this one ended.
+        </p>
+      </div>
+    </div>
+
+    <h3 class="pro-subhead">A companion app built for psychologists</h3>
+    <p class="sub">
+      A web app that runs entirely on their device — local-first, nothing to
+      set up, free for clinicians. Three views, each in service of the
+      conversation:
+    </p>
+
+    <figure class="pro-shot" role="img" aria-label="Design of the companion web app for psychologists: a client list, a prep digest of changes since the last session, the shared timeline with one ghost line, and a prompt pack being composed.">
+      <div class="pro-shot-bar" aria-hidden="true">
+        <span class="pro-shot-dots"><i></i><i></i><i></i></span>
+        <span class="pro-shot-url">sessions.onecurrent.app &nbsp;·&nbsp; runs locally — nothing is uploaded</span>
+      </div>
+      <div class="pro-shot-body" aria-hidden="true">
+        <aside class="pro-side">
+          <div class="pro-side-brand">
+            <svg width="20" height="12" viewBox="0 0 34 16"><path d="M 2 12 C 9 12 9 3 17 3 C 25 3 25 12 32 12" fill="none" stroke="#5c7d6b" stroke-width="2.4" stroke-linecap="round"/></svg>
+            Sessions
+          </div>
+          <span class="pro-side-lock">Locked · local only</span>
+          <p class="pro-side-label">Clients</p>
+          <div class="pro-client active">
+            <i>M</i>
+            <div><strong>M.</strong><span>snapshot · 2 days ago</span></div>
+          </div>
+          <div class="pro-client">
+            <i>A</i>
+            <div><strong>A.</strong><span>snapshot · 3 weeks ago</span></div>
+          </div>
+          <div class="pro-client">
+            <i>J</i>
+            <div><strong>J.</strong><span>first session Friday</span></div>
+          </div>
+          <p class="pro-side-foot">Names live only on this device. Snapshots are pseudonymous and encrypted at rest.</p>
+        </aside>
+        <div class="pro-main">
+          <div class="pro-main-top">
+            <h4>M. — since 24 Jul</h4>
+            <div class="pro-tabs">
+              <span class="pro-tab active">Prep digest</span>
+              <span class="pro-tab">Shared timeline</span>
+              <span class="pro-tab">Progress</span>
+            </div>
+          </div>
+          <div class="pro-panels">
+            <div class="pro-digest">
+              <div class="digest-row">
+                <i class="d-up">▲</i>
+                <div><strong>Career change</strong><span>got louder · 2 → 4 · no decision in 9 days</span></div>
+              </div>
+              <div class="digest-row">
+                <i class="d-down">▼</i>
+                <div><strong>The apartment</strong><span>quieter · 3 → 1 · decision taken Tuesday</span></div>
+              </div>
+              <div class="digest-row">
+                <i class="d-back">↺</i>
+                <div><strong>Old friendship</strong><span>came back — third time this year</span></div>
+              </div>
+              <div class="digest-row">
+                <i class="d-belief">❝</i>
+                <div><strong>A belief moved</strong><span>"I can't leave" → "I could leave, carefully"</span></div>
+              </div>
+              <div class="digest-row">
+                <i class="d-check">✓</i>
+                <div><strong>Merged: the move abroad</strong><span>reclaimed: courage, appetite for mornings</span></div>
+              </div>
+            </div>
+            <figure class="pro-timeline">
+              <svg viewBox="0 0 340 150" aria-hidden="true">
+                <line x1="262" y1="12" x2="262" y2="138" stroke="#ddd5c0" stroke-width="1.2" stroke-dasharray="3 4"/>
+                <text x="262" y="9" text-anchor="middle" font-size="8" fill="#a49c85" font-weight="600">Now</text>
+                <path d="M 14 96 C 150 96 190 92 326 92" fill="none" stroke="#6b6450" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M 58 96 C 82 96 84 44 108 44 L 240 44" fill="none" stroke="#c0632f" stroke-width="2.4" stroke-linecap="round"/>
+                <circle cx="150" cy="44" r="3" fill="#c0632f"/>
+                <circle cx="196" cy="44" r="3" fill="#c0632f"/>
+                <circle cx="240" cy="44" r="4.4" fill="#c0632f"/>
+                <text x="112" y="34" font-size="8.5" fill="#8c5232" font-weight="600">career change</text>
+                <path d="M 96 96 C 118 96 120 68 142 68 L 240 68" fill="none" stroke="#5c7d6b" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="205" cy="68" r="2.6" fill="#5c7d6b"/>
+                <circle cx="240" cy="68" r="3.4" fill="#5c7d6b"/>
+                <text x="146" y="60" font-size="8.5" fill="#4c6d59" font-weight="600">the apartment</text>
+                <path d="M 40 96 C 66 96 68 124 94 124 L 176 124 C 200 124 202 96 224 96" fill="none" stroke="#8d86ad" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="224" cy="96" r="3.2" fill="#8d86ad"/>
+                <text x="100" y="140" font-size="8.5" fill="#736c93" font-weight="600">the move abroad · merged</text>
+                <path d="M 126 96 C 146 96 148 20 168 20 L 240 20" fill="none" stroke="#b3aa93" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="4 4" opacity="0.75"/>
+                <circle cx="240" cy="20" r="3.4" fill="none" stroke="#b3aa93" stroke-width="1.4" opacity="0.75"/>
+              </svg>
+              <figcaption>One thread held back — it appears only as an unlabeled ghost line.</figcaption>
+            </figure>
+          </div>
+          <div class="pro-compose">
+            <p><strong>Prompt pack · 2 prompts queued</strong> — "When Career change gets loud, what is it protecting?" · attached to the thread</p>
+            <span class="pro-compose-btn">Show QR at session end</span>
+          </div>
+        </div>
+      </div>
+    </figure>
+    <p class="pro-shot-caption">Concept design of the companion app — web-based, read-only, no account, nothing installed.</p>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Prep digest</h3>
+        <p>
+          Since the last session, at a glance: which threads got louder or
+          quieter, which came back, decisions taken, feelings still held,
+          beliefs that moved.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Shared timeline</h3>
+        <p>
+          The same branching timeline you know, sized for the table between you.
+          Any thread opens into its moments and beliefs. Threads you held back
+          appear only as unlabeled ghost lines.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Progress</h3>
+        <p>
+          The long view across months: threads integrated, feelings reclaimed
+          for good, loudness easing. Evidence of change, useful to both of you.
+        </p>
+      </div>
+    </div>
+
+    <div class="pro-privacy" style="margin-top: 44px;">
+      <svg width="18" height="22" viewBox="0 0 18 22" aria-hidden="true">
+        <rect x="1" y="9" width="16" height="12" rx="3" fill="none" stroke="#8fbfa9" stroke-width="1.6"/>
+        <path d="M 5 9 V 6.5 a 4 4 0 0 1 8 0 V 9" fill="none" stroke="#8fbfa9" stroke-width="1.6"/>
+        <circle cx="9" cy="15" r="1.6" fill="#8fbfa9"/>
+      </svg>
+      <p>
+        <strong>Still no accounts, no server, no analytics — for either of you.</strong>
+        Data moves only when you perform the act of sharing, encrypted by default.
+        Your psychologist keeps a sealed page, never access to your life, and can
+        delete everything about you at your word. Pro mode supports the
+        conversation between you and your own clinician — it is not a diagnostic
+        tool, a medical record, or a crisis channel.
+      </p>
+    </div>
+
+    <div class="pro-pricing">
+      <div class="pro-price-main">
+        <p class="pro-price-kicker">One Current Pro</p>
+        <p class="pro-price"><strong>€6</strong><span>/ month · cancel anytime</span></p>
+        <p class="pro-price-note">
+          You pay. Your psychologist never does — the companion app is free for
+          clinicians, forever.
+        </p>
+        <a class="btn btn-gold" href="../">Upgrade to Pro</a>
+        <p class="pro-price-fine">
+          In development — Pro launches together with the companion app. The
+          timeline itself stays free, forever, for everyone.
+        </p>
+      </div>
+      <ul class="pro-checks">
+        <li><span><strong>Session snapshots</strong> — sealed, encrypted, with per-thread control over what they see</span></li>
+        <li><span><strong>Prompt packs</strong> — their words settle onto your threads between sessions</span></li>
+        <li><span><strong>The companion app</strong> for your psychologist — prep digest, shared timeline, progress</span></li>
+        <li><span><strong>Progress across months</strong> — evidence of change, visible to both of you</span></li>
+        <li><span><strong>Every future Pro feature</strong> — one plan, nothing tiered</span></li>
+      </ul>
     </div>
   </div>
 </section>

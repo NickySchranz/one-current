@@ -130,6 +130,79 @@
   nav.primary a:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
   header.site .btn { padding: 8px 16px; font-size: 0.88rem; }
 
+  /* mobile navigation */
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--ink);
+    padding: 0;
+  }
+  .nav-toggle:hover { background: rgba(38, 37, 31, 0.06); }
+  .nav-toggle svg { display: block; }
+  .nav-toggle .ic-close { display: none; }
+  .nav-toggle[aria-expanded="true"] .ic-burger { display: none; }
+  .nav-toggle[aria-expanded="true"] .ic-close { display: block; }
+  .pro-pill {
+    display: none;
+    align-items: center;
+    flex: none;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #4d3a0e;
+    background: linear-gradient(180deg, #f0d795, #dfb968);
+    border-radius: 999px;
+    padding: 8px 14px;
+    box-shadow: 0 4px 12px rgba(216, 177, 96, 0.35);
+    white-space: nowrap;
+  }
+  .mobile-nav {
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    background: #faf9f6;
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 22px 44px rgba(38, 37, 31, 0.14);
+    padding: 8px 14px 14px;
+  }
+  .mobile-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .mobile-nav a:hover, .mobile-nav a:active { background: rgba(38, 37, 31, 0.05); }
+  .mobile-nav a.mn-pro { color: #7c5c14; }
+  .mn-chip {
+    flex: none;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #4d3a0e;
+    background: linear-gradient(180deg, #f0d795, #dfb968);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+  @media (min-width: 861px) {
+    .mobile-nav { display: none !important; }
+  }
+
   /* device frame */
   .device {
     background: #1d1c19;
@@ -663,11 +736,18 @@
 
   @media (max-width: 860px) {
     nav.primary { display: none; }
+    .nav-toggle { display: inline-flex; }
+    .pro-pill { display: inline-flex; margin-left: auto; }
+    header.site .bar { gap: 8px; }
     .hero { grid-template-columns: 1fr; padding: 44px 0 56px; gap: 44px; }
     .step { grid-template-columns: 1fr; gap: 22px; padding: 30px 0; }
     .step:nth-child(even) .step-media { order: 0; }
     .step-media { max-width: 440px; margin: 0 auto; width: 100%; }
     section .inner { padding-top: 56px; padding-bottom: 56px; }
+  }
+  @media (max-width: 560px) {
+    .brand-name { display: none; }
+    header.site .btn { padding: 8px 13px; }
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -685,7 +765,7 @@
         <path d="M2 13 C8 13 8 5 15 5 C22 5 22 13 28 13" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
         <circle cx="24" cy="13" r="3" fill="var(--accent)"/>
       </svg>
-      One Current
+      <span class="brand-name">One Current</span>
     </a>
     <nav class="primary" aria-label="Sections">
       <a href="#what">What it is</a>
@@ -694,8 +774,24 @@
       <a href="#themes">Themes</a>
       <a href="#privacy">Privacy</a>
     </nav>
+    <a class="pro-pill" href="#pro">Pro mode</a>
     <a class="btn" href="../">Open the app</a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
+      <svg class="ic-burger" width="20" height="16" viewBox="0 0 20 16" aria-hidden="true">
+        <path d="M1 2 H19 M1 8 H19 M1 14 H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <svg class="ic-close" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M2 2 L14 14 M14 2 L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Sections" hidden>
+    <a href="#what">What it is</a>
+    <a href="#how">How it works</a>
+    <a class="mn-pro" href="#pro">Pro mode <span class="mn-chip">Paid · €6/mo</span></a>
+    <a href="#themes">Themes</a>
+    <a href="#privacy">Privacy</a>
+  </nav>
 </header>
 
 <div class="hero-band" id="top">
@@ -1167,6 +1263,8 @@
       <p>
         <strong>Still no accounts, no server, no analytics — for either of you.</strong>
         Data moves only when you perform the act of sharing, encrypted by default.
+        Cloud backup is opt-in and sealed on your device before it leaves — we
+        store a package we cannot open.
         Your psychologist keeps a sealed page, never access to your life, and can
         delete everything about you at your word. Pro mode supports the
         conversation between you and your own clinician — it is not a diagnostic
@@ -1193,6 +1291,7 @@
         <li><span><strong>Prompt packs</strong> — their words settle onto your threads between sessions</span></li>
         <li><span><strong>The companion app</strong> for your psychologist — prep digest, shared timeline, progress</span></li>
         <li><span><strong>Progress across months</strong> — evidence of change, visible to both of you</span></li>
+        <li><span><strong>Encrypted cloud backup</strong> — sealed on your device with a key only you hold, restorable on a new phone</span></li>
         <li><span><strong>Every future Pro feature</strong> — one plan, nothing tiered</span></li>
       </ul>
     </div>
@@ -1392,6 +1491,27 @@
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") sheet.hidden = true;
+    });
+
+    var navToggle = document.getElementById("nav-toggle");
+    var mobileNav = document.getElementById("mobile-nav");
+    function closeMenu() {
+      mobileNav.hidden = true;
+      navToggle.setAttribute("aria-expanded", "false");
+    }
+    navToggle.addEventListener("click", function () {
+      var open = mobileNav.hidden;
+      mobileNav.hidden = !open;
+      navToggle.setAttribute("aria-expanded", String(open));
+    });
+    mobileNav.addEventListener("click", function (e) {
+      if (e.target.closest("a")) closeMenu();
+    });
+    document.addEventListener("click", function (e) {
+      if (!mobileNav.hidden && !e.target.closest("header.site")) closeMenu();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !mobileNav.hidden) closeMenu();
     });
   })();
 </script>

@@ -6,7 +6,7 @@
 <title>One Current — one line, one life</title>
 <meta
   name="description"
-  content="One Current is a calm, private timeline of your life. Everything that pulls on your attention becomes a thread branching off one main line — and every thread can be brought back."
+  content="One Current is a calm, private timeline of your life. Everything that pulls on your attention becomes a thread — and every thread can be brought back."
 />
 <meta property="og:title" content="One Current — one line, one life" />
 <meta property="og:description" content="A calm, private timeline of your life. Everything that pulls on your attention becomes a visible thread — and every thread can be brought back." />
@@ -360,6 +360,19 @@
   }
   .theme-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
   .theme-card h3 { margin: 0 0 6px; font-size: 1.02rem; letter-spacing: -0.01em; }
+  .theme-card h3 .pro-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #4d3a0e;
+    background: linear-gradient(180deg, #f0d795, #dfb968);
+    border-radius: 999px;
+    padding: 2px 7px;
+    vertical-align: middle;
+    margin-left: 6px;
+    transform: translateY(-1px);
+  }
   .theme-card p { margin: 0 0 18px; color: var(--ink-soft); font-size: 0.9rem; }
   .theme-card .shot {
     margin-top: auto;
@@ -420,7 +433,6 @@
   .pro-arrow svg { display: block; width: 100%; height: 10px; margin-bottom: 5px; }
   .pro-arrow line { stroke: rgba(244, 242, 234, 0.45); stroke-width: 1.4; stroke-dasharray: 3 4; }
   .pro-arrow polygon { fill: rgba(244, 242, 234, 0.6); }
-  .pro-session { text-align: center; font-size: 0.78rem; color: #8fbfa9; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
   section.pro .cards { margin-bottom: 44px; }
   section.pro .card {
     background: rgba(244, 242, 234, 0.05);
@@ -443,7 +455,7 @@
     transform: translateY(5px);
   }
   section.pro .card p { color: rgba(244, 242, 234, 0.62); }
-  .pro-subhead { margin: 0 0 10px; font-size: 1.25rem; letter-spacing: -0.01em; }
+  .pro-subhead { margin: 0 0 10px; font-size: 1.25rem; letter-spacing: -0.01em; color: #f4f2ea; }
   .pro-privacy {
     border: 1px solid rgba(143, 191, 169, 0.3);
     border-radius: var(--radius-lg);
@@ -451,172 +463,72 @@
     display: flex;
     gap: 16px;
     align-items: flex-start;
+    margin-top: 44px;
   }
   .pro-privacy svg { flex: none; margin-top: 3px; }
   .pro-privacy p { margin: 0; font-size: 0.92rem; color: rgba(244, 242, 234, 0.68); }
   .pro-privacy p strong { color: #f4f2ea; }
 
-  /* companion app design mockup (web) */
-  .pro-shot {
-    margin: 26px 0 10px;
+  /* companion app real screenshot */
+  .pro-app-shot {
+    margin: 26px 0 44px;
     border: 1px solid rgba(244, 242, 234, 0.14);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 34px 90px rgba(0, 0, 0, 0.5);
-    font-size: 0.8rem;
   }
-  .pro-shot-bar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: #2e2c26;
-    padding: 9px 14px;
+  .pro-app-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
-  .pro-shot-dots { display: flex; gap: 6px; flex: none; }
-  .pro-shot-dots i { width: 10px; height: 10px; border-radius: 50%; background: rgba(244, 242, 234, 0.2); }
-  .pro-shot-url {
-    flex: 1;
-    max-width: 440px;
-    margin: 0 auto;
-    background: rgba(244, 242, 234, 0.08);
-    border-radius: 8px;
-    padding: 4px 14px;
-    font-size: 0.7rem;
-    color: rgba(244, 242, 234, 0.55);
+  .pro-app-shot figcaption {
     text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.78rem;
+    color: rgba(244, 242, 234, 0.5);
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.25);
   }
-  .pro-shot-body {
-    display: grid;
-    grid-template-columns: 205px 1fr;
-    background: #f7f4ec;
-    color: #46412f;
-    min-height: 380px;
-  }
-  .pro-side {
-    background: #efeadd;
-    border-right: 1px solid #e2dcc9;
-    padding: 16px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .pro-side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.86rem; color: #35311f; margin-bottom: 4px; }
-  .pro-side-lock {
-    align-self: flex-start;
-    font-size: 0.62rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    color: #5c7d6b;
-    background: rgba(92, 125, 107, 0.13);
-    border-radius: 999px;
-    padding: 2px 9px;
-    margin-bottom: 14px;
-  }
-  .pro-side-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #a49c85; margin: 0 0 6px; }
-  .pro-client {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 7px 9px;
-    border-radius: 9px;
-    color: #55503c;
-  }
-  .pro-client.active { background: #fdfbf4; box-shadow: 0 1px 4px rgba(61, 55, 35, 0.12); }
-  .pro-client i {
-    flex: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-style: normal;
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: #fdfbf4;
-    background: #7d9a89;
-  }
-  .pro-client:nth-child(4) i { background: #b08d5e; }
-  .pro-client:nth-child(5) i { background: #8d86ad; }
-  .pro-client strong { display: block; font-size: 0.76rem; }
-  .pro-client span { display: block; font-size: 0.64rem; color: #a49c85; }
-  .pro-side-foot { margin-top: auto; font-size: 0.62rem; color: #a49c85; line-height: 1.45; }
-  .pro-main { padding: 18px 22px 16px; display: flex; flex-direction: column; }
-  .pro-main-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-  .pro-main-top h4 { margin: 0; font-size: 0.95rem; color: #35311f; }
-  .pro-tabs { display: flex; gap: 4px; background: #ece7d8; border-radius: 999px; padding: 3px; }
-  .pro-tab { border-radius: 999px; padding: 4px 12px; font-size: 0.7rem; font-weight: 600; color: #86805f; white-space: nowrap; }
-  .pro-tab.active { background: #46412f; color: #f7f4ec; }
-  .pro-panels { display: grid; grid-template-columns: 1fr 1.15fr; gap: 14px; align-items: stretch; }
-  .pro-digest { display: flex; flex-direction: column; gap: 7px; }
-  .digest-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: #fdfbf4;
-    border: 1px solid #eee8d8;
-    border-radius: 10px;
-    padding: 8px 11px;
-  }
-  .digest-row i {
-    flex: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-style: normal;
-    font-size: 0.66rem;
-    font-weight: 700;
-    margin-top: 1px;
-  }
-  .d-up { color: #b3572f; background: rgba(179, 87, 47, 0.12); }
-  .d-down { color: #4c7d64; background: rgba(76, 125, 100, 0.13); }
-  .d-check { color: #4c7d64; background: rgba(76, 125, 100, 0.13); }
-  .d-back { color: #8d86ad; background: rgba(141, 134, 173, 0.15); }
-  .d-belief { color: #b08d5e; background: rgba(176, 141, 94, 0.15); }
-  .digest-row strong { display: block; font-size: 0.76rem; color: #46412f; }
-  .digest-row span { display: block; font-size: 0.68rem; color: #948c72; margin-top: 1px; }
-  .pro-timeline {
-    background: #fdfbf4;
-    border: 1px solid #eee8d8;
-    border-radius: 10px;
-    padding: 12px 14px 10px;
-    display: flex;
-    flex-direction: column;
-  }
-  .pro-timeline svg { width: 100%; height: auto; flex: 1; }
-  .pro-timeline figcaption { font-size: 0.66rem; color: #948c72; text-align: center; margin-top: 6px; }
-  .pro-compose {
-    margin-top: 14px;
-    border-top: 1px solid #e7e1d0;
-    padding-top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .pro-compose p { margin: 0; font-size: 0.72rem; color: #948c72; }
-  .pro-compose p strong { color: #46412f; }
-  .pro-compose-btn {
-    flex: none;
-    background: #46412f;
-    color: #f7f4ec;
-    border-radius: 8px;
-    padding: 7px 14px;
-    font-size: 0.72rem;
-    font-weight: 600;
-  }
-  .pro-shot-caption { text-align: center; font-size: 0.78rem; color: rgba(244, 242, 234, 0.5); margin: 12px 0 44px; }
 
   /* pricing */
+  .pricing-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(244, 242, 234, 0.07);
+    border: 1px solid rgba(244, 242, 234, 0.12);
+    border-radius: 999px;
+    padding: 4px;
+    width: fit-content;
+    margin: 44px 0 22px;
+  }
+  .pricing-tab {
+    border: none;
+    background: transparent;
+    color: rgba(244, 242, 234, 0.6);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .pricing-tab:hover { color: rgba(244, 242, 234, 0.85); }
+  .pricing-tab.active { background: rgba(244, 242, 234, 0.12); color: #f4f2ea; }
+  .save-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #4d3a0e;
+    background: linear-gradient(180deg, #f0d795, #dfb968);
+    border-radius: 999px;
+    padding: 2px 7px;
+  }
   .pro-pricing {
-    margin-top: 44px;
     display: grid;
     grid-template-columns: 1fr 1.2fr;
     gap: 0;
@@ -660,17 +572,44 @@
   }
   .pro-checks li strong { color: #f4f2ea; font-weight: 600; }
 
-  @media (max-width: 860px) {
-    .pro-loop { grid-template-columns: 1fr; gap: 18px; padding: 22px 18px; }
-    .pro-arrows { min-width: 0; }
-    .pro-shot-body { grid-template-columns: 1fr; min-height: 0; }
-    .pro-side { display: none; }
-    .pro-tabs { align-self: flex-start; }
-    .pro-tab { font-size: 0.62rem; padding: 4px 9px; }
-    .pro-panels { grid-template-columns: 1fr; }
-    .pro-pricing { grid-template-columns: 1fr; }
-    .pro-price-main { border-right: none; border-bottom: 1px solid rgba(244, 242, 234, 0.1); padding: 26px 22px; }
-    .pro-checks { padding: 24px 22px; }
+  /* therapists section */
+  section.therapists { background: var(--bg); }
+  .psycho-shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 0 0 44px;
+  }
+  .psycho-shots figure {
+    margin: 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-md);
+  }
+  .psycho-shots figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .psycho-shots figcaption {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    padding: 10px 14px;
+    background: var(--bg-raised);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .therapist-cta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 44px;
+  }
+  .therapist-note {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
   }
 
   /* install sheet */
@@ -744,6 +683,13 @@
     .step:nth-child(even) .step-media { order: 0; }
     .step-media { max-width: 440px; margin: 0 auto; width: 100%; }
     section .inner { padding-top: 56px; padding-bottom: 56px; }
+    .pro-loop { grid-template-columns: 1fr; gap: 18px; padding: 22px 18px; }
+    .pro-arrows { min-width: 0; }
+    .pro-pricing { grid-template-columns: 1fr; }
+    .pro-price-main { border-right: none; border-bottom: 1px solid rgba(244, 242, 234, 0.1); padding: 26px 22px; }
+    .pro-checks { padding: 24px 22px; }
+    .psycho-shots { grid-template-columns: 1fr; }
+    .pricing-tabs { flex-wrap: wrap; border-radius: var(--radius); }
   }
   @media (max-width: 560px) {
     .brand-name { display: none; }
@@ -761,21 +707,24 @@
 <header class="site">
   <div class="wrap bar">
     <a class="brand" href="#top">
-      <svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true">
-        <path d="M2 13 C8 13 8 5 15 5 C22 5 22 13 28 13" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="24" cy="13" r="3" fill="var(--accent)"/>
+      <!-- Logo matches the in-app mark: straight main line, arched branch, Now dot -->
+      <svg width="33" height="22" viewBox="0 0 33 22" aria-hidden="true">
+        <path d="M2 15 H31" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M7 15 C10 15 9 7 13 7 H18 C22 7 21 15 24 15" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.55"/>
+        <circle cx="29" cy="15" r="3.2" fill="var(--accent)"/>
       </svg>
       <span class="brand-name">One Current</span>
     </a>
     <nav class="primary" aria-label="Sections">
       <a href="#what">What it is</a>
       <a href="#how">How it works</a>
-      <a href="#pro">Pro mode</a>
+      <a href="#pro">Pro</a>
+      <a href="#therapists">For therapists</a>
       <a href="#themes">Themes</a>
       <a href="#privacy">Privacy</a>
     </nav>
-    <a class="pro-pill" href="#pro">Pro mode</a>
-    <a class="btn" href="../">Open the app</a>
+    <a class="pro-pill" href="#pro">Pro</a>
+    <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open the app</a>
     <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
       <svg class="ic-burger" width="20" height="16" viewBox="0 0 20 16" aria-hidden="true">
         <path d="M1 2 H19 M1 8 H19 M1 14 H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -788,7 +737,8 @@
   <nav class="mobile-nav" id="mobile-nav" aria-label="Sections" hidden>
     <a href="#what">What it is</a>
     <a href="#how">How it works</a>
-    <a class="mn-pro" href="#pro">Pro mode <span class="mn-chip">Paid · €6/mo</span></a>
+    <a class="mn-pro" href="#pro">Pro <span class="mn-chip">Paid · from €4/mo</span></a>
+    <a href="#therapists">For therapists</a>
     <a href="#themes">Themes</a>
     <a href="#privacy">Privacy</a>
   </nav>
@@ -806,13 +756,13 @@
           what it needs, the line changes, and you return to your life.
         </p>
         <div class="cta-row">
-          <a class="btn" href="../">Open One Current</a>
-          <button class="btn quiet" type="button" data-install>Download the app</button>
+          <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open One Current</a>
+          <button class="btn quiet" type="button" data-install>Add to your phone</button>
         </div>
-        <p class="note"><strong>Free.</strong> No account, no ads — nothing leaves your browser.</p>
+        <p class="note"><strong>Free to start.</strong> Your threads stay on your device. No ads.</p>
       </div>
       <div class="device">
-        <img src="img/timeline-mobile.png" alt="One Current on a phone: a dark main line marked Now, with colored threads running alongside it and a small wholeness chip in the corner." />
+        <img src="img/timeline-mobile.png" alt="One Current on a phone: a main line moving through Now, with colored threads running alongside it and a small wholeness chip in the corner." />
       </div>
     </div>
   </div>
@@ -848,8 +798,8 @@
         <p>Threads are not deleted or suppressed. When one has given you what it can, it curves back into your main line and travels with you.</p>
       </div>
       <div class="card">
-        <h3>Seven living themes</h3>
-        <p>From quiet Riverbed to pomeranian pups, koi ponds, balloons, cats, anglerfish, ghosts and dragons — each open thread becomes a small creature that settles when you decide.</p>
+        <h3>Living themes</h3>
+        <p>From quiet Riverbed to koi ponds, pomeranian pups, balloons, cats, anglerfish, ghosts, and dragons — each open thread becomes a small creature that settles when you decide.</p>
       </div>
       <div class="card">
         <h3>In your language</h3>
@@ -878,12 +828,11 @@
         </p>
         <p>
           That alone changes something: the pull now has a shape and a place,
-          instead of circling in your head. And the timeline grows with you —
-          it scrolls to hold as many threads as your life has open.
+          instead of circling in your head.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/timeline-desktop.png" alt="The full timeline: several named threads running parallel to the main line, day markers along the bottom, and the Now point where the main line continues into the future." />
+        <img src="img/timeline-desktop.png" alt="The full timeline: several named threads running parallel to the main line with day markers and the Now point where the main line continues." />
         <p class="caption">Every open thread stays visible until you decide what it needs.</p>
       </div>
     </div>
@@ -892,23 +841,23 @@
       <div>
         <h3><span class="num">2</span> Say how loud it is</h3>
         <p>
-          Tap a thread and the sheet opens just a little: its name and one
-          slider — <em>how loud is this thread right now?</em> Set it and go;
+          Tap a thread and a quick panel opens: its name and one dial —
+          <em>how loud is this thread right now?</em> Set it and go;
           that touch is not a commitment to do anything.
         </p>
         <p>
-          Or skip the sheet entirely: press the thread and slide your thumb up
+          Or skip the panel entirely: press the thread and slide your thumb up
           or down, and its loudness dials right there on the timeline.
         </p>
         <p>
-          Loudness is honest over time, too. A thread left undecided grows
+          Loudness is honest over time too. A thread left undecided grows
           louder day by day, and the line shows it — thicker, more restless —
           until you give it a decision.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/peek.png" alt="The peek sheet over the timeline for a thread called 'The argument with my father': its name, a loudness slider, a note that undecided days have made it louder, and the folded question below." />
-        <p class="caption">One slider first. Everything else stays folded away.</p>
+        <img src="img/peek.png" alt="The quick panel for a thread: its name, a loudness control, and a note that undecided days have made it louder." />
+        <p class="caption">One control first. Everything else stays folded away.</p>
       </div>
     </div>
 
@@ -916,10 +865,8 @@
       <div>
         <h3><span class="num">3</span> Decide what it needs today</h3>
         <p>
-          When you want to do more, pull the sheet up and answer one question:
-          <em>what does this thread need from you now?</em> While you decide,
-          your main line leans over to meet the thread you chose, so the two
-          read together above the sheet — nothing else moves.
+          When you want to do more, open the full menu and answer one question:
+          <em>what does this thread need from you now?</em>
         </p>
         <p>
           <strong>Act</strong> — take one small step.
@@ -930,7 +877,7 @@
         </p>
       </div>
       <div class="step-media">
-        <img src="img/quick-menu.png" alt="The sheet pulled up for a thread called 'The argument with my father': the loudness slider on top, then the question of what the thread needs now, with options to act, integrate, note, or accept that nothing can be done." />
+        <img src="img/quick-menu.png" alt="The full menu for a thread: the loudness control on top, then four answers to what the thread needs — act, integrate, note, or accept that nothing can be done." />
         <p class="caption">Four honest answers. No forms, no scoring.</p>
       </div>
     </div>
@@ -940,7 +887,7 @@
         <h3><span class="num">4</span> The line changes</h3>
         <p>
           Your decisions show up on the timeline itself. Steps you chose appear
-          ahead of Now on your main line. Threads you decided on today are marked.
+          ahead of Now. Threads you decided on today are marked.
           A thread you integrate curves back into the main line and stays part of
           your history.
         </p>
@@ -950,7 +897,7 @@
         </p>
       </div>
       <div class="step-media">
-        <img src="img/actions.png" alt="The Actions panel below the timeline, listing threads still undecided today and threads already decided, each with a short human sentence." />
+        <img src="img/actions.png" alt="The Actions panel: threads still undecided today above, threads already decided below — each with a short human sentence." />
         <p class="caption">Undecided above, decided below — nothing more to track.</p>
       </div>
     </div>
@@ -959,7 +906,7 @@
       <div>
         <h3><span class="num">5</span> Go deeper only when you want to</h3>
         <p>
-          Every thread also has a quieter door: <em>understand this thread</em>.
+          Every thread has a quieter door: <em>understand this thread</em>.
           There you can name what from it still belongs to you now — confidence,
           rest, connection, closure — compare where it began with where you are,
           and notice what feels less available while it stays open.
@@ -988,7 +935,7 @@
         </p>
       </div>
       <div class="step-media">
-        <img src="img/wholeness.png" alt="The wholeness panel open: 'You are scattered. Today can feel foggy and tiring, like living several days at once. One small decision starts bringing you back' — followed by the threads pulling hardest." />
+        <img src="img/wholeness.png" alt="The wholeness panel open: a plain-language summary of how scattered you are, followed by the threads pulling hardest right now." />
         <p class="caption">Not a score to optimize — a weather report, and one next step.</p>
       </div>
     </div>
@@ -1053,24 +1000,25 @@
 
 <section class="pro" id="pro">
   <div class="wrap inner">
-    <p class="kicker">Pro mode <span class="pro-badge">Paid upgrade</span></p>
-    <h2>Bring your timeline to your sessions</h2>
+    <p class="kicker">Pro <span class="pro-badge">Paid upgrade</span></p>
+    <h2>More threads, all themes, and a direct line to your psychologist</h2>
     <p class="sub">
-      A therapy session often spends its first twenty minutes reconstructing the
-      week: what got louder, what you decided, what you avoided. Your timeline
-      already holds that picture. Pro mode lets you hand it to your psychologist —
-      deliberately, session by session — and lets them hand something gentle back.
+      The free app lets you keep up to ten open threads and use five quiet themes.
+      Pro removes those limits and adds cloud backup, all seven living creature themes,
+      and the ability to share your timeline with your psychologist using a single
+      eight-character code — no files, no complicated steps.
     </p>
 
     <div class="pro-loop">
       <div class="pro-node">
         <svg width="34" height="52" viewBox="0 0 34 52" aria-hidden="true">
           <rect x="1.5" y="1.5" width="31" height="49" rx="7" fill="none" stroke="rgba(244,242,234,0.55)" stroke-width="1.6"/>
-          <path d="M 6 30 C 12 30 12 20 17 20 C 22 20 22 30 28 30" fill="none" stroke="#8fbfa9" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="24.5" cy="30" r="2.6" fill="#e0823f"/>
+          <path d="M2 15 H31" stroke="#8fbfa9" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 15 C10 15 9 7 13 7 H18 C22 7 21 15 24 15" stroke="#8fbfa9" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="29" cy="15" r="2.6" fill="#e0823f"/>
         </svg>
         <strong>Your One Current</strong>
-        <span>private, on your phone</span>
+        <span>private, on your device</span>
       </div>
       <div class="pro-arrows">
         <div class="pro-arrow">
@@ -1078,15 +1026,14 @@
             <line x1="0" y1="5" x2="110" y2="5"/>
             <polygon points="110,1 119,5 110,9"/>
           </svg>
-          session snapshot — sealed, you choose its contents
+          8-character code — you choose which threads
         </div>
-        <div class="pro-session">the session itself</div>
         <div class="pro-arrow">
           <svg viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true">
             <line x1="10" y1="5" x2="120" y2="5"/>
             <polygon points="10,1 1,5 10,9"/>
           </svg>
-          prompt pack — scanned as a QR at the end
+          (no return path needed — the session is the conversation)
         </div>
       </div>
       <div class="pro-node">
@@ -1096,8 +1043,8 @@
           <circle cx="39.5" cy="20" r="2.4" fill="#e0823f"/>
           <path d="M 3 36 L 55 36 L 51 40 L 7 40 Z" fill="rgba(244,242,234,0.35)"/>
         </svg>
-        <strong>Their companion app</strong>
-        <span>read-only, no account, no install</span>
+        <strong>The companion app</strong>
+        <span>free for clinicians, no install</span>
       </div>
     </div>
 
@@ -1105,195 +1052,151 @@
       <div class="card">
         <h3><span class="num">1</span> You choose what they see</h3>
         <p>
-          Before a session, a quiet "bring this to your session" flow: include or
-          hold back each thread, one by one. What leaves your phone is a small
-          sealed package — encrypted, shared as a file or a link, with the
-          passphrase spoken aloud in the room.
+          Before a session, pick which threads to include — one by one. Then tap
+          <em>Upload and get a code</em>. An eight-character code appears: valid
+          once, for fourteen days, and nothing is sent until you hand it over.
         </p>
       </div>
       <div class="card">
         <h3><span class="num">2</span> The timeline on the table</h3>
         <p>
-          Your psychologist opens it in under a minute — read-only, no account,
-          no install. Walking a thread together — where it forked, its moments,
-          what you believed then and believe now — gives the session a shape
-          beyond a blank "how was your week?"
+          Your psychologist enters the code in the companion app and your timeline
+          appears — read-only, no account needed on their end for the local version,
+          or free account for cloud redeem. Walking a thread together gives the
+          session a shape beyond a blank "how was your week?"
         </p>
       </div>
       <div class="card">
-        <h3><span class="num">3</span> They send something back</h3>
+        <h3><span class="num">3</span> Day by day</h3>
         <p>
-          At the end, their app shows a QR code. You scan it, and their prompts
-          settle onto the threads they belong to, surfacing softly during the
-          week. The next session starts where this one ended.
+          The companion app shows every day in the shared period: which threads moved,
+          which got louder, which were decided on. The conversation starts with the
+          picture already in front of both of you.
         </p>
       </div>
     </div>
 
-    <h3 class="pro-subhead">A companion app built for psychologists</h3>
+    <h3 class="pro-subhead" style="margin-top: 44px;">The companion app — real, running now</h3>
     <p class="sub">
-      A web app that runs entirely on their device — local-first, nothing to
-      set up, free for clinicians. Three views, each in service of the
-      conversation:
+      Not a concept. A working web app your psychologist can open at
+      <a href="https://nickyschranz.github.io/one-current-psycho/" style="color: #8fbfa9;">one-current-psycho</a>
+      right now, for free.
     </p>
 
-    <figure class="pro-shot" role="img" aria-label="Design of the companion web app for psychologists: a client list, a prep digest of changes since the last session, the shared timeline with one ghost line, and a prompt pack being composed.">
-      <div class="pro-shot-bar" aria-hidden="true">
-        <span class="pro-shot-dots"><i></i><i></i><i></i></span>
-        <span class="pro-shot-url">sessions.onecurrent.app &nbsp;·&nbsp; runs locally — nothing is uploaded</span>
-      </div>
-      <div class="pro-shot-body" aria-hidden="true">
-        <aside class="pro-side">
-          <div class="pro-side-brand">
-            <svg width="20" height="12" viewBox="0 0 34 16"><path d="M 2 12 C 9 12 9 3 17 3 C 25 3 25 12 32 12" fill="none" stroke="#5c7d6b" stroke-width="2.4" stroke-linecap="round"/></svg>
-            Sessions
-          </div>
-          <span class="pro-side-lock">Locked · local only</span>
-          <p class="pro-side-label">Clients</p>
-          <div class="pro-client active">
-            <i>M</i>
-            <div><strong>M.</strong><span>snapshot · 2 days ago</span></div>
-          </div>
-          <div class="pro-client">
-            <i>A</i>
-            <div><strong>A.</strong><span>snapshot · 3 weeks ago</span></div>
-          </div>
-          <div class="pro-client">
-            <i>J</i>
-            <div><strong>J.</strong><span>first session Friday</span></div>
-          </div>
-          <p class="pro-side-foot">Names live only on this device. Snapshots are pseudonymous and encrypted at rest.</p>
-        </aside>
-        <div class="pro-main">
-          <div class="pro-main-top">
-            <h4>M. — since 24 Jul</h4>
-            <div class="pro-tabs">
-              <span class="pro-tab active">Prep digest</span>
-              <span class="pro-tab">Shared timeline</span>
-              <span class="pro-tab">Progress</span>
-            </div>
-          </div>
-          <div class="pro-panels">
-            <div class="pro-digest">
-              <div class="digest-row">
-                <i class="d-up">▲</i>
-                <div><strong>Career change</strong><span>got louder · 2 → 4 · no decision in 9 days</span></div>
-              </div>
-              <div class="digest-row">
-                <i class="d-down">▼</i>
-                <div><strong>The apartment</strong><span>quieter · 3 → 1 · decision taken Tuesday</span></div>
-              </div>
-              <div class="digest-row">
-                <i class="d-back">↺</i>
-                <div><strong>Old friendship</strong><span>came back — third time this year</span></div>
-              </div>
-              <div class="digest-row">
-                <i class="d-belief">❝</i>
-                <div><strong>A belief moved</strong><span>"I can't leave" → "I could leave, carefully"</span></div>
-              </div>
-              <div class="digest-row">
-                <i class="d-check">✓</i>
-                <div><strong>Merged: the move abroad</strong><span>reclaimed: courage, appetite for mornings</span></div>
-              </div>
-            </div>
-            <figure class="pro-timeline">
-              <svg viewBox="0 0 340 150" aria-hidden="true">
-                <line x1="262" y1="12" x2="262" y2="138" stroke="#ddd5c0" stroke-width="1.2" stroke-dasharray="3 4"/>
-                <text x="262" y="9" text-anchor="middle" font-size="8" fill="#a49c85" font-weight="600">Now</text>
-                <path d="M 14 96 C 150 96 190 92 326 92" fill="none" stroke="#6b6450" stroke-width="3.2" stroke-linecap="round"/>
-                <path d="M 58 96 C 82 96 84 44 108 44 L 240 44" fill="none" stroke="#c0632f" stroke-width="2.4" stroke-linecap="round"/>
-                <circle cx="150" cy="44" r="3" fill="#c0632f"/>
-                <circle cx="196" cy="44" r="3" fill="#c0632f"/>
-                <circle cx="240" cy="44" r="4.4" fill="#c0632f"/>
-                <text x="112" y="34" font-size="8.5" fill="#8c5232" font-weight="600">career change</text>
-                <path d="M 96 96 C 118 96 120 68 142 68 L 240 68" fill="none" stroke="#5c7d6b" stroke-width="1.8" stroke-linecap="round"/>
-                <circle cx="205" cy="68" r="2.6" fill="#5c7d6b"/>
-                <circle cx="240" cy="68" r="3.4" fill="#5c7d6b"/>
-                <text x="146" y="60" font-size="8.5" fill="#4c6d59" font-weight="600">the apartment</text>
-                <path d="M 40 96 C 66 96 68 124 94 124 L 176 124 C 200 124 202 96 224 96" fill="none" stroke="#8d86ad" stroke-width="1.8" stroke-linecap="round"/>
-                <circle cx="224" cy="96" r="3.2" fill="#8d86ad"/>
-                <text x="100" y="140" font-size="8.5" fill="#736c93" font-weight="600">the move abroad · merged</text>
-                <path d="M 126 96 C 146 96 148 20 168 20 L 240 20" fill="none" stroke="#b3aa93" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="4 4" opacity="0.75"/>
-                <circle cx="240" cy="20" r="3.4" fill="none" stroke="#b3aa93" stroke-width="1.4" opacity="0.75"/>
-              </svg>
-              <figcaption>One thread held back — it appears only as an unlabeled ghost line.</figcaption>
-            </figure>
-          </div>
-          <div class="pro-compose">
-            <p><strong>Prompt pack · 2 prompts queued</strong> — "When Career change gets loud, what is it protecting?" · attached to the thread</p>
-            <span class="pro-compose-btn">Show QR at session end</span>
-          </div>
-        </div>
-      </div>
+    <figure class="pro-app-shot" role="img" aria-label="The One Current companion app for psychologists showing a client list on the left and shared timeline on the right.">
+      <img src="img/psycho-app.png" alt="The companion app: client sidebar, shared timeline with thread markers at the top, and the day-by-day record below." loading="lazy" />
+      <figcaption>The companion app — a real account, fully functional, free for clinicians.</figcaption>
     </figure>
-    <p class="pro-shot-caption">Concept design of the companion app — web-based, read-only, no account, nothing installed.</p>
 
     <div class="cards">
       <div class="card">
-        <h3>Prep digest</h3>
-        <p>
-          Since the last session, at a glance: which threads got louder or
-          quieter, which came back, decisions taken, feelings still held,
-          beliefs that moved.
-        </p>
-      </div>
-      <div class="card">
         <h3>Shared timeline</h3>
         <p>
-          The same branching timeline you know, sized for the table between you.
-          Any thread opens into its moments and beliefs. Threads you held back
-          appear only as unlabeled ghost lines.
+          The same branching timeline your patient knows, sized for the session.
+          Tap any marker to see what happened on that day and the thread's full arc.
         </p>
       </div>
       <div class="card">
-        <h3>Progress</h3>
+        <h3>Day by day</h3>
         <p>
-          The long view across months: threads integrated, feelings reclaimed
-          for good, loudness easing. Evidence of change, useful to both of you.
+          Every recorded day stacked under each other — loudness moves, decisions
+          taken, quiet runs folded into a single line. Nothing to interpret; just the
+          record.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Multiple clients</h3>
+        <p>
+          Each client's shared files are kept under their name. New shares from the
+          same patient stack in order. Everything stays on the practitioner's device.
         </p>
       </div>
     </div>
 
-    <div class="pro-privacy" style="margin-top: 44px;">
+    <div class="pro-privacy">
       <svg width="18" height="22" viewBox="0 0 18 22" aria-hidden="true">
         <rect x="1" y="9" width="16" height="12" rx="3" fill="none" stroke="#8fbfa9" stroke-width="1.6"/>
         <path d="M 5 9 V 6.5 a 4 4 0 0 1 8 0 V 9" fill="none" stroke="#8fbfa9" stroke-width="1.6"/>
         <circle cx="9" cy="15" r="1.6" fill="#8fbfa9"/>
       </svg>
       <p>
-        <strong>Still no accounts, no server, no analytics — for either of you.</strong>
-        Data moves only when you perform the act of sharing, encrypted by default.
-        Cloud backup is opt-in and sealed on your device before it leaves — we
-        store a package we cannot open.
-        Your psychologist keeps a sealed page, never access to your life, and can
-        delete everything about you at your word. Pro mode supports the
-        conversation between you and your own clinician — it is not a diagnostic
-        tool, a medical record, or a crisis channel.
+        <strong>Share codes are one-time and expire in fourteen days.</strong>
+        Your timeline data moves only when you perform the act of sharing — the
+        code is useless after a single redeem. Cloud backup is opt-in and stored
+        on your account; your psychologist keeps only what you chose to share.
+        One Current is not a diagnostic tool, a medical record, or a crisis channel.
       </p>
+    </div>
+
+    <div class="pricing-tabs" role="tablist" aria-label="Billing period">
+      <button class="pricing-tab active" data-plan="monthly" role="tab" aria-selected="true">Monthly</button>
+      <button class="pricing-tab" data-plan="biannual" role="tab" aria-selected="false">6 months <span class="save-badge">Save 17%</span></button>
+      <button class="pricing-tab" data-plan="annual" role="tab" aria-selected="false">Yearly <span class="save-badge">Save 33%</span></button>
     </div>
 
     <div class="pro-pricing">
       <div class="pro-price-main">
         <p class="pro-price-kicker">One Current Pro</p>
-        <p class="pro-price"><strong>€6</strong><span>/ month · cancel anytime</span></p>
-        <p class="pro-price-note">
-          You pay. Your psychologist never does — the companion app is free for
-          clinicians, forever.
+        <p class="pro-price">
+          <strong class="js-price">€6</strong>
+          <span>/ month</span>
         </p>
-        <a class="btn btn-gold" href="../">Upgrade to Pro</a>
-        <p class="pro-price-fine">
-          In development — Pro launches together with the companion app. The
-          timeline itself stays free, forever, for everyone.
-        </p>
+        <p class="pro-price-note js-price-note">Billed monthly. Cancel anytime.</p>
+        <a class="btn btn-gold" href="https://nickyschranz.github.io/one-current-app/">Upgrade to Pro</a>
+        <p class="pro-price-fine">Your psychologist never pays — the companion app is always free for clinicians.</p>
       </div>
       <ul class="pro-checks">
-        <li><span><strong>Session snapshots</strong> — sealed, encrypted, with per-thread control over what they see</span></li>
-        <li><span><strong>Prompt packs</strong> — their words settle onto your threads between sessions</span></li>
-        <li><span><strong>The companion app</strong> for your psychologist — prep digest, shared timeline, progress</span></li>
-        <li><span><strong>Progress across months</strong> — evidence of change, visible to both of you</span></li>
-        <li><span><strong>Encrypted cloud backup</strong> — sealed on your device with a key only you hold, restorable on a new phone</span></li>
+        <li><span><strong>Unlimited open threads</strong> — no ten-thread cap</span></li>
+        <li><span><strong>All seven creature themes</strong> — Pompom, Demonfire, Koi pond, Carnival, Catnap, Abyss, Gravemist</span></li>
+        <li><span><strong>Share with your psychologist</strong> — one code, one use, your choice of which threads</span></li>
+        <li><span><strong>Cloud backup</strong> — restore your full history on a new device</span></li>
+        <li><span><strong>The companion app</strong> for your psychologist — timeline, day-by-day, multiple clients</span></li>
         <li><span><strong>Every future Pro feature</strong> — one plan, nothing tiered</span></li>
       </ul>
+    </div>
+  </div>
+</section>
+
+<section class="therapists" id="therapists">
+  <div class="wrap inner">
+    <p class="kicker">For psychologists &amp; therapists</p>
+    <h2>A dedicated app for the session — free, forever</h2>
+    <p class="sub">
+      You never pay. Your patient shares their timeline with an eight-character code;
+      you enter it, and their threads appear in your app. Two views keep the
+      conversation grounded: the shared timeline with tappable markers, and a
+      day-by-day record of every moment they logged.
+    </p>
+
+    <div class="psycho-shots">
+      <figure>
+        <img src="img/psycho-app.png" alt="The companion app: a client list on the left and the shared timeline with thread markers on the right." loading="lazy" />
+        <figcaption>Shared timeline — tap any marker to see the thread arc</figcaption>
+      </figure>
+      <figure>
+        <img src="img/psycho-daybyday.png" alt="The day-by-day view: each day stacked under each other with loudness moves, decisions, and quiet days folded into a single line." loading="lazy" />
+        <figcaption>Day by day — every logged moment, quiet days folded</figcaption>
+      </figure>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>No install, no account needed for file import</h3>
+        <p>Open the web app in any browser. Your patient sends their threads as a file or a code — you import it, and the session begins. Nothing lives on a server you don't control.</p>
+      </div>
+      <div class="card">
+        <h3>Code-based sharing (with a free account)</h3>
+        <p>Create a free account, add your patient as a client, enter their eight-character code. The share arrives instantly — valid once, expired after fourteen days.</p>
+      </div>
+      <div class="card">
+        <h3>Multiple clients, kept separate</h3>
+        <p>Each client's timeline is stored under their name on your device. New shares from the same patient stack in order. You can delete any client's data at any time.</p>
+      </div>
+    </div>
+
+    <div class="therapist-cta">
+      <a class="btn" href="https://nickyschranz.github.io/one-current-psycho/">Open the companion app</a>
+      <span class="therapist-note">Free for clinicians — no subscription, no install, no account required for file import.</span>
     </div>
   </div>
 </section>
@@ -1303,72 +1206,72 @@
     <p class="kicker">Themes</p>
     <h2>Choose how your threads look at you</h2>
     <p class="sub">
-      Five quiet looks — Riverbed, Midnight, Sunprint, Duskwood, Porcelain —
-      and seven living ones, where every open thread ends in a small creature
-      facing you at Now. Each one grows more restless the louder its thread
-      gets, and the moment you give it an honest decision, it settles.
+      Five quiet looks — Riverbed, Midnight, Sunprint, Duskwood, Porcelain — are free.
+      Seven living ones, where every open thread ends in a small creature facing you at Now,
+      come with Pro. Each creature grows more restless the louder its thread gets, and
+      the moment you give it an honest decision, it settles.
     </p>
     <div class="themes-grid">
       <div class="theme-card">
-        <h3>Pompom</h3>
+        <h3>Pompom <span class="pro-tag">Pro</span></h3>
         <p>Peach fluff and button eyes. Every open thread is a pomeranian pup — leave it waiting and it barks.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/pompom.png" loading="lazy" alt="The Pompom theme on a phone: a warm peach timeline where each open thread ends in a small orange pomeranian with a white blaze, the loudest ones barking beside the Now marker." />
+            <img src="img/pompom.png" loading="lazy" alt="The Pompom theme: a warm peach timeline where each open thread ends in a small orange pomeranian." />
           </div>
         </div>
       </div>
       <div class="theme-card">
-        <h3>Demonfire</h3>
+        <h3>Demonfire <span class="pro-tag">Pro</span></h3>
         <p>Ember dark. Every open thread is a small dragon — face it kindly and it settles.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/demonfire.png" loading="lazy" alt="The Demonfire theme on a phone: a dark ember timeline where each open thread ends in a small dragon head in the thread's colour, with glowing eyes, beside the Now marker." />
+            <img src="img/demonfire.png" loading="lazy" alt="The Demonfire theme: a dark ember timeline where each open thread ends in a small dragon head." />
           </div>
         </div>
       </div>
       <div class="theme-card">
-        <h3>Koi pond</h3>
+        <h3>Koi pond <span class="pro-tag">Pro</span></h3>
         <p>Still water. Every open thread is a koi nosing at Now — feed it a decision and the pond settles.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/koipond.png" loading="lazy" alt="The Koi pond theme on a phone: a pale water-green timeline where each open thread ends in a koi fish nosing at the Now marker, ripples spreading around the loudest ones." />
+            <img src="img/koipond.png" loading="lazy" alt="The Koi pond theme: a pale water-green timeline where each open thread ends in a koi fish nosing at the Now marker." />
           </div>
         </div>
       </div>
       <div class="theme-card">
-        <h3>Carnival</h3>
+        <h3>Carnival <span class="pro-tag">Pro</span></h3>
         <p>Cream and bunting. Every open thread is a balloon — the longer it waits, the tighter it swells.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/carnival.png" loading="lazy" alt="The Carnival theme on a phone: a cream timeline with bunting colours where each open thread ends in a balloon, the longest-waiting ones swollen tight." />
+            <img src="img/carnival.png" loading="lazy" alt="The Carnival theme: a cream timeline with bunting colours where each open thread ends in a balloon." />
           </div>
         </div>
       </div>
       <div class="theme-card">
-        <h3>Catnap</h3>
+        <h3>Catnap <span class="pro-tag">Pro</span></h3>
         <p>Lavender and soft paws. Every open thread is a cat watching you — answer it and it curls up.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/catnap.png" loading="lazy" alt="The Catnap theme on a phone: a soft lavender timeline where each open thread ends in a small cat's face watching you, ears flattening as threads grow louder." />
+            <img src="img/catnap.png" loading="lazy" alt="The Catnap theme: a soft lavender timeline where each open thread ends in a small cat's face watching you." />
           </div>
         </div>
       </div>
       <div class="theme-card">
-        <h3>Abyss</h3>
+        <h3>Abyss <span class="pro-tag">Pro</span></h3>
         <p>Deep-sea black. Every open thread is an anglerfish — the louder it grows, the brighter its lure.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/abyss.png" loading="lazy" alt="The Abyss theme on a phone: a deep-sea black timeline where each open thread ends in an anglerfish, its glowing lure brighter on the loudest threads." />
+            <img src="img/abyss.png" loading="lazy" alt="The Abyss theme: a deep-sea black timeline where each open thread ends in an anglerfish with a glowing lure." />
           </div>
         </div>
       </div>
       <div class="theme-card">
-        <h3>Gravemist</h3>
+        <h3>Gravemist <span class="pro-tag">Pro</span></h3>
         <p>Fog and lantern light. Every open thread is a small ghost — its wail widens until you answer.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/gravemist.png" loading="lazy" alt="The Gravemist theme on a phone: a foggy lantern-lit timeline where each open thread ends in a small ghost, mouths widening on the threads left longest." />
+            <img src="img/gravemist.png" loading="lazy" alt="The Gravemist theme: a foggy lantern-lit timeline where each open thread ends in a small ghost." />
           </div>
         </div>
       </div>
@@ -1379,12 +1282,18 @@
 <section class="alt" id="privacy">
   <div class="wrap inner privacy">
     <p class="kicker">Privacy</p>
-    <h2>Everything stays in your browser</h2>
+    <h2>Your threads stay on your device</h2>
     <p>
-      What you write in One Current is stored only on your device, in this browser.
-      There is no account, no server, no analytics. Nothing is sent anywhere.
-      You can export your data as a file whenever you want, and delete everything
-      just as easily.
+      What you write in One Current is stored locally on your device — not on our servers.
+      Creating an account lets you back up your history to the cloud and share with your
+      psychologist using codes, but those features are opt-in. Your backup is encrypted
+      before it leaves your device. We have no ads, no analytics, and we never sell
+      your data.
+    </p>
+    <p>
+      Share codes are one-time and expire in fourteen days. Your psychologist sees only
+      the threads you chose to include. You can export your full data as a file, and
+      delete your account and everything in it at any time from Settings.
     </p>
   </div>
 </section>
@@ -1393,8 +1302,8 @@
   <div class="wrap">
     <h2>See your one current.</h2>
     <div class="cta-row">
-      <a class="btn" href="../">Open One Current</a>
-      <button class="btn quiet" type="button" data-install>Download the app</button>
+      <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open One Current</a>
+      <button class="btn quiet" type="button" data-install>Add to your phone</button>
     </div>
     <p class="small">Works on your phone and your desktop. Add it to your home screen and it opens like any app — still private, still yours.</p>
     <p class="legal">One Current — a calm, private timeline of your life.</p>
@@ -1407,7 +1316,7 @@
     <div data-install-ios hidden>
       <p>One Current installs straight from Safari — no app store needed:</p>
       <ol>
-        <li>Open <a href="../">the app</a> in <strong>Safari</strong>.</li>
+        <li>Open <a href="https://nickyschranz.github.io/one-current-app/">the app</a> in <strong>Safari</strong>.</li>
         <li>Tap the <strong>Share</strong> button
           <svg class="share-glyph" width="16" height="18" viewBox="0 0 16 18" aria-hidden="true"><path d="M8 1 v10 M4.5 4.5 L8 1 l3.5 3.5 M2 8 v7.5 h12 V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>.
         </li>
@@ -1418,7 +1327,7 @@
     <div data-install-generic hidden>
       <p>One Current installs straight from your browser — no app store needed:</p>
       <ol>
-        <li>Open <a href="../">the app</a> in your browser.</li>
+        <li>Open <a href="https://nickyschranz.github.io/one-current-app/">the app</a> in your browser.</li>
         <li>Open the browser menu (⋮ or the install icon in the address bar).</li>
         <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
       </ol>
@@ -1429,23 +1338,41 @@
     </div>
     <div class="row">
       <button class="btn quiet" type="button" data-install-close>Close</button>
-      <a class="btn" href="../">Open the app</a>
+      <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open the app</a>
     </div>
   </div>
 </div>
 
 <script>
-  // "Download the app": a web app installs, it does not download. On
-  // Chromium the real install prompt appears; on iOS Safari there is no
-  // programmatic way to add a home-screen web app, so the sheet walks
-  // through Share -> Add to Home Screen instead.
   (function () {
+    // Pricing tab switcher
+    var plans = {
+      monthly:   { price: "€6",  note: "Billed monthly. Cancel anytime." },
+      biannual:  { price: "€5",  note: "€30 billed every 6 months. Cancel anytime." },
+      annual:    { price: "€4",  note: "€48 billed yearly. Cancel anytime." },
+    };
+    var priceEl = document.querySelector(".js-price");
+    var noteEl  = document.querySelector(".js-price-note");
+    document.querySelectorAll(".pricing-tab").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".pricing-tab").forEach(function (b) {
+          b.classList.remove("active");
+          b.setAttribute("aria-selected", "false");
+        });
+        btn.classList.add("active");
+        btn.setAttribute("aria-selected", "true");
+        var p = plans[btn.dataset.plan];
+        if (priceEl) priceEl.textContent = p.price;
+        if (noteEl)  noteEl.textContent  = p.note;
+      });
+    });
+
+    // Install sheet
     var deferredPrompt = null;
     window.addEventListener("beforeinstallprompt", function (e) {
       e.preventDefault();
       deferredPrompt = e;
     });
-
     var sheet = document.getElementById("install-sheet");
     var panes = {
       ios: sheet.querySelector("[data-install-ios]"),
@@ -1468,10 +1395,8 @@
         window.navigator.standalone === true
       );
     }
-
-    var buttons = document.querySelectorAll("[data-install]");
-    for (var i = 0; i < buttons.length; i++) {
-      buttons[i].addEventListener("click", function () {
+    document.querySelectorAll("[data-install]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
         if (isStandalone()) return showSheet("standalone");
         if (deferredPrompt) {
           var p = deferredPrompt;
@@ -1481,8 +1406,7 @@
         }
         showSheet(isIOS() ? "ios" : "generic");
       });
-    }
-
+    });
     sheet.querySelector("[data-install-close]").addEventListener("click", function () {
       sheet.hidden = true;
     });
@@ -1493,6 +1417,7 @@
       if (e.key === "Escape") sheet.hidden = true;
     });
 
+    // Mobile nav toggle
     var navToggle = document.getElementById("nav-toggle");
     var mobileNav = document.getElementById("mobile-nav");
     function closeMenu() {

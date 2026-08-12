@@ -469,6 +469,55 @@
   .pro-privacy p { margin: 0; font-size: 0.92rem; color: rgba(244, 242, 234, 0.68); }
   .pro-privacy p strong { color: #f4f2ea; }
 
+  /* companion feature — Pip mascot */
+  .companion-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .companion-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  section.alt .companion-card { background: var(--bg); }
+  .companion-quote {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+    font-style: italic;
+    margin-bottom: 5px;
+  }
+  .companion-label {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+  .companion-variants {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+  .companion-variant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .companion-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 560px) {
+    .companion-cards { grid-template-columns: 1fr; }
+    .companion-variants { gap: 16px; }
+    .companion-variants svg { width: 52px; height: 65px; }
+  }
+
   /* companion app real screenshot */
   .pro-app-shot {
     margin: 26px 0 44px;
@@ -718,6 +767,7 @@
     <nav class="primary" aria-label="Sections">
       <a href="#what">What it is</a>
       <a href="#how">How it works</a>
+      <a href="#companion">Your companion</a>
       <a href="#pro">Pro</a>
       <a href="#therapists">For therapists</a>
       <a href="#themes">Themes</a>
@@ -737,6 +787,7 @@
   <nav class="mobile-nav" id="mobile-nav" aria-label="Sections" hidden>
     <a href="#what">What it is</a>
     <a href="#how">How it works</a>
+    <a href="#companion">Your companion</a>
     <a class="mn-pro" href="#pro">Pro <span class="mn-chip">Paid · from €4/mo</span></a>
     <a href="#therapists">For therapists</a>
     <a href="#themes">Themes</a>
@@ -937,6 +988,185 @@
       <div class="step-media">
         <img src="img/wholeness.png" alt="The wholeness panel open: a plain-language summary of how scattered you are, followed by the threads pulling hardest right now." />
         <p class="caption">Not a score to optimize — a weather report, and one next step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="companion">
+  <div class="wrap inner">
+    <p class="kicker">Your companion</p>
+    <h2>Pip keeps watch while you live your day</h2>
+    <p class="sub">
+      A small animated character lives on your timeline. He patrols your threads,
+      spots what needs attention, and reacts every time you make a decision — like
+      having a patient, encouraging friend keeping tabs on things with you.
+    </p>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">✦</span> He patrols your threads</h3>
+        <p>
+          Pip zigzags between your open timelines on his own — inspecting each one,
+          staying longer on the loudest threads. He's always doing something.
+          Nothing slips past him.
+        </p>
+        <p>
+          When he picks his next destination, that thread lights up first so you
+          know exactly where he's heading before he moves.
+        </p>
+      </div>
+      <div class="step-media">
+        <img src="img/mascot-timeline.png" alt="The One Current timeline with Pip, the animated pixel-art companion character, sitting on one of the thread lines. Other threads are gently faded so the active one stands out." />
+        <p class="caption">Pip highlights the thread he's about to visit — then runs.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">✦</span> He nudges you, never nags</h3>
+        <p>
+          When Pip lands on a thread he opens a small speech bubble with a
+          one-line read of the situation: <em>"This one's LOUD — want to sort it?"</em>
+          or <em>"Boss, I think this one's ready to close!"</em>
+        </p>
+        <p>
+          Tap him and the thread's action panel opens. One move and you're done.
+        </p>
+      </div>
+      <div class="step-media">
+        <img src="img/mascot-mobile.png" alt="Pip on mobile, sitting to the right of a thread endpoint with a speech bubble above him saying 'This one's LOUD — want to sort it?'" />
+        <p class="caption">Short reads, never demands. Tap him to act on the thread.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">✦</span> He celebrates every move you make</h3>
+        <p>
+          Merge a thread — <em>"HANDLED! One less thing, boss!"</em>
+          Add a note — <em>"Got it. Witnessed."</em>
+          Take an action — <em>"PLAN LOCKED. Let's go!"</em>
+        </p>
+        <p>
+          Small wins deserve recognition. Pip gives it every single time,
+          in the voice of a friend who is genuinely rooting for you.
+        </p>
+      </div>
+      <div class="step-media">
+        <div class="companion-cards">
+          <div class="companion-card">
+            <div class="companion-quote">"I got it handled, boss!"</div>
+            <div class="companion-label">On opening the app</div>
+          </div>
+          <div class="companion-card">
+            <div class="companion-quote">"HUGE ONE. You really did that!"</div>
+            <div class="companion-label">After a big merge</div>
+          </div>
+          <div class="companion-card">
+            <div class="companion-quote">"Deep one. Worth a sit-down."</div>
+            <div class="companion-label">Inspecting an identity thread</div>
+          </div>
+          <div class="companion-card">
+            <div class="companion-quote">"Action taken. That's how we roll."</div>
+            <div class="companion-label">After deciding a step</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">✦</span> Three companions, one for you</h3>
+        <p>
+          Choose from three characters in Settings → Companion.
+          The <strong>Chronicler</strong> arrives with spectacles and a gold quill.
+          The <strong>Wisp</strong> floats between threads trailing ethereal light.
+          The <strong>Wanderer</strong> strides in with a wide hat and a staff.
+        </p>
+        <p>
+          All three wear your current theme's accent color, move with the same
+          fluid zigzag patrol, and carry the same unmistakeable buddy energy.
+        </p>
+      </div>
+      <div class="step-media">
+        <div class="companion-variants">
+          <div class="companion-variant">
+            <svg width="64" height="80" viewBox="0 0 64 80" aria-label="Chronicler mascot">
+              <!-- Chronicler pixel art: spectacles + quill, simplified -->
+              <rect x="20" y="2" width="6" height="4" fill="#3f6f5f" rx="1"/><!-- quill -->
+              <rect x="22" y="0" width="2" height="4" fill="#c8952a" rx="1"/>
+              <rect x="16" y="8" width="32" height="4" fill="#3f6f5f" rx="2"/><!-- hat brim -->
+              <rect x="18" y="6" width="28" height="4" fill="#3f6f5f" rx="1"/>
+              <rect x="20" y="14" width="24" height="22" fill="#f5c38c" rx="8"/><!-- head -->
+              <rect x="20" y="14" width="24" height="4" fill="#35604f" rx="2"/><!-- hat -->
+              <rect x="24" y="20" width="5" height="5" fill="#ffffff" rx="2"/><!-- left eye -->
+              <rect x="25" y="21" width="2" height="3" fill="#1a1a1a" rx="1"/>
+              <rect x="35" y="20" width="5" height="5" fill="#ffffff" rx="2"/><!-- right eye -->
+              <rect x="36" y="21" width="2" height="3" fill="#1a1a1a" rx="1"/>
+              <rect x="24" y="20" width="5" height="5" fill="none" stroke="#c4864e" stroke-width="1" rx="2"/><!-- specs -->
+              <rect x="35" y="20" width="5" height="5" fill="none" stroke="#c4864e" stroke-width="1" rx="2"/>
+              <rect x="27" y="28" width="2" height="2" fill="#1a1a1a" rx="1"/><!-- smile -->
+              <rect x="35" y="28" width="2" height="2" fill="#1a1a1a" rx="1"/>
+              <rect x="18" y="36" width="28" height="16" fill="#35604f" rx="4"/><!-- body -->
+              <rect x="22" y="44" width="20" height="4" fill="#f0c040" rx="2"/><!-- belt -->
+              <rect x="22" y="52" width="8" height="10" fill="#35604f" rx="2"/><!-- left leg -->
+              <rect x="34" y="52" width="8" height="10" fill="#35604f" rx="2"/>
+              <rect x="20" y="60" width="12" height="6" fill="#3a6ad4" rx="3"/><!-- boots -->
+              <rect x="32" y="60" width="12" height="6" fill="#3a6ad4" rx="3"/>
+              <rect x="48" y="48" width="4" height="14" fill="#f0c040" rx="1"/><!-- scroll -->
+            </svg>
+            <span class="companion-name">Chronicler</span>
+          </div>
+          <div class="companion-variant">
+            <svg width="64" height="80" viewBox="0 0 64 80" aria-label="Wisp mascot">
+              <!-- Wisp: glowing orb, ethereal tail -->
+              <ellipse cx="32" cy="28" rx="18" ry="18" fill="#3f6f5f" opacity="0.25"/>
+              <ellipse cx="32" cy="28" rx="14" ry="14" fill="#3f6f5f" opacity="0.4"/>
+              <ellipse cx="32" cy="28" rx="10" ry="10" fill="#3f6f5f"/>
+              <ellipse cx="32" cy="28" rx="6" ry="6" fill="#7ab8a5"/>
+              <ellipse cx="32" cy="28" rx="3" ry="3" fill="#ffffff"/>
+              <rect x="26" y="24" width="3" height="3" fill="#1a1a1a" rx="1"/><!-- eyes -->
+              <rect x="35" y="24" width="3" height="3" fill="#1a1a1a" rx="1"/>
+              <rect x="27" y="30" width="10" height="2" fill="#1a1a1a" rx="1" opacity="0.4"/><!-- smile -->
+              <rect x="8" y="22" width="4" height="4" fill="#7ab8a5" rx="2" opacity="0.7"/><!-- sparkles -->
+              <rect x="52" y="20" width="4" height="4" fill="#7ab8a5" rx="2" opacity="0.7"/>
+              <rect x="6" y="32" width="3" height="3" fill="#3f6f5f" rx="1" opacity="0.5"/>
+              <rect x="55" y="30" width="3" height="3" fill="#3f6f5f" rx="1" opacity="0.5"/>
+              <rect x="18" y="42" width="28" height="10" fill="#3f6f5f" rx="4"/><!-- body -->
+              <!-- Ethereal tail -->
+              <rect x="26" y="52" width="12" height="6" fill="#3f6f5f" rx="3" opacity="0.8"/>
+              <rect x="28" y="58" width="8" height="5" fill="#3f6f5f" rx="3" opacity="0.55"/>
+              <rect x="30" y="63" width="4" height="4" fill="#3f6f5f" rx="2" opacity="0.3"/>
+            </svg>
+            <span class="companion-name">Wisp</span>
+          </div>
+          <div class="companion-variant">
+            <svg width="64" height="80" viewBox="0 0 64 80" aria-label="Wanderer mascot">
+              <!-- Wanderer: wide hat + staff -->
+              <rect x="12" y="8" width="40" height="5" fill="#3f6f5f" rx="2"/><!-- wide brim -->
+              <rect x="20" y="4" width="24" height="6" fill="#35604f" rx="2"/><!-- hat crown -->
+              <rect x="50" y="6" width="3" height="6" fill="#f0c040" rx="1"/><!-- feather -->
+              <rect x="18" y="13" width="28" height="22" fill="#f5c38c" rx="8"/><!-- head -->
+              <rect x="22" y="19" width="5" height="5" fill="#ffffff" rx="2"/><!-- eyes -->
+              <rect x="23" y="20" width="2" height="3" fill="#1a1a1a" rx="1"/>
+              <rect x="37" y="19" width="5" height="5" fill="#ffffff" rx="2"/>
+              <rect x="38" y="20" width="2" height="3" fill="#1a1a1a" rx="1"/>
+              <rect x="22" y="27" width="2" height="2" fill="#1a1a1a" rx="1"/><!-- smile -->
+              <rect x="40" y="27" width="2" height="2" fill="#1a1a1a" rx="1"/>
+              <rect x="16" y="35" width="32" height="16" fill="#35604f" rx="4"/><!-- body -->
+              <rect x="20" y="43" width="24" height="4" fill="#f0c040" rx="2"/><!-- belt -->
+              <rect x="20" y="51" width="8" height="10" fill="#35604f" rx="2"/><!-- legs -->
+              <rect x="36" y="51" width="8" height="10" fill="#35604f" rx="2"/>
+              <rect x="18" y="59" width="12" height="6" fill="#3a6ad4" rx="3"/><!-- boots -->
+              <rect x="34" y="59" width="12" height="6" fill="#3a6ad4" rx="3"/>
+              <rect x="50" y="35" width="3" height="30" fill="#c8952a" rx="1"/><!-- staff -->
+              <rect x="48" y="33" width="7" height="4" fill="#f0c040" rx="2"/><!-- staff tip -->
+            </svg>
+            <span class="companion-name">Wanderer</span>
+          </div>
+        </div>
+        <p class="caption">Three companions. Switch any time in Settings → Companion.</p>
       </div>
     </div>
   </div>

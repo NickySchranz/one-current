@@ -114,17 +114,20 @@
   .brand svg { display: block; }
   nav.primary {
     display: flex;
-    gap: 4px;
+    gap: 2px;
     margin-left: auto;
     margin-right: 6px;
+    flex-wrap: nowrap;
+    align-items: center;
   }
   nav.primary a {
     color: var(--ink-soft);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    padding: 7px 12px;
+    padding: 7px 9px;
     border-radius: 8px;
+    white-space: nowrap;
     transition: color 0.15s ease, background-color 0.15s ease;
   }
   nav.primary a:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
@@ -199,8 +202,13 @@
     border-radius: 999px;
     padding: 3px 10px;
   }
-  @media (min-width: 861px) {
+  @media (min-width: 980px) {
     .mobile-nav { display: none !important; }
+  }
+  @media (max-width: 979px) {
+    nav.primary { display: none; }
+    .nav-toggle { display: flex; }
+    .pro-pill { display: flex; }
   }
 
   /* device frame */
@@ -767,9 +775,9 @@
     <nav class="primary" aria-label="Sections">
       <a href="#what">What it is</a>
       <a href="#how">How it works</a>
-      <a href="#companion">Your companion</a>
+      <a href="#companion">Companion</a>
       <a href="#pro">Pro</a>
-      <a href="#therapists">For therapists</a>
+      <a href="#therapists">Therapists</a>
       <a href="#themes">Themes</a>
       <a href="#privacy">Privacy</a>
     </nav>

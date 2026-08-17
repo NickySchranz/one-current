@@ -19,7 +19,7 @@ export const videos: PromoDef[] = [
       {
         src: "01-hero.webm",
         from: 0,
-        to: 749,
+        to: 756,
         cues: [
           { at: 8, text: "Everything pulling at you, beside one steady line." },
           { at: 95, text: "Something lands on your mind? Name it." },
@@ -103,7 +103,7 @@ export const videos: PromoDef[] = [
       {
         src: "04-merge.webm",
         from: 0,
-        to: 556,
+        to: 563,
         cues: [
           { at: 8, text: "Some threads are finished — they just never ended." },
           { at: 120, text: "When one is resolved, integrate it into Now." },
@@ -195,7 +195,7 @@ export const videos: PromoDef[] = [
       {
         src: "08-wholeness.webm",
         from: 0,
-        to: 525,
+        to: 532,
         cues: [
           { at: 55, text: "Tap the gauge: how much of you moves with your main line?" },
           { at: 120, text: "“That is the split — not you.”" },
@@ -220,7 +220,7 @@ export const videos: PromoDef[] = [
       {
         src: "09-share.webm",
         from: 0,
-        to: 332,
+        to: 335,
         cues: [
           { at: 8, text: "Words are hard in a session. The picture helps." },
           { at: 70, text: "Pick exactly which threads to share — nothing else leaves." },

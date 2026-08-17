@@ -17,14 +17,13 @@ export function Logo({ size = 22 }: { size?: number }) {
         fill="none"
       />
       <path
-        d="M7 15 C10 15, 9 7, 13 7 H18 C22 7, 21 15, 24 15"
-        stroke="currentColor"
-        strokeWidth="1.8"
+        d="M7 15 C11.5 15, 10.5 6, 16 6 C21.5 6, 20.5 15, 25 15"
+        stroke="var(--accent)"
+        strokeWidth="2"
         strokeLinecap="round"
         fill="none"
-        opacity="0.55"
       />
-      <circle cx="29" cy="15" r="3.2" fill="var(--accent)" />
+      <circle cx="25" cy="15" r="3.2" fill="var(--accent)" />
     </svg>
   );
 }

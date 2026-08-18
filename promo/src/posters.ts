@@ -236,6 +236,30 @@ const concepts: Concept[] = [
     headline: "Only what the client chose to share.",
     sub: "A shared window on a timeline — session notes never leave your device.",
   },
+  // ---- campaign wave 4: positioning, rituals, contrasts, feelings, practice ----
+  ...[
+    ["a1-no-streaks", "No streaks. No guilt. Just your current.", "Nothing to keep up. Only what is true today.", "river", "One Current"],
+    ["a2-not-todo", "Not a to-do list. A map of your attention.", "See what pulls at you — and what it actually needs.", "warm", "One Current"],
+    ["a3-opposite-feed", "The opposite of a feed.", "Nothing scrolls here. Your threads wait quietly until you're ready.", "night", "One Current"],
+    ["a4-close-lighter", "An app you close feeling lighter.", "Open it, decide something small, return to your life.", "dusk", "One Current"],
+    ["r1-morning", "Morning coffee: what's pulling at today?", "One look at your line, one honest answer.", "warm", "A small ritual"],
+    ["r2-bed", "Before bed: one honest decision.", "An action counts. So does deciding nothing can be done.", "night", "A small ritual"],
+    ["r3-sunday", "Sunday evening: read your week like a story.", "Every decision, quietly recorded in History.", "river", "A small ritual"],
+    ["b1-visible", "Same worries. Finally visible.", "A vague weight becomes lines you can answer.", "river", "One Current"],
+    ["b2-one-thing", "From everything-at-once to one thing today.", "The gauge points at the decision that gathers you most.", "dusk", "One Current"],
+    ["b3-ten-threads", "Ten open threads. One line through them all.", "Your life continues on one main line.", "warm", "One Current"],
+    ["e1-feelings", "worry · dread · guilt · overwhelm", "Each one can live on a line — instead of in your chest.", "night", "One Current"],
+    ["t1-month", "Your client's month, on one page.", "The shared window, drawn the way their own app drew it.", "river", "One Current — Practice"],
+    ["t2-recall", "Less recall. More reality.", "Sessions start from what actually happened in between.", "warm", "One Current — Practice"],
+  ].map(([key, headline, sub, mood, kicker]) => ({
+    key: key as string,
+    formats: ["45", "story"] as (keyof typeof F)[],
+    mood: mood as Concept["mood"],
+    layout: "quote" as const,
+    kicker: kicker as string,
+    headline: headline as string,
+    sub: sub as string,
+  })),
 ];
 
 export const posters: PosterDef[] = concepts.flatMap((c) =>

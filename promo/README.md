@@ -30,6 +30,9 @@ defines the poster set (IG 4:5 / story / square + one A3 print hero) rendered by
 `node promo/scripts/render-posters.mjs [ids…]` into `public/about/social/`.
 Browse everything on the unlisted gallery `about/media.html`.
 
+The 60-second flagship cut is `src/Flagship.tsx` (composition id `00-flagship`),
+rendered directly: `npx remotion render 00-flagship ../public/about/video/00-flagship.mp4`.
+
 ## Notes
 
 - The renderer reuses the Playwright Chromium at

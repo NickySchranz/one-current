@@ -4,12 +4,21 @@ import { loadFont } from "@remotion/google-fonts/Ubuntu";
 import { PromoVideo, promoDuration } from "./PromoVideo";
 import { videos } from "./videos";
 import { PosterComp } from "./PosterComp";
+import { Flagship } from "./Flagship";
 import { posters } from "./posters";
 
 loadFont();
 
 export const Root: React.FC = () => (
   <>
+    <Composition
+      id="00-flagship"
+      component={Flagship}
+      durationInFrames={1800}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     {videos.map((def) => (
       <Composition
         key={def.id}

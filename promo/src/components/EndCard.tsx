@@ -106,21 +106,6 @@ export const EndCard: React.FC<{
           Part of Pro · €6/month
         </div>
       ) : null}
-      <div
-        style={{
-          marginTop: 46,
-          padding: "20px 46px",
-          borderRadius: 999,
-          background: brand.accent,
-          color: "#fff",
-          fontSize: 38,
-          fontWeight: 700,
-          boxShadow: "0 14px 38px rgba(63,111,95,0.4)",
-          opacity: late(28),
-        }}
-      >
-        nickyschranz.github.io/one-current
-      </div>
     </AbsoluteFill>
   );
 };

@@ -22,15 +22,10 @@ export type PosterDef = {
   bullets?: string[];
 };
 
-const URL_TEXT = "nickyschranz.github.io/one-current";
-
-const BrandRow: React.FC<{ ink: string; sub: string }> = ({ ink, sub }) => (
-  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-    <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-      <LogoMark ink={ink} size={92} />
-      <span style={{ fontSize: 34, fontWeight: 700, color: ink }}>One Current</span>
-    </div>
-    <span style={{ fontSize: 24, fontWeight: 600, color: sub }}>{URL_TEXT}</span>
+const BrandRow: React.FC<{ ink: string; sub: string }> = ({ ink }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+    <LogoMark ink={ink} size={92} />
+    <span style={{ fontSize: 34, fontWeight: 700, color: ink }}>One Current</span>
   </div>
 );
 
@@ -128,7 +123,10 @@ export const PosterComp: React.FC<{ def: PosterDef }> = ({ def }) => {
             {def.sub ? <div style={{ fontSize: 40, lineHeight: 1.45, color: sub, maxWidth: width * 0.78 }}>{def.sub}</div> : null}
             {def.badge ? <Badge text={def.badge} /> : null}
           </div>
-          <div style={{ textAlign: "center", fontSize: 27, fontWeight: 600, color: sub }}>{URL_TEXT}</div>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14 }}>
+            <LogoMark ink={ink} size={64} />
+            <span style={{ fontSize: 27, fontWeight: 700, color: sub }}>One Current</span>
+          </div>
         </AbsoluteFill>
       )}
 

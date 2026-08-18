@@ -123,6 +123,50 @@ const concepts: Concept[] = [
       "Seven living creature themes",
     ],
   },
+  // ---- campaign: worry hooks — one universal thread title per poster ----
+  ...[
+    ["w1-message", "The unanswered message.", "river"],
+    ["w2-rent", "The rent increase letter.", "warm"],
+    ["w3-further", "Everyone seems further along than me.", "night"],
+    ["w4-sleep", "My sleep is a mess again.", "dusk"],
+    ["w5-argument", "The argument I keep replaying.", "river"],
+    ["w6-waiting", "Waiting for news that isn't coming fast enough.", "warm"],
+  ].map(([key, headline, mood]) => ({
+    key: key as string,
+    formats: ["45", "story"] as (keyof typeof F)[],
+    mood: mood as Concept["mood"],
+    layout: "quote" as const,
+    kicker: "One Current",
+    headline: headline as string,
+    sub: "Whatever pulls at you — name it, see it on your line, decide something small.",
+  })),
+  // ---- campaign: one poster per creature theme ----
+  ...[
+    ["c1-demonfire", "demonfire", "Face it kindly, and it settles.", "night"],
+    ["c2-koipond", "koipond", "Feed it a decision — the pond stills.", "river"],
+    ["c3-carnival", "carnival", "The longer it waits, the tighter it swells.", "warm"],
+    ["c4-catnap", "catnap", "Answer it, and it curls up.", "river"],
+    ["c5-abyss", "abyss", "The louder it grows, the brighter its lure.", "night"],
+    ["c6-pompom", "pompom", "Leave it waiting, and it barks.", "warm"],
+    ["c7-gravemist", "gravemist", "Its wail widens until you answer.", "dusk"],
+  ].map(([key, theme, headline, mood]) => ({
+    key: key as string,
+    formats: ["45", "story"] as (keyof typeof F)[],
+    mood: mood as Concept["mood"],
+    layout: "device" as const,
+    still: `still-theme-${theme}.png`,
+    kicker: "One Current Pro",
+    headline: headline as string,
+  })),
+  {
+    key: "f1-wholeness",
+    formats: ["45", "story"],
+    mood: "river",
+    layout: "device",
+    still: "still-wholeness.png",
+    headline: "How much of you is here today?",
+    sub: "The wholeness gauge answers honestly — and points at the one decision that gathers you most.",
+  },
 ];
 
 export const posters: PosterDef[] = concepts.flatMap((c) =>

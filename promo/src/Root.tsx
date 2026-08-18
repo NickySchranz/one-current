@@ -5,6 +5,7 @@ import { PromoVideo, promoDuration } from "./PromoVideo";
 import { videos } from "./videos";
 import { PosterComp } from "./PosterComp";
 import { Flagship } from "./Flagship";
+import { WhyFilm } from "./WhyFilm";
 import { posters } from "./posters";
 
 loadFont();
@@ -15,6 +16,14 @@ export const Root: React.FC = () => (
       id="00-flagship"
       component={Flagship}
       durationInFrames={1800}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="00-why-it-works"
+      component={WhyFilm}
+      durationInFrames={1470}
       fps={30}
       width={1080}
       height={1920}

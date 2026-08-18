@@ -21,7 +21,7 @@ import type { Mood } from "./brand";
 
 /* ------------------------------------------------ shared segment helpers */
 
-const FadeIn: React.FC<{ children: React.ReactNode; dur?: number }> = ({ children, dur = 8 }) => {
+export const FadeIn: React.FC<{ children: React.ReactNode; dur?: number }> = ({ children, dur = 8 }) => {
   const frame = useCurrentFrame();
   return (
     <AbsoluteFill style={{ opacity: interpolate(frame, [0, dur], [0, 1], { extrapolateRight: "clamp" }) }}>
@@ -32,7 +32,7 @@ const FadeIn: React.FC<{ children: React.ReactNode; dur?: number }> = ({ childre
 
 /* Phone with footage: springs in, optional playback rate and animated
    zoom-punch toward a point of the screen (fractions of the phone). */
-const PhoneClip: React.FC<{
+export const PhoneClip: React.FC<{
   src: string;
   from: number;
   rate?: number;
@@ -85,7 +85,7 @@ const PhoneClip: React.FC<{
 };
 
 /* Big statement: kicker + word-punch headline. */
-const Statement: React.FC<{ mood: Mood; kicker?: string; headline: string }> = ({ mood, kicker, headline }) => {
+export const Statement: React.FC<{ mood: Mood; kicker?: string; headline: string; sub?: string }> = ({ mood, kicker, headline, sub }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const ink = inkFor(mood);
@@ -129,6 +129,21 @@ const Statement: React.FC<{ mood: Mood; kicker?: string; headline: string }> = (
           );
         })}
       </div>
+      {sub ? (
+        <div
+          style={{
+            marginTop: 44,
+            fontSize: 40,
+            lineHeight: 1.45,
+            color: subInkFor(mood),
+            textAlign: "center",
+            maxWidth: 840,
+            opacity: interpolate(frame, [18, 32], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+          }}
+        >
+          {sub}
+        </div>
+      ) : null}
     </AbsoluteFill>
   );
 };

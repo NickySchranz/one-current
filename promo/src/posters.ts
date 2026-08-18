@@ -448,6 +448,29 @@ const concepts: Concept[] = [
     headline: "Feed it a decision.",
     sub: "The koi settles. The pond stills.",
   },
+  // ---- campaign wave 7: zoom-circle details ----
+  ...[
+    ["z1-zoom-balloon", "still-theme-carnival.png", 0.575, 0.195, 3.4, "One balloon per worry.", "The longer it waits, the tighter it swells.", "dusk", "One Current Pro"],
+    ["z2-zoom-cat", "still-theme-catnap.png", 0.52, 0.21, 3.0, "It waits. Politely.", "Answer the cat, and it curls up.", "warm", "One Current Pro"],
+    ["z3-zoom-angler", "still-theme-abyss.png", 0.52, 0.21, 3.0, "Light in the deep.", "The louder it grows, the brighter its lure.", "night", "One Current Pro"],
+    ["z4-zoom-pup", "still-theme-pompom.png", 0.52, 0.21, 3.0, "Small. Loud. Loyal.", "Leave it waiting, and it barks.", "warm", "One Current Pro"],
+    ["z5-zoom-ghost", "still-theme-gravemist.png", 0.52, 0.21, 3.0, "A gentle haunting.", "Its wail widens until you answer.", "dusk", "One Current Pro"],
+    ["z6-zoom-now", "still-hero.png", 0.61, 0.5, 3.0, "Now has a pulse.", "Your present moment, always moving.", "river", "One Current"],
+    ["z7-zoom-curve", "still-hero.png", 0.4, 0.53, 2.6, "The line that comes back.", "Integrated threads curve home into Now.", "river", "One Current"],
+    ["z8-zoom-check", "still-hero.png", 0.535, 0.428, 3.4, "The quiet ✓ of “decided today.”", "Not solved. Answered. That counts.", "warm", "One Current"],
+    ["z9-zoom-steps", "still-hero.png", 0.8, 0.52, 2.4, "Small steps live on your line.", "Decided actions sit right on today.", "river", "One Current"],
+    ["z10-zoom-loud", "still-loud.png", 0.35, 0.31, 2.8, "This is what “loud” looks like.", "Thicker, wilder, further from your line.", "night", "One Current"],
+  ].map(([key, still, x, y, zoom, headline, sub, mood, kicker]) => ({
+    key: key as string,
+    formats: ["45", "story"] as (keyof typeof F)[],
+    mood: mood as Concept["mood"],
+    layout: "zoom" as const,
+    still: still as string,
+    focus: { x: x as number, y: y as number, zoom: zoom as number },
+    kicker: kicker as string,
+    headline: headline as string,
+    sub: sub as string,
+  })),
 ];
 
 export const posters: PosterDef[] = concepts.flatMap((c) =>

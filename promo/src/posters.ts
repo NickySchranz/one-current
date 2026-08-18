@@ -450,11 +450,11 @@ const concepts: Concept[] = [
   },
   // ---- campaign wave 7: zoom-circle details ----
   ...[
-    ["z1-zoom-balloon", "still-theme-carnival.png", 0.575, 0.195, 3.4, "One balloon per worry.", "The longer it waits, the tighter it swells.", "dusk", "One Current Pro"],
-    ["z2-zoom-cat", "still-theme-catnap.png", 0.52, 0.21, 3.0, "It waits. Politely.", "Answer the cat, and it curls up.", "warm", "One Current Pro"],
-    ["z3-zoom-angler", "still-theme-abyss.png", 0.52, 0.21, 3.0, "Light in the deep.", "The louder it grows, the brighter its lure.", "night", "One Current Pro"],
-    ["z4-zoom-pup", "still-theme-pompom.png", 0.52, 0.21, 3.0, "Small. Loud. Loyal.", "Leave it waiting, and it barks.", "warm", "One Current Pro"],
-    ["z5-zoom-ghost", "still-theme-gravemist.png", 0.52, 0.21, 3.0, "A gentle haunting.", "Its wail widens until you answer.", "dusk", "One Current Pro"],
+    ["z1-zoom-balloon", "still-theme-carnival.png", 0.545, 0.565, 3.2, "One balloon per worry.", "The longer it waits, the tighter it swells.", "dusk", "One Current Pro"],
+    ["z2-zoom-cat", "still-theme-catnap.png", 0.545, 0.585, 3.2, "It waits. Politely.", "Answer the cat, and it curls up.", "warm", "One Current Pro"],
+    ["z3-zoom-angler", "still-theme-abyss.png", 0.545, 0.585, 3.2, "Light in the deep.", "The louder it grows, the brighter its lure.", "night", "One Current Pro"],
+    ["z4-zoom-pup", "still-theme-pompom.png", 0.545, 0.585, 3.2, "Small. Loud. Loyal.", "Leave it waiting, and it barks.", "warm", "One Current Pro"],
+    ["z5-zoom-ghost", "still-theme-gravemist.png", 0.545, 0.585, 3.2, "A gentle haunting.", "Its wail widens until you answer.", "dusk", "One Current Pro"],
     ["z6-zoom-now", "still-hero.png", 0.61, 0.5, 3.0, "Now has a pulse.", "Your present moment, always moving.", "river", "One Current"],
     ["z7-zoom-curve", "still-hero.png", 0.4, 0.53, 2.6, "The line that comes back.", "Integrated threads curve home into Now.", "river", "One Current"],
     ["z8-zoom-check", "still-hero.png", 0.535, 0.428, 3.4, "The quiet ✓ of “decided today.”", "Not solved. Answered. That counts.", "warm", "One Current"],

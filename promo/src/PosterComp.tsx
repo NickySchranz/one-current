@@ -205,20 +205,29 @@ export const PosterComp: React.FC<{ def: PosterDef }> = ({ def }) => {
         <>
           <AbsoluteFill style={{ padding: pad, display: "flex", flexDirection: "column", gap: 44 }}>
             <BrandRow ink={ink} sub={sub} />
-            <div style={{ maxWidth: width * 0.55 }}>{Header}</div>
+            <div
+              style={{
+                maxWidth: width * 0.55,
+                // keep the copy on the opposite side of the rising phone corner
+                alignSelf: def.tiltSide === "left" ? "flex-end" : "flex-start",
+              }}
+            >
+              {Header}
+            </div>
           </AbsoluteFill>
           <div
             style={{
               position: "absolute",
               ...(def.tiltSide === "left"
-                ? { left: -width * 0.12 }
-                : { right: -width * 0.12 }),
-              bottom: -width * 0.3,
+                ? { left: -width * 0.14 }
+                : { right: -width * 0.14 }),
+              // squarer formats leave less air — sink the phone further down
+              bottom: tall > 1.5 ? -width * 0.26 : -width * 0.42,
               transform: `rotate(${def.tiltSide === "left" ? 9 : -9}deg)`,
               filter: "drop-shadow(0 40px 70px rgba(0,0,0,0.32))",
             }}
           >
-            <PhoneFrame width={Math.round(width * 0.64)}>
+            <PhoneFrame width={Math.round(width * (tall > 1.5 ? 0.64 : 0.58))}>
               {def.still ? <Img src={staticFile(`stills/${def.still}`)} style={{ width: "100%", display: "block" }} /> : null}
             </PhoneFrame>
           </div>

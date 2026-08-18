@@ -11,7 +11,9 @@ export type PosterDef = {
   w: number;
   h: number;
   mood: Mood;
-  layout: "device" | "quote" | "grid" | "split";
+  layout: "device" | "quote" | "grid" | "split" | "tilt" | "peek" | "duo" | "fan" | "top-bleed" | "zoom";
+  tiltSide?: "left" | "right";
+  focus?: { x: number; y: number; zoom: number }; // zoom layout, fractions of the still
   still?: string; // file in public/stills/
   stills?: string[]; // grid tiles
   deviceKind?: "phone" | "browser"; // split
@@ -195,6 +197,188 @@ export const PosterComp: React.FC<{ def: PosterDef }> = ({ def }) => {
                 </PhoneFrame>
               )}
             </div>
+          </div>
+        </AbsoluteFill>
+      )}
+
+      {def.layout === "tilt" && (
+        <>
+          <AbsoluteFill style={{ padding: pad, display: "flex", flexDirection: "column", gap: 44 }}>
+            <BrandRow ink={ink} sub={sub} />
+            <div style={{ maxWidth: width * 0.55 }}>{Header}</div>
+          </AbsoluteFill>
+          <div
+            style={{
+              position: "absolute",
+              ...(def.tiltSide === "left"
+                ? { left: -width * 0.12 }
+                : { right: -width * 0.12 }),
+              bottom: -width * 0.3,
+              transform: `rotate(${def.tiltSide === "left" ? 9 : -9}deg)`,
+              filter: "drop-shadow(0 40px 70px rgba(0,0,0,0.32))",
+            }}
+          >
+            <PhoneFrame width={Math.round(width * 0.64)}>
+              {def.still ? <Img src={staticFile(`stills/${def.still}`)} style={{ width: "100%", display: "block" }} /> : null}
+            </PhoneFrame>
+          </div>
+        </>
+      )}
+
+      {def.layout === "peek" && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              left: -width * 0.3,
+              top: "50%",
+              transform: "translateY(-50%) rotate(6deg)",
+              filter: "drop-shadow(0 40px 70px rgba(0,0,0,0.32))",
+            }}
+          >
+            <PhoneFrame width={Math.round(width * 0.62)}>
+              {def.still ? <Img src={staticFile(`stills/${def.still}`)} style={{ width: "100%", display: "block" }} /> : null}
+            </PhoneFrame>
+          </div>
+          <AbsoluteFill
+            style={{
+              padding: pad,
+              paddingLeft: width * 0.38,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: 34,
+            }}
+          >
+            <LogoMark ink={ink} size={110} />
+            {def.kicker ? (
+              <div style={{ fontSize: 28, letterSpacing: 5, textTransform: "uppercase", fontWeight: 700, color: dark ? "#9fd0bd" : brand.accent }}>
+                {def.kicker}
+              </div>
+            ) : null}
+            <div style={{ fontSize: headlineSize * 0.82, fontWeight: 750, lineHeight: 1.1, color: ink, letterSpacing: -1 }}>{def.headline}</div>
+            {def.sub ? <div style={{ fontSize: 33, lineHeight: 1.4, color: sub }}>{def.sub}</div> : null}
+          </AbsoluteFill>
+        </>
+      )}
+
+      {def.layout === "duo" && (
+        <AbsoluteFill style={{ padding: pad, display: "flex", flexDirection: "column", gap: 44 }}>
+          <BrandRow ink={ink} sub={sub} />
+          {Header}
+          <div style={{ flex: 1, position: "relative", marginTop: 6 }}>
+            <div
+              style={{
+                position: "absolute",
+                left: width * 0.02,
+                top: 0,
+                transform: "rotate(-6deg)",
+                filter: "drop-shadow(0 34px 60px rgba(0,0,0,0.30))",
+              }}
+            >
+              <PhoneFrame width={Math.round(width * 0.46)}>
+                <Img src={staticFile(`stills/${(def.stills ?? [])[0]}`)} style={{ width: "100%", display: "block" }} />
+              </PhoneFrame>
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                right: width * 0.02,
+                top: width * 0.16,
+                transform: "rotate(6deg)",
+                filter: "drop-shadow(0 34px 60px rgba(0,0,0,0.34))",
+              }}
+            >
+              <PhoneFrame width={Math.round(width * 0.46)}>
+                <Img src={staticFile(`stills/${(def.stills ?? [])[1]}`)} style={{ width: "100%", display: "block" }} />
+              </PhoneFrame>
+            </div>
+          </div>
+        </AbsoluteFill>
+      )}
+
+      {def.layout === "fan" && (
+        <AbsoluteFill style={{ padding: pad, display: "flex", flexDirection: "column", gap: 44 }}>
+          <BrandRow ink={ink} sub={sub} />
+          {Header}
+          <div style={{ flex: 1, position: "relative", marginTop: 10 }}>
+            <div style={{ position: "absolute", left: -width * 0.04, top: width * 0.1, transform: "rotate(-13deg)", filter: "drop-shadow(0 30px 55px rgba(0,0,0,0.28))" }}>
+              <PhoneFrame width={Math.round(width * 0.42)}>
+                <Img src={staticFile(`stills/${(def.stills ?? [])[0]}`)} style={{ width: "100%", display: "block" }} />
+              </PhoneFrame>
+            </div>
+            <div style={{ position: "absolute", right: -width * 0.04, top: width * 0.1, transform: "rotate(13deg)", filter: "drop-shadow(0 30px 55px rgba(0,0,0,0.28))" }}>
+              <PhoneFrame width={Math.round(width * 0.42)}>
+                <Img src={staticFile(`stills/${(def.stills ?? [])[2]}`)} style={{ width: "100%", display: "block" }} />
+              </PhoneFrame>
+            </div>
+            <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", top: 0, filter: "drop-shadow(0 40px 70px rgba(0,0,0,0.36))" }}>
+              <PhoneFrame width={Math.round(width * 0.46)}>
+                <Img src={staticFile(`stills/${(def.stills ?? [])[1]}`)} style={{ width: "100%", display: "block" }} />
+              </PhoneFrame>
+            </div>
+          </div>
+        </AbsoluteFill>
+      )}
+
+      {def.layout === "top-bleed" && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%) rotate(180deg)",
+              top: -height * 0.52,
+              filter: "drop-shadow(0 -30px 60px rgba(0,0,0,0.30))",
+            }}
+          >
+            <div style={{ transform: "rotate(180deg)" }}>
+              <PhoneFrame width={Math.round(width * 0.6)}>
+                {def.still ? <Img src={staticFile(`stills/${def.still}`)} style={{ width: "100%", display: "block" }} /> : null}
+              </PhoneFrame>
+            </div>
+          </div>
+          <AbsoluteFill style={{ padding: pad, display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 40 }}>
+            {Header}
+            <BrandRow ink={ink} sub={sub} />
+          </AbsoluteFill>
+        </>
+      )}
+
+      {def.layout === "zoom" && (
+        <AbsoluteFill style={{ padding: pad, display: "flex", flexDirection: "column", gap: 40 }}>
+          <BrandRow ink={ink} sub={sub} />
+          {Header}
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {(() => {
+              const D = width * 0.64;
+              const f = def.focus ?? { x: 0.72, y: 0.62, zoom: 1.9 };
+              const dispW = D * f.zoom; // width of the still as displayed inside the circle
+              return (
+                <div
+                  style={{
+                    width: D,
+                    height: D,
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    position: "relative",
+                    border: `10px solid ${brand.device}`,
+                    boxShadow: "0 40px 80px rgba(0,0,0,0.34)",
+                    background: "#fff",
+                  }}
+                >
+                  <Img
+                    src={staticFile(`stills/${def.still}`)}
+                    style={{
+                      position: "absolute",
+                      width: dispW,
+                      left: D / 2 - f.x * dispW,
+                      top: D / 2 - f.y * dispW * (2532 / 1170),
+                    }}
+                  />
+                </div>
+              );
+            })()}
           </div>
         </AbsoluteFill>
       )}

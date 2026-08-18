@@ -37,6 +37,30 @@
     background: var(--accent-soft); border-radius: 999px; padding: 4px 12px;
   }
   .links a:hover { background: #d7e5de; }
+
+  /* campaigns */
+  .camp { background: var(--bg-raised); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; margin-bottom: 18px; }
+  .camp > summary { cursor: pointer; list-style: none; }
+  .camp > summary::-webkit-details-marker { display: none; }
+  .camp h3 { margin: 0 0 6px; font-size: 1.1rem; }
+  .camp .meta { color: var(--ink-soft); font-size: 0.88rem; line-height: 1.5; margin: 0; }
+  .camp .meta b { color: var(--ink); font-weight: 600; }
+  .asset { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
+  .asset .head { display: flex; gap: 14px; align-items: center; cursor: pointer; }
+  .asset .head img { width: 54px; height: 54px; object-fit: cover; border-radius: 10px; background: #101311; flex: none; }
+  .asset .head h4 { margin: 0; font-size: 0.95rem; }
+  .asset .head .kind { color: var(--ink-soft); font-size: 0.78rem; }
+  .asset .panel { display: none; margin-top: 14px; }
+  .asset.open .panel { display: block; }
+  .ptabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .ptabs button { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 5px 14px; font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); cursor: pointer; }
+  .ptabs button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .field { margin-bottom: 10px; }
+  .field .lbl { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 4px; }
+  .field pre { margin: 0; white-space: pre-wrap; font-family: inherit; font-size: 0.88rem; line-height: 1.5; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .copybtn { border: 0; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 12px; font-size: 0.72rem; font-weight: 700; cursor: pointer; }
+  .copybtn:active { background: #cfe0d8; }
+  .dl { margin-top: 8px; }
   footer { padding: 60px 0 40px; color: var(--ink-soft); font-size: 0.85rem; }
 </style>
 </head>
@@ -60,6 +84,10 @@
     </p>
   </header>
 
+  <h2>Campaigns</h2>
+  <p class="hint">Eight ready-to-run campaigns. Open an asset to get the exact post — caption, hashtags, alt text, and format notes — for each platform, with copy buttons.</p>
+  <div id="campaigns"></div>
+
   <h2>Videos</h2>
   <p class="hint">Tap to play. Right-click (or long-press) → “Save video as…” to download the MP4.</p>
   <div class="grid" id="videos"></div>
@@ -70,6 +98,7 @@
 
   <footer>One Current · nickyschranz.github.io/one-current · regenerate with <code>npm run promo</code> / <code>node promo/scripts/render-posters.mjs</code></footer>
 </div>
+<script src="campaigns.js"></script>
 <script>
   const VIDEOS = [
     ["00-flagship", "The 60-second tour"],
@@ -181,6 +210,57 @@
       <h3>${title}</h3>
       <div class="links">${formats.map((f) => `<a href="social/${key}-${f}.png" download>${LABEL[f]}</a>`).join("")}</div>
     </div>`).join("");
+
+  // ---- campaigns renderer ----
+  const PLATFORMS = [["instagram","Instagram"],["tiktok","TikTok"],["x","X"],["facebook","Facebook"],["linkedin","LinkedIn"],["youtube","YouTube"]];
+  const FMT = { "45": "Feed 4:5", story: "Story 9:16", sq: "Square", print: "Print A3" };
+  const campRoot = document.getElementById("campaigns");
+  window.CAMPAIGN_DATA.campaigns.forEach((camp) => {
+    const d = document.createElement("details");
+    d.className = "camp";
+    d.innerHTML = `<summary><h3>${camp.title}</h3>
+      <p class="meta">${camp.description}<br/><b>Goal:</b> ${camp.goal} · <b>Audience:</b> ${camp.audience} · <b>Cadence:</b> ${camp.cadence}</p></summary>`;
+    camp.assets.forEach((asset) => {
+      const thumb = asset.kind === "video" ? `${asset.file}.jpg` : `${asset.file}-${(asset.formats || ["45"])[0]}.png`;
+      const row = document.createElement("div");
+      row.className = "asset";
+      const dls = asset.kind === "video"
+        ? `<a href="${asset.file}.mp4" download>MP4</a>`
+        : (asset.formats || ["45"]).map((f) => `<a href="${asset.file}-${f}.png" download>${FMT[f]}</a>`).join("");
+      row.innerHTML = `<div class="head"><img loading="lazy" src="${thumb}" alt="" />
+          <div><h4>${asset.title}</h4><div class="kind">${asset.kind === "video" ? "video · 1080×1920" : "graphic"} · ${camp.title}</div></div></div>
+        <div class="panel"><div class="ptabs"></div><div class="pbody"></div><div class="links dl">${dls}</div></div>`;
+      const tabs = row.querySelector(".ptabs");
+      const body = row.querySelector(".pbody");
+      const show = (key) => {
+        const post = window.CAMPAIGN_DATA.post(camp, asset, key);
+        tabs.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.k === key));
+        const field = (label, value) => `<div class="field"><div class="lbl"><span>${label}</span><button class="copybtn" data-copy>Copy</button></div><pre>${value.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</pre></div>`;
+        body.innerHTML = field("Title", post.title) + field("Caption", post.caption) + field("Hashtags", post.hashtags) + field("Alt text", post.alt) + `<div class="field"><div class="lbl"><span>Format notes</span></div><pre>${post.notes}</pre></div>`;
+        body.querySelectorAll("[data-copy]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            navigator.clipboard.writeText(btn.closest(".field").querySelector("pre").textContent);
+            btn.textContent = "Copied!";
+            setTimeout(() => (btn.textContent = "Copy"), 1200);
+          });
+        });
+      };
+      PLATFORMS.forEach(([key, label], i) => {
+        const b = document.createElement("button");
+        b.textContent = label;
+        b.dataset.k = key;
+        b.addEventListener("click", () => show(key));
+        tabs.appendChild(b);
+      });
+      row.querySelector(".head").addEventListener("click", () => {
+        row.classList.toggle("open");
+        if (row.classList.contains("open") && !body.innerHTML) show("instagram");
+      });
+      d.appendChild(row);
+    });
+    campRoot.appendChild(d);
+  });
+
   document.addEventListener("play", (e) => {
     if (e.target.tagName !== "VIDEO") return;
     document.querySelectorAll("video").forEach((v) => { if (v !== e.target) v.pause(); });

@@ -1,0 +1,418 @@
+/* Campaign planner: every asset with ready-to-post copy per platform.
+   Data + assembly only — media.html renders it. "link in bio" is the
+   placeholder CTA until the final domain exists. */
+window.CAMPAIGN_DATA = (() => {
+  // ---- campaigns -----------------------------------------------------
+  const campaigns = [
+    {
+      id: "in-motion",
+      title: "In Motion",
+      description: "The film set: the 60-second tour, the why-it-works explainer, and ten single-topic shorts. Real screen recordings, animated captions, silent by design.",
+      goal: "Reach & awareness — video carries the algorithm.",
+      audience: "Anyone who says “my head is full”. 20–45, wellbeing-curious.",
+      cadence: "1–2 videos/week. Lead with the flagship, then rotate shorts.",
+      tags: ["mentalload", "anxietyrelief", "mindfulness", "selfcare", "calmtech", "journaling", "mentalhealthapp"],
+      assets: [
+        {
+          file: "video/00-flagship", kind: "video", title: "The 60-second tour",
+          hook: "Your mind is one current.",
+          body: "Every worry becomes a visible thread beside your life's main line. Name it, hear how loud it is, decide something small — and watch the energy come home. Sixty seconds, the whole idea.",
+          alt: "One-minute app tour: worries become threads on a timeline, get decided, and merge back into a calm main line.",
+        },
+        {
+          file: "video/00-why-it-works", kind: "video", title: "Why it works — the thinking",
+          hook: "An open loop you can see is lighter than one you carry blind.",
+          body: "The thinking behind One Current in 49 seconds: name it, feel it honestly, decide — don't solve, integrate — don't suppress. Rest is a decision. Tomorrow you answer again.",
+          alt: "Explainer video walking through the psychology of the app: externalize, decide, integrate.",
+        },
+        {
+          file: "video/01-one-current", kind: "video", title: "Your mind is one current",
+          hook: "Something lands on your mind? Name it.",
+          body: "Watch a worry become a thread: named in a few words, set to how loud it feels, answered with one small step. Not noise inside your head — a line you can see.",
+          alt: "Screen recording: creating a thread, setting its loudness, and placing one small action on today.",
+        },
+        {
+          file: "video/02-meet-pip", kind: "video", title: "Meet Pip",
+          hook: "Someone small keeps watch over your threads.",
+          body: "Pip lives on your timeline. He patrols the worries you haven't decided on, checks in on the loud ones, and celebrates every honest answer.",
+          alt: "Pixel-art companion Pip running along timeline threads and talking in speech bubbles.",
+        },
+        {
+          file: "video/03-threads-get-louder", kind: "video", title: "Ignored threads get louder",
+          hook: "A week passes in seconds — watch what waiting does.",
+          body: "Undecided threads thicken and drift. Then: one small step, one integration, one honest “nothing can be done today”. Every thread answered, the line calms.",
+          alt: "Time-lapse of threads growing louder over simulated days, then quieting as each gets decided.",
+        },
+        {
+          file: "video/04-integrate-it", kind: "video", title: "Integrate it into Now",
+          hook: "Finished threads don't get deleted. They come home.",
+          body: "When something is resolved, you fold it back into your line — and what it held (patience, sleep, closeness) visibly returns to you.",
+          alt: "The integrate flow: confirming a resolved thread and its qualities flying back to the main line.",
+        },
+        {
+          file: "video/05-creature-themes", kind: "video", title: "Creature themes (Pro)",
+          hook: "Every open thread becomes a creature.",
+          body: "Dragons, koi, balloons, cats, anglerfish, pups, ghosts — seven living themes. Answer a thread and its creature settles.",
+          alt: "Montage of seven app themes where each open thread ends in a small animated creature.",
+        },
+        {
+          file: "video/06-history", kind: "video", title: "Days that read like a story",
+          hook: "Your history, written by your decisions.",
+          body: "Every day keeps its record: the steps you chose, the threads that came home, the energy that returned. Reviewing it builds self-knowledge.",
+          alt: "Browsing the History view day by day with decisions and integrated threads.",
+        },
+        {
+          file: "video/07-private-by-design", kind: "video", title: "Nothing is sent anywhere",
+          hook: "No feed. No tracking. Just your current.",
+          body: "Everything you write stays on your device. Export a copy whenever you like. Privacy isn't a promise here — it's the architecture.",
+          alt: "The privacy settings: everything stored locally, one-tap full export.",
+        },
+        {
+          file: "video/08-wholeness", kind: "video", title: "The wholeness gauge",
+          hook: "How much of you is here today?",
+          body: "The gauge answers honestly — “that is the split, not you” — and points at the one decision that would gather you most.",
+          alt: "Opening the wholeness gauge, reading its honest summary, and making one small decision.",
+        },
+        {
+          file: "video/09-share-with-your-psychologist", kind: "video", title: "Share with your therapist (Pro)",
+          hook: "Words are hard in a session. The picture helps.",
+          body: "Pick exactly which threads to share and for what window — hand over one code. It works once and expires in 14 days. You choose what they see. Always.",
+          alt: "Selecting threads and a time window, then generating a one-time share code.",
+        },
+        {
+          file: "video/10-practice", kind: "video", title: "One Current — Practice (for therapists)",
+          hook: "Your client's month, on one page.",
+          body: "The practitioner app: redeem a code, see the shared window drawn the way the client lived it, keep session notes that never leave your device.",
+          alt: "The practitioner app redeeming a share code and reading a client's shared timeline.",
+        },
+      ],
+    },
+    {
+      id: "name-the-weight",
+      title: "Name the Weight",
+      description: "Relatable worry-hooks: the exact threads everyone carries, named out loud on moody typography posters.",
+      goal: "Saves & shares — recognition content.",
+      audience: "Broad. Anyone mid-doomscroll who feels seen.",
+      cadence: "1–2/week, alternate moods (dark/light).",
+      tags: ["overthinking", "anxiety", "mentalload", "worry", "innerpeace", "selfawareness"],
+      assets: [
+        { file: "social/w1-message", kind: "image", formats: ["45", "story"], title: "The unanswered message.",
+          hook: "The unanswered message.", body: "It's not laziness. It's an open loop. Name it, see it on your line, decide something small — even “not today” counts.", alt: "Typography poster: 'The unanswered message.' on a calm gradient." },
+        { file: "social/w2-rent", kind: "image", formats: ["45", "story"], title: "The rent increase letter.",
+          hook: "The rent increase letter.", body: "Sitting unopened, taking up more space in your head than on the table. Give it a line. Read it once. That's today's step.", alt: "Typography poster: 'The rent increase letter.'" },
+        { file: "social/w3-further", kind: "image", formats: ["45", "story"], title: "Everyone seems further along than me.",
+          hook: "Everyone seems further along than me.", body: "The comparison thread flares every time you open your phone. It deserves a name and a line — not a permanent seat in your chest.", alt: "Dark typography poster: 'Everyone seems further along than me.'" },
+        { file: "social/w4-sleep", kind: "image", formats: ["45", "story"], title: "My sleep is a mess again.",
+          hook: "My sleep is a mess again.", body: "Some threads need an action. Some just need honest watching. Both count as answers.", alt: "Dusk typography poster: 'My sleep is a mess again.'" },
+        { file: "social/w5-argument", kind: "image", formats: ["45", "story"], title: "The argument I keep replaying.",
+          hook: "The argument I keep replaying.", body: "Replaying isn't solving. Put it on a line where you can see it, and choose the smallest honest step — or an honest rest.", alt: "Typography poster: 'The argument I keep replaying.'" },
+        { file: "social/w6-waiting", kind: "image", formats: ["45", "story"], title: "Waiting for news that isn't coming fast enough.",
+          hook: "Waiting for news that isn't coming fast enough.", body: "Waiting is a thread too. It gets a line, a boundary, and permission to stop pulling at you every hour.", alt: "Typography poster about the weight of waiting." },
+        { file: "social/e1-feelings", kind: "image", formats: ["45", "story"], title: "worry · dread · guilt · overwhelm",
+          hook: "worry · dread · guilt · overwhelm", body: "Each one can live on a line — instead of in your chest. Naming is the first decision.", alt: "Typography poster listing feelings: worry, dread, guilt, overwhelm." },
+      ],
+    },
+    {
+      id: "creatures-of-pro",
+      title: "Creatures of Pro",
+      description: "The seven living themes: every open thread becomes a creature that settles when you answer it. The most shareable visual in the app.",
+      goal: "Pro differentiation + delight. Drives upgrade curiosity.",
+      audience: "Existing users + cozy-game / pixel-art adjacent audiences.",
+      cadence: "1/week — one creature at a time, grid & fan as anchors.",
+      tags: ["cozyapp", "pixelart", "creatures", "mentalhealthapp", "onecurrentpro", "calmtech"],
+      assets: [
+        { file: "social/c1-demonfire", kind: "image", formats: ["45", "story"], title: "Demonfire",
+          hook: "Face it kindly, and it settles.", body: "In the Demonfire theme every open thread is a small dragon. They're not enemies — they're worries waiting for an honest answer.", alt: "App screenshot in the Demonfire theme: threads ending in small dragons." },
+        { file: "social/c2-koipond", kind: "image", formats: ["45", "story"], title: "Koi pond",
+          hook: "Feed it a decision — the pond stills.", body: "Koi pond: still water, patient fish. Every koi is a thread nosing at Now.", alt: "App screenshot in the Koi pond theme: koi fish at each thread's end." },
+        { file: "social/c3-carnival", kind: "image", formats: ["45", "story"], title: "Carnival",
+          hook: "The longer it waits, the tighter it swells.", body: "Carnival: every worry is a balloon. Answering lets the air out gently.", alt: "App screenshot in the Carnival theme with balloons on threads." },
+        { file: "social/c4-catnap", kind: "image", formats: ["45", "story"], title: "Catnap",
+          hook: "Answer it, and it curls up.", body: "Catnap: lavender, soft paws, and a cat on every undecided thread, watching you politely.", alt: "App screenshot in the Catnap theme with cats on threads." },
+        { file: "social/c5-abyss", kind: "image", formats: ["45", "story"], title: "Abyss",
+          hook: "The louder it grows, the brighter its lure.", body: "Abyss: deep-sea black. Anglerfish mark your loudest threads so you can't lose them in the dark.", alt: "App screenshot in the deep-sea Abyss theme with anglerfish." },
+        { file: "social/c6-pompom", kind: "image", formats: ["45", "story"], title: "Pompom",
+          hook: "Leave it waiting, and it barks.", body: "Pompom: peach fluff and button eyes. Every open thread is a pup that just wants an answer.", alt: "App screenshot in the Pompom theme with pomeranian pups." },
+        { file: "social/c7-gravemist", kind: "image", formats: ["45", "story"], title: "Gravemist",
+          hook: "Its wail widens until you answer.", body: "Gravemist: fog and lantern light. A gentle haunting for the threads you keep postponing.", alt: "App screenshot in the Gravemist theme with small ghosts." },
+        { file: "social/p04-themes", kind: "image", formats: ["45", "story"], title: "The theme grid",
+          hook: "Every open thread becomes a creature.", body: "Six worlds, one timeline. Pick where your threads live — they all settle the same way: with an honest answer.", alt: "Grid of six app themes, each with different creatures." },
+        { file: "social/x4-fan-themes", kind: "image", formats: ["45", "story"], title: "Three worlds, fanned",
+          hook: "Pick the world your threads live in.", body: "Koi pond, Carnival, Gravemist — three of seven Pro themes, same honest timeline.", alt: "Three phones fanned out showing different creature themes." },
+        { file: "social/y7-fan-dark", kind: "image", formats: ["45", "story"], title: "The dark ones",
+          hook: "The dark ones live here too.", body: "Demonfire, Abyss, Gravemist — for the weeks that feel that way. Your threads still settle.", alt: "Three phones showing the dark creature themes." },
+        { file: "social/y5-duo-soft", kind: "image", formats: ["45", "story"], title: "The soft ones",
+          hook: "Soft company for loud days.", body: "Catnap and Pompom: the gentlest ways to look your worries in the eye.", alt: "Two phones showing the cat and pomeranian themes." },
+        { file: "social/y1-tilt-koi", kind: "image", formats: ["45", "story"], title: "Quiet water",
+          hook: "Quiet water. Honest threads.", body: "The Koi pond theme up close — still, patient, and always ready for one more decision.", alt: "Tilted phone showing the koi pond theme." },
+        { file: "social/z1-zoom-balloon", kind: "image", formats: ["45", "story"], title: "One balloon per worry",
+          hook: "One balloon per worry.", body: "Zoom in on Carnival: the longer a thread waits, the tighter its balloon swells.", alt: "Close-up circle crop of a balloon at a thread's end." },
+        { file: "social/z2-zoom-cat", kind: "image", formats: ["45", "story"], title: "It waits. Politely.",
+          hook: "It waits. Politely.", body: "A Catnap close-up. Answer the cat, and it curls up.", alt: "Close-up of a cat creature at the end of a thread." },
+        { file: "social/z3-zoom-angler", kind: "image", formats: ["45", "story"], title: "Light in the deep",
+          hook: "Light in the deep.", body: "Abyss up close: the louder a thread grows, the brighter its lure. You'll never lose track of what matters.", alt: "Close-up of an anglerfish creature on a dark theme." },
+        { file: "social/z4-zoom-pup", kind: "image", formats: ["45", "story"], title: "Small. Loud. Loyal.",
+          hook: "Small. Loud. Loyal.", body: "The Pompom pup, up close. Leave it waiting and it barks — answer it and it settles.", alt: "Close-up of a pomeranian creature at a thread's end." },
+        { file: "social/z5-zoom-ghost", kind: "image", formats: ["45", "story"], title: "A gentle haunting",
+          hook: "A gentle haunting.", body: "Gravemist up close. Its wail widens until you answer — then it rests.", alt: "Close-up of a small ghost creature." },
+        { file: "social/y12-zoom-koi", kind: "image", formats: ["45", "story"], title: "Feed it a decision",
+          hook: "Feed it a decision.", body: "The koi settles. The pond stills. That's the whole loop.", alt: "Close-up of a koi fish at a thread's end." },
+        { file: "social/x6-zoom-dragon", kind: "image", formats: ["45", "story"], title: "Small dragons. Honest answers.",
+          hook: "Small dragons. Honest answers.", body: "Pip and a Demonfire dragon, nose to nose. “Don't worry — I'm keeping an eye on everything.”", alt: "Close-up of Pip the companion facing a small dragon." },
+      ],
+    },
+    {
+      id: "pip",
+      title: "Pip, your companion",
+      description: "Character content. Pip patrols your threads, speaks in his own voice, and makes the whole thing feel less lonely.",
+      goal: "Affinity & personality — the brand's face.",
+      audience: "Cozy-app crowd; people who bond with mascots.",
+      cadence: "1/week, alternate quotes and visuals.",
+      tags: ["pip", "companion", "cozyapp", "pixelart", "mentalhealthapp"],
+      assets: [
+        { file: "social/q1-pip-hi", kind: "image", formats: ["45", "story"], title: "“Hi! I'm Pip!”",
+          hook: "“Hi! I'm Pip! I live on your timelines.”", body: "He patrols your threads, inspects the loud ones, and cheers every honest answer.", alt: "Quote card: Hi! I'm Pip! I live on your timelines." },
+        { file: "social/q2-pip-named", kind: "image", formats: ["45", "story"], title: "“Named things are easier to work with.”",
+          hook: "“Named things are easier to work with.”", body: "Pip's first rule. When something new lands on your mind, give it a name and a line.", alt: "Quote card: Named things are easier to work with." },
+        { file: "social/q3-pip-merge", kind: "image", formats: ["45", "story"], title: "“The energy comes home.”",
+          hook: "“Merge it back — the energy comes home.”", body: "Resolved threads rejoin your main line, and what they were holding returns to you.", alt: "Quote card about merging threads back." },
+        { file: "social/q4-pip-got-this", kind: "image", formats: ["45", "story"], title: "“You've got this.”",
+          hook: "“You've got this.”", body: "— Pip, every single day, about every single thread.", alt: "Quote card: You've got this." },
+        { file: "social/p05-pip", kind: "image", formats: ["45", "story"], title: "A companion on your timeline",
+          hook: "A companion on your timeline.", body: "Meet Pip — he keeps watch over your threads. Swap him for a Wisp or a Wanderer any time.", alt: "Poster with the app showing Pip on the timeline." },
+        { file: "social/x8-tilt-pip", kind: "image", formats: ["45", "story"], title: "Never alone on your line",
+          hook: "Never alone on your line.", body: "Whatever the week looks like, Pip patrols it with you.", alt: "Tilted phone showing Pip on the timeline." },
+        { file: "social/y11-zoom-pip", kind: "image", formats: ["45", "story"], title: "Kindly watching",
+          hook: "Someone's watching your threads. Kindly.", body: "Pip inspects what you haven't decided on yet — no judgment, just company.", alt: "Close-up of Pip inspecting a thread." },
+      ],
+    },
+    {
+      id: "honest-gauge",
+      title: "The Honest Gauge",
+      description: "The wholeness series: whole, gathered, pulled apart, scattered — plain words for how much of you is actually here today.",
+      goal: "Emotional resonance; the words people screenshot.",
+      audience: "Burnout-adjacent professionals; therapy-curious.",
+      cadence: "1/week — post the word that matches the collective mood.",
+      tags: ["burnout", "selfawareness", "mentalhealth", "wholeness", "checkin"],
+      assets: [
+        { file: "social/v1-whole", kind: "image", formats: ["45", "story"], title: "whole.",
+          hook: "whole.", body: "Nothing is pulling you apart today. Expect a steady, present day — and protect it.", alt: "Single-word poster: whole." },
+        { file: "social/v2-gathered", kind: "image", formats: ["45", "story"], title: "gathered.",
+          hook: "gathered.", body: "A few threads are open, but you're mostly moving as one. Good place to be.", alt: "Single-word poster: gathered." },
+        { file: "social/v3-pulled-apart", kind: "image", formats: ["45", "story"], title: "pulled apart.",
+          hook: "pulled apart.", body: "Several threads pulling at once. One decision starts bringing you back.", alt: "Single-word poster: pulled apart." },
+        { file: "social/v4-scattered", kind: "image", formats: ["45", "story"], title: "scattered.",
+          hook: "scattered.", body: "Today can feel like living several days at once. That is the split — not you.", alt: "Single-word poster: scattered." },
+        { file: "social/f1-wholeness", kind: "image", formats: ["45", "story"], title: "How much of you is here today?",
+          hook: "How much of you is here today?", body: "The wholeness gauge answers honestly — and points at the one decision that gathers you most.", alt: "Poster showing the wholeness gauge screen." },
+        { file: "social/p08-action", kind: "image", formats: ["sq", "story"], title: "An action counts.",
+          hook: "“An action counts. So does deciding that nothing can be done.”", body: "Every thread needs a decision — not a solution.", alt: "Quote card: an action counts." },
+        { file: "social/x5-topbleed-wholeness", kind: "image", formats: ["45", "story"], title: "Check in with yourself",
+          hook: "Check in with yourself — not with a feed.", body: "One honest gauge, one next decision. That's the whole ritual.", alt: "Poster with the app hanging from the top edge." },
+      ],
+    },
+    {
+      id: "why-it-works",
+      title: "Why it works",
+      description: "The conviction series: open loops, honest steps, integration over suppression, rituals, and the anti-feed positioning.",
+      goal: "Education & conviction — why this beats a todo list.",
+      audience: "Skeptics; productivity crowd; people burned by streak apps.",
+      cadence: "2/week — alternate manifesto lines and product-detail zooms.",
+      tags: ["mentalload", "psychology", "openloops", "mindfultech", "antifeed", "calmtech"],
+      assets: [
+        { file: "social/m1-mainline", kind: "image", formats: ["45", "story"], title: "One main line",
+          hook: "Your life continues on one main line.", body: "Everything else is a thread that can come back. That's the entire model.", alt: "Manifesto poster: your life continues on one main line." },
+        { file: "social/m2-not-noise", kind: "image", formats: ["45", "story"], title: "Not noise",
+          hook: "Not noise inside your head. A thread beside your line.", body: "Externalizing a worry is half the relief. Seeing it is the other half.", alt: "Manifesto poster about worries as visible threads." },
+        { file: "social/m3-come-home", kind: "image", formats: ["45", "story"], title: "Every thread can come home",
+          hook: "Every thread can come home.", body: "Decided, integrated, or set down kindly — no thread is ever just crossed out.", alt: "Manifesto poster: every thread can come home." },
+        { file: "social/a1-no-streaks", kind: "image", formats: ["45", "story"], title: "No streaks. No guilt.",
+          hook: "No streaks. No guilt. Just your current.", body: "Nothing to keep up. Only what is true today.", alt: "Poster: no streaks, no guilt." },
+        { file: "social/a2-not-todo", kind: "image", formats: ["45", "story"], title: "Not a to-do list",
+          hook: "Not a to-do list. A map of your attention.", body: "See what pulls at you — and what it actually needs from you today.", alt: "Poster: not a to-do list, a map of your attention." },
+        { file: "social/a3-opposite-feed", kind: "image", formats: ["45", "story"], title: "The opposite of a feed",
+          hook: "The opposite of a feed.", body: "Nothing scrolls here. Your threads wait quietly until you're ready.", alt: "Dark poster: the opposite of a feed." },
+        { file: "social/a4-close-lighter", kind: "image", formats: ["45", "story"], title: "Close it feeling lighter",
+          hook: "An app you close feeling lighter.", body: "Open it, decide something small, return to your life. A minute, not an evening.", alt: "Poster: an app you close feeling lighter." },
+        { file: "social/r1-morning", kind: "image", formats: ["45", "story"], title: "Morning ritual",
+          hook: "Morning coffee: what's pulling at today?", body: "One look at your line, one honest answer. Then the day is yours.", alt: "Ritual poster: morning coffee check-in." },
+        { file: "social/r2-bed", kind: "image", formats: ["45", "story"], title: "Before bed ritual",
+          hook: "Before bed: one honest decision.", body: "An action counts. So does deciding nothing can be done today. Sleep on a decided line.", alt: "Ritual poster: before bed decision." },
+        { file: "social/r3-sunday", kind: "image", formats: ["45", "story"], title: "Sunday evening ritual",
+          hook: "Sunday evening: read your week like a story.", body: "Every decision, quietly recorded in History. Self-knowledge, one week at a time.", alt: "Ritual poster: Sunday evening review." },
+        { file: "social/b1-visible", kind: "image", formats: ["45", "story"], title: "Finally visible",
+          hook: "Same worries. Finally visible.", body: "A vague weight becomes a finite set of lines you can answer.", alt: "Poster: same worries, finally visible." },
+        { file: "social/b2-one-thing", kind: "image", formats: ["45", "story"], title: "One thing today",
+          hook: "From everything-at-once to one thing today.", body: "The gauge points at the decision that gathers you most. Start there.", alt: "Poster: from everything-at-once to one thing today." },
+        { file: "social/b3-ten-threads", kind: "image", formats: ["45", "story"], title: "Ten threads, one line",
+          hook: "Ten open threads. One line through them all.", body: "You don't need fewer worries. You need one line through them.", alt: "Poster: ten open threads, one line." },
+        { file: "social/p06-privacy", kind: "image", formats: ["45", "story", "sq"], title: "Nothing is sent anywhere",
+          hook: "Nothing is sent anywhere.", body: "Your threads live on your device. No feed, no tracking, no cloud you didn't ask for.", alt: "Typography poster: nothing is sent anywhere." },
+        { file: "social/p07-split", kind: "image", formats: ["sq", "story"], title: "That is the split — not you",
+          hook: "“That is the split — not you.”", body: "One Current shows how much of you moves with your main line — and the one decision that would gather you most.", alt: "Quote card: that is the split, not you." },
+        { file: "social/z6-zoom-now", kind: "image", formats: ["45", "story"], title: "Now has a pulse",
+          hook: "Now has a pulse.", body: "Your present moment, always moving. Everything else branches from here.", alt: "Close-up of the pulsing Now marker on the timeline." },
+        { file: "social/z7-zoom-curve", kind: "image", formats: ["45", "story"], title: "The line that comes back",
+          hook: "The line that comes back.", body: "Integrated threads curve home into Now. Closure, drawn literally.", alt: "Close-up of a thread curving back into the main line." },
+        { file: "social/z8-zoom-check", kind: "image", formats: ["45", "story"], title: "The quiet checkmark",
+          hook: "The quiet ✓ of “decided today.”", body: "Not solved. Answered. That counts — and tomorrow you answer again.", alt: "Close-up of a decided-today checkmark on a thread." },
+        { file: "social/z9-zoom-steps", kind: "image", formats: ["45", "story"], title: "Steps live on the line",
+          hook: "Small steps live on your line.", body: "Decided actions sit right on today, where you can actually do them.", alt: "Close-up of small action steps on the timeline." },
+        { file: "social/z10-zoom-loud", kind: "image", formats: ["45", "story"], title: "What loud looks like",
+          hook: "This is what “loud” looks like.", body: "Thicker, wilder, further from your line. Loudness isn't a feeling here — it's visible.", alt: "Close-up of a loud, thick thread line." },
+      ],
+    },
+    {
+      id: "for-therapists",
+      title: "For Therapists",
+      description: "The B2B lane: One Current — Practice. Clients share a chosen window; sessions start from what actually happened.",
+      goal: "Practitioner signups; credibility.",
+      audience: "Therapists, psychologists, coaches. LinkedIn-first.",
+      cadence: "1/week on LinkedIn, cross-post monthly elsewhere. Pair with the Practice video.",
+      tags: ["therapists", "psychotherapy", "mentalhealthcare", "practicetools", "teletherapy"],
+      assets: [
+        { file: "social/p09-practice", kind: "image", formats: ["45", "story"], title: "The real picture, on one timeline",
+          hook: "The real picture, on one timeline.", body: "Clients share a chosen window of their threads — drawn the way they lived it. Only what they chose to share. Session notes never leave your device.", alt: "Poster of the practitioner app showing a client's shared timeline." },
+        { file: "social/t1-month", kind: "image", formats: ["45", "story"], title: "Your client's month, on one page",
+          hook: "Your client's month, on one page.", body: "Loudness curves, moments, steps taken, threads integrated — the shared window answers the first session question at a glance.", alt: "Quote card: your client's month, on one page." },
+        { file: "social/t2-recall", kind: "image", formats: ["45", "story"], title: "Less recall. More reality.",
+          hook: "Less recall. More reality.", body: "Sessions start from what actually happened between them — not what memory reconstructs on the couch.", alt: "Quote card: less recall, more reality." },
+        { file: "social/f4-practice-quote", kind: "image", formats: ["45", "story"], title: "Only what the client chose to share",
+          hook: "Only what the client chose to share.", body: "A one-time 8-character code, a 14-day expiry, and total client control. Consent is the interface.", alt: "Quote card: only what the client chose to share." },
+      ],
+    },
+    {
+      id: "the-tour",
+      title: "The Tour",
+      description: "Product showcase: the hero timeline, loudness, integration, history, actions — the app itself in creative compositions.",
+      goal: "Feature education; retargeting-friendly.",
+      audience: "People who saw a hook post and want to see the actual app.",
+      cadence: "2/week alongside any other campaign.",
+      tags: ["app", "timeline", "mentalload", "productivity", "calmtech", "journaling"],
+      assets: [
+        { file: "social/p01-hero", kind: "image", formats: ["45", "story", "sq", "print"], title: "Your mind is one current",
+          hook: "Your mind is one current.", body: "A quiet map of everything pulling at you: one main line, your worries as threads beside it, and a way home for each of them.", alt: "Hero poster: the app timeline in a phone frame." },
+        { file: "social/p02-louder", kind: "image", formats: ["45", "story"], title: "Ignored threads get louder",
+          hook: "Ignored threads get louder.", body: "Every undecided day adds a little weight. The app makes that visible — kindly.", alt: "Dark poster: the timeline with loud, thick threads." },
+        { file: "social/p03-integrate", kind: "image", formats: ["45", "story"], title: "Get yourself back",
+          hook: "Get yourself back.", body: "Resolved threads fold back into your line — and what they held comes home.", alt: "Poster: the integrate moment with qualities returning." },
+        { file: "social/p10-pro", kind: "image", formats: ["45", "story"], title: "One Current Pro",
+          hook: "Carry as many threads as your days do.", body: "Unlimited open threads, sharing with your psychologist, seven living themes. €6/month.", alt: "Pro feature poster with the share screen." },
+        { file: "social/x1-tilt-hero", kind: "image", formats: ["45", "story"], title: "All of it, on one line",
+          hook: "All of it, on one line.", body: "Threads you can see are threads you can answer.", alt: "Tilted phone showing the timeline." },
+        { file: "social/x2-peek-loud", kind: "image", formats: ["45", "story"], title: "Just quieter",
+          hook: "It's all still there. Just quieter.", body: "Loud weeks turn into lines you can work with.", alt: "Phone peeking from the edge with a loud timeline." },
+        { file: "social/x3-duo-live-read", kind: "image", formats: ["45", "story"], title: "Live it. Then read it.",
+          hook: "Live it. Then read it.", body: "Your current by day, your story by night. The timeline and History are two views of one life.", alt: "Two phones: the timeline and the history view." },
+        { file: "social/x7-duo-decide", kind: "image", formats: ["45", "story"], title: "Decide. Integrate. Come home.",
+          hook: "Decide. Integrate. Come home.", body: "What a thread held returns to you the moment you fold it back.", alt: "Two phones showing deciding and the wholeness gauge." },
+        { file: "social/y2-tilt-history", kind: "image", formats: ["45", "story"], title: "A week, written by your decisions",
+          hook: "A week, written by your decisions.", body: "History keeps each day the way you lived it — steps, integrations, energy returned.", alt: "Tilted phone showing the history view." },
+        { file: "social/y3-peek-abyss", kind: "image", formats: ["45", "story"], title: "Even the deep ones surface here",
+          hook: "Even the deep ones surface here.", body: "The louder a thread grows, the brighter its lure. Nothing important gets lost.", alt: "Phone peeking from the edge in the Abyss theme." },
+        { file: "social/y4-peek-reclaim", kind: "image", formats: ["45", "story"], title: "The moment it comes home",
+          hook: "The moment it comes home.", body: "Integrate a finished thread and its energy visibly returns to your line.", alt: "Phone showing the reclaim animation mid-flight." },
+        { file: "social/y6-duo-clear", kind: "image", formats: ["45", "story"], title: "From loud weeks to one clear line",
+          hook: "From loud weeks to one clear line.", body: "Decisions quiet threads. Every time.", alt: "Two phones: a loud timeline and a calm one." },
+        { file: "social/y8-fan-see", kind: "image", formats: ["45", "story"], title: "See it. Weigh it. Remember it.",
+          hook: "See it. Weigh it. Remember it.", body: "Timeline, wholeness, history — three honest views of the same week.", alt: "Three phones fanned showing different app views." },
+        { file: "social/y9-topbleed-actions", kind: "image", formats: ["45", "story"], title: "Today's steps, right below",
+          hook: "Today's steps, right below.", body: "Small, honest, and already decided. That's all a day needs.", alt: "Poster with the actions view hanging from the top." },
+        { file: "social/y10-topbleed-carnival", kind: "image", formats: ["45", "story"], title: "Some days are a carnival",
+          hook: "Some days are a carnival. Answer anyway.", body: "Even on balloon days, one honest decision at a time.", alt: "Poster with the carnival theme hanging from the top." },
+        { file: "social/f2-history", kind: "image", formats: ["45", "story"], title: "Days that read like a story",
+          hook: "Days that read like a story.", body: "Every decision, quietly recorded — energy, steps, and what came home.", alt: "Poster of the history view." },
+        { file: "social/f3-actions", kind: "image", formats: ["45", "story"], title: "Small honest steps",
+          hook: "Small honest steps, all in one place.", body: "What each thread needs from you today — nothing more.", alt: "Poster of the actions view." },
+      ],
+    },
+  ];
+
+  // ---- per-platform assembly ------------------------------------------
+  const CTA = "Try One Current — link in bio. Free to start; your threads stay on your device.";
+  const short = (t) => t.split(". ")[0] + ".";
+  const tagStr = (tags, n, camp) => tags.slice(0, n).map((t) => "#" + t).join(" ");
+
+  function buildPost(camp, asset, platform) {
+    const proTag = /Pro/.test(asset.title) || camp.id === "creatures-of-pro";
+    switch (platform) {
+      case "instagram":
+        return {
+          title: asset.title,
+          caption: `${asset.hook}\n\n${asset.body}\n\n${CTA}`,
+          hashtags: tagStr(camp.tags, 7) + " #onecurrent",
+          alt: asset.alt,
+          notes: asset.kind === "video"
+            ? "Post as a Reel (1080×1920). Silent by design — add a calm trending audio at low volume. First frame is the hook."
+            : `Feed: use the 4:5 file. Story: the 9:16 variant${(asset.formats || []).includes("sq") ? "; square available for grid consistency" : ""}. Add a poll or “relatable?” sticker on stories.`,
+        };
+      case "tiktok":
+        return {
+          title: asset.title,
+          caption: `${asset.hook} ${short(asset.body)}`,
+          hashtags: tagStr(camp.tags, 4) + " #fyp",
+          alt: asset.alt,
+          notes: asset.kind === "video"
+            ? "Upload the 9:16 MP4. Add trending calm/lofi audio — captions carry the message. Reply to comments with follow-up clips from this campaign."
+            : "Use the 9:16 image as a photo post (or 3–5 from this campaign as a swipe). Add text-to-speech reading the hook for reach.",
+        };
+      case "x":
+        return {
+          title: asset.title,
+          caption: `${asset.hook}\n\n${short(asset.body)} ${tagStr(camp.tags, 2)}`,
+          hashtags: tagStr(camp.tags, 2),
+          alt: asset.alt,
+          notes: asset.kind === "video" ? "Attach the MP4 directly — native video outperforms links." : "Attach the 4:5 image; it renders full-width in feed.",
+        };
+      case "facebook":
+        return {
+          title: asset.title,
+          caption: `${asset.hook}\n\n${asset.body}\n\nFree to start. No ads, no feed — everything stays on your device.${proTag ? " Creature themes are part of One Current Pro (€6/month)." : ""}`,
+          hashtags: "#onecurrent #mentalload",
+          alt: asset.alt,
+          notes: asset.kind === "video" ? "Native upload; captions burned in, safe for sound-off autoplay." : "4:5 image. Works well in wellbeing/parenting groups where sharing is allowed.",
+        };
+      case "linkedin":
+        return {
+          title: asset.title,
+          caption: camp.id === "for-therapists"
+            ? `${asset.hook}\n\n${asset.body}\n\nOne Current — Practice is the practitioner side of One Current: clients share a chosen window of their mental-load timeline via a one-time code, and sessions start from what actually happened. Interested practitioners: link in bio.`
+            : `${asset.hook}\n\n${asset.body}\n\nWe built One Current around a simple conviction: an open loop you can see is lighter than one you carry blind. It's not a task manager — it's a map of your attention.`,
+          hashtags: camp.id === "for-therapists" ? "#therapists #mentalhealthcare #psychotherapy" : "#mentalload #calmtech #founders",
+          alt: asset.alt,
+          notes: "Document-style intro line + the asset. Post Tue–Thu mornings. For therapists: tag relevant professional groups.",
+        };
+      case "youtube":
+        return {
+          title: asset.title.length > 66 ? asset.title.slice(0, 66) + "…" : asset.title + " — One Current",
+          caption: `${asset.hook}\n\n${asset.body}\n\n${CTA}\n\nOne Current: a calm, private timeline for everything pulling at your attention.`,
+          hashtags: tagStr(camp.tags, 3),
+          alt: asset.alt,
+          notes: asset.kind === "video"
+            ? "Upload as a Short (9:16, <60s). Title = the hook. Pin a comment with the link once the domain is live."
+            : "Use as a Community post (image + caption) to keep the channel active between Shorts.",
+        };
+    }
+  }
+
+  // hand-tuned overrides for the flagship films
+  const overrides = {
+    "video/00-flagship": {
+      instagram: { caption: "60 seconds, the whole idea:\n\nYour worries become threads beside your life's main line. You name them, hear how loud they are, decide something small — and watch the energy come home.\n\nNo streaks. No feed. Just your current.\n\nTry One Current — link in bio." },
+      tiktok: { caption: "POV: your mental load, but visible. 60 seconds, the whole idea. 🧵" },
+      x: { caption: "Your mind is one current.\n\nWorries become visible threads. Decisions quiet them. Finished ones come home.\n\n60 seconds, the whole idea: #mentalload #calmtech" },
+    },
+    "video/00-why-it-works": {
+      instagram: { caption: "Why it works, in 49 seconds:\n\n→ An open loop you can see is lighter than one you carry blind\n→ Name it in a few words\n→ Say how loud it feels — honestly\n→ Decide, don't solve (rest is a decision)\n→ Integrate, don't suppress\n→ Tomorrow, you answer again\n\nA place outside your head for what you keep carrying inside it. Link in bio." },
+      linkedin: { caption: "We didn't build another task manager.\n\nOne Current is built on a handful of quiet convictions: an open loop you can see is lighter than one you carry blind; a small step counts, and so does honestly deciding that nothing can be done today; threads are integrated, never suppressed.\n\nThis 49-second film walks through the thinking. Feedback welcome — especially from practitioners." },
+    },
+  };
+
+  function post(camp, asset, platform) {
+    const base = buildPost(camp, asset, platform);
+    const o = (overrides[asset.file] || {})[platform];
+    return o ? Object.assign({}, base, o) : base;
+  }
+
+  return { campaigns, post };
+})();

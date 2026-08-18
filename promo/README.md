@@ -22,6 +22,14 @@ built from real app footage.
 
 From the repo root, `npm run promo` runs capture + render end to end.
 
+## Posters & social graphics
+
+`one-current-app/scripts/promo-stills.mjs` captures hi-res app stills (phone at
+3x, print-grade) into `promo/public/stills/` (gitignored). `src/posters.ts`
+defines the poster set (IG 4:5 / story / square + one A3 print hero) rendered by
+`node promo/scripts/render-posters.mjs [ids…]` into `public/about/social/`.
+Browse everything on the unlisted gallery `about/media.html`.
+
 ## Notes
 
 - The renderer reuses the Playwright Chromium at

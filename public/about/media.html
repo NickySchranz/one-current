@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>One Current — Media kit</title>
+<link rel="icon" href="../icons/icon-192.png" />
+<style>
+  :root {
+    --ink: #26251f; --ink-soft: #5c594e; --accent: #3f6f5f; --accent-soft: #e4ede9;
+    --bg: #faf9f6; --bg-raised: #f4f2ea; --line: #e3e1d9; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans", source-sans-pro, sans-serif;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px; }
+  header { padding: 42px 0 10px; }
+  header .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.15rem; }
+  h1 { font-size: 2rem; margin: 18px 0 8px; letter-spacing: -0.02em; }
+  .sub { color: var(--ink-soft); max-width: 46em; line-height: 1.5; margin: 0 0 8px; }
+  .sub a { color: var(--accent); }
+  h2 { font-size: 1.3rem; margin: 46px 0 4px; }
+  .hint { color: var(--ink-soft); font-size: 0.9rem; margin: 0 0 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; }
+  .card {
+    background: var(--bg-raised); border: 1px solid var(--line); border-radius: 16px;
+    padding: 14px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .card img, .card video { width: 100%; border-radius: 10px; display: block; background: #101311; }
+  .card h3 { font-size: 0.95rem; margin: 2px 2px 0; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a {
+    font-size: 0.78rem; font-weight: 600; color: var(--accent); text-decoration: none;
+    background: var(--accent-soft); border-radius: 999px; padding: 4px 12px;
+  }
+  .links a:hover { background: #d7e5de; }
+  footer { padding: 60px 0 40px; color: var(--ink-soft); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg width="33" height="22" viewBox="0 0 33 22" aria-hidden="true">
+        <path d="M2 15 H31" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M7 15 C11.5 15 10.5 6 16 6 C21.5 6 20.5 15 25 15" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="25" cy="15" r="3.2" fill="var(--accent)"/>
+      </svg>
+      One Current — Media kit
+    </div>
+    <h1>Videos &amp; graphics, ready to post</h1>
+    <p class="sub">
+      Everything below is generated straight from the real app. Videos are vertical
+      1080×1920 MP4s (silent, captioned) for reels and shorts; graphics come as
+      Instagram feed (4:5), story (9:16), and square variants.
+      Back to <a href="./">the main page</a>.
+    </p>
+  </header>
+
+  <h2>Videos</h2>
+  <p class="hint">Tap to play. Right-click (or long-press) → “Save video as…” to download the MP4.</p>
+  <div class="grid" id="videos"></div>
+
+  <h2>Graphics</h2>
+  <p class="hint">The preview links each format; the print file of the hero poster is A3 at 300&nbsp;dpi.</p>
+  <div class="grid" id="posters"></div>
+
+  <footer>One Current · nickyschranz.github.io/one-current · regenerate with <code>npm run promo</code> / <code>node promo/scripts/render-posters.mjs</code></footer>
+</div>
+<script>
+  const VIDEOS = [
+    ["01-one-current", "Your mind is one current"],
+    ["02-meet-pip", "Meet Pip"],
+    ["03-threads-get-louder", "Ignored threads get louder"],
+    ["04-integrate-it", "Integrate it into Now"],
+    ["05-creature-themes", "Creature themes (Pro)"],
+    ["06-history", "Days that read like a story"],
+    ["07-private-by-design", "Nothing is sent anywhere"],
+    ["08-wholeness", "The wholeness gauge"],
+    ["09-share-with-your-psychologist", "Share with your therapist (Pro)"],
+    ["10-practice", "One Current — Practice"],
+  ];
+  const POSTERS = [
+    ["p01-hero", "Your mind is one current.", ["45", "story", "sq", "print"]],
+    ["p02-louder", "Ignored threads get louder.", ["45", "story"]],
+    ["p03-integrate", "Get yourself back.", ["45", "story"]],
+    ["p04-themes", "Every open thread becomes a creature.", ["45", "story"]],
+    ["p05-pip", "Meet Pip.", ["45", "story"]],
+    ["p06-privacy", "Nothing is sent anywhere.", ["45", "story", "sq"]],
+    ["p07-split", "“That is the split — not you.”", ["sq", "story"]],
+    ["p08-action", "“An action counts.”", ["sq", "story"]],
+    ["p09-practice", "For therapists", ["45", "story"]],
+    ["p10-pro", "One Current Pro · €6/month", ["45", "story"]],
+  ];
+  const LABEL = { "45": "Feed 4:5", story: "Story 9:16", sq: "Square", print: "Print A3" };
+  document.getElementById("videos").innerHTML = VIDEOS.map(([id, title]) => `
+    <div class="card">
+      <video controls muted playsinline preload="none" poster="video/${id}.jpg"><source src="video/${id}.mp4" type="video/mp4" /></video>
+      <h3>${title}</h3>
+      <div class="links"><a href="video/${id}.mp4" download>MP4</a><a href="video/${id}.jpg" download>Poster frame</a></div>
+    </div>`).join("");
+  document.getElementById("posters").innerHTML = POSTERS.map(([key, title, formats]) => `
+    <div class="card">
+      <img loading="lazy" src="social/${key}-${formats[0]}.png" alt="${title}" />
+      <h3>${title}</h3>
+      <div class="links">${formats.map((f) => `<a href="social/${key}-${f}.png" download>${LABEL[f]}</a>`).join("")}</div>
+    </div>`).join("");
+  document.addEventListener("play", (e) => {
+    if (e.target.tagName !== "VIDEO") return;
+    document.querySelectorAll("video").forEach((v) => { if (v !== e.target) v.pause(); });
+  }, true);
+</script>
+</body>
+</html>

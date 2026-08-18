@@ -1,8 +1,10 @@
 import React from "react";
-import { Composition } from "remotion";
+import { Composition, Still } from "remotion";
 import { loadFont } from "@remotion/google-fonts/Ubuntu";
 import { PromoVideo, promoDuration } from "./PromoVideo";
 import { videos } from "./videos";
+import { PosterComp } from "./PosterComp";
+import { posters } from "./posters";
 
 loadFont();
 
@@ -19,6 +21,9 @@ export const Root: React.FC = () => (
         height={1920}
         defaultProps={{ def }}
       />
+    ))}
+    {posters.map((def) => (
+      <Still key={def.id} id={def.id} component={PosterComp} width={def.w} height={def.h} defaultProps={{ def }} />
     ))}
   </>
 );

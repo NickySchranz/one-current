@@ -6,3 +6,4 @@ tsconfig.tsbuildinfo
 # promo studio (Remotion) — footage and deps are regenerated locally
 promo/node_modules/
 promo/public/footage/
+promo/public/stills/

@@ -8,6 +8,7 @@ import {
 } from "remotion";
 import { brand } from "../brand";
 import { inkFor, subInkFor } from "./Background";
+import { StoreBadgesRow } from "./StoreBadges";
 import type { Mood } from "../brand";
 
 /* The logo mark is the metaphor itself: a main line, one branch leaving it,
@@ -106,6 +107,9 @@ export const EndCard: React.FC<{
           Part of Pro · €6/month
         </div>
       ) : null}
+      <div style={{ marginTop: 44 }}>
+        <StoreBadgesRow height={64} appearAt={26} justify="center" />
+      </div>
     </AbsoluteFill>
   );
 };

@@ -1,6 +1,6 @@
 /* Campaign planner: every asset with ready-to-post copy per platform.
-   Data + assembly only — media.html renders it. "link in bio" is the
-   placeholder CTA until the final domain exists. */
+   Data + assembly only — media.html renders it. The CTA points at the
+   App Store / Google Play listings; no store links in captions. */
 window.CAMPAIGN_DATA = (() => {
   // ---- campaigns -----------------------------------------------------
   const campaigns = [
@@ -329,7 +329,7 @@ window.CAMPAIGN_DATA = (() => {
   ];
 
   // ---- per-platform assembly ------------------------------------------
-  const CTA = "Try One Current — link in bio. Free to start; your threads stay on your device.";
+  const CTA = "One Current is on the App Store and Google Play. Free to start; your threads stay on your device.";
   const short = (t) => t.split(". ")[0] + ".";
   const tagStr = (tags, n, camp) => tags.slice(0, n).map((t) => "#" + t).join(" ");
 
@@ -376,7 +376,7 @@ window.CAMPAIGN_DATA = (() => {
         return {
           title: asset.title,
           caption: camp.id === "for-therapists"
-            ? `${asset.hook}\n\n${asset.body}\n\nOne Current — Practice is the practitioner side of One Current: clients share a chosen window of their mental-load timeline via a one-time code, and sessions start from what actually happened. Interested practitioners: link in bio.`
+            ? `${asset.hook}\n\n${asset.body}\n\nOne Current — Practice is the practitioner side of One Current: clients share a chosen window of their mental-load timeline via a one-time code, and sessions start from what actually happened. Interested practitioners: find One Current — Practice on the App Store and Google Play.`
             : `${asset.hook}\n\n${asset.body}\n\nWe built One Current around a simple conviction: an open loop you can see is lighter than one you carry blind. It's not a task manager — it's a map of your attention.`,
           hashtags: camp.id === "for-therapists" ? "#therapists #mentalhealthcare #psychotherapy" : "#mentalload #calmtech #founders",
           alt: asset.alt,
@@ -389,7 +389,7 @@ window.CAMPAIGN_DATA = (() => {
           hashtags: tagStr(camp.tags, 3),
           alt: asset.alt,
           notes: asset.kind === "video"
-            ? "Upload as a Short (9:16, <60s). Title = the hook. Pin a comment with the link once the domain is live."
+            ? "Upload as a Short (9:16, <60s). Title = the hook."
             : "Use as a Community post (image + caption) to keep the channel active between Shorts.",
         };
     }
@@ -398,12 +398,12 @@ window.CAMPAIGN_DATA = (() => {
   // hand-tuned overrides for the flagship films
   const overrides = {
     "video/00-flagship": {
-      instagram: { caption: "60 seconds, the whole idea:\n\nYour worries become threads beside your life's main line. You name them, hear how loud they are, decide something small — and watch the energy come home.\n\nNo streaks. No feed. Just your current.\n\nTry One Current — link in bio." },
+      instagram: { caption: "60 seconds, the whole idea:\n\nYour worries become threads beside your life's main line. You name them, hear how loud they are, decide something small — and watch the energy come home.\n\nNo streaks. No feed. Just your current.\n\nOne Current — on the App Store and Google Play." },
       tiktok: { caption: "POV: your mental load, but visible. 60 seconds, the whole idea. 🧵" },
       x: { caption: "Your mind is one current.\n\nWorries become visible threads. Decisions quiet them. Finished ones come home.\n\n60 seconds, the whole idea: #mentalload #calmtech" },
     },
     "video/00-why-it-works": {
-      instagram: { caption: "Why it works, in 49 seconds:\n\n→ An open loop you can see is lighter than one you carry blind\n→ Name it in a few words\n→ Say how loud it feels — honestly\n→ Decide, don't solve (rest is a decision)\n→ Integrate, don't suppress\n→ Tomorrow, you answer again\n\nA place outside your head for what you keep carrying inside it. Link in bio." },
+      instagram: { caption: "Why it works, in 49 seconds:\n\n→ An open loop you can see is lighter than one you carry blind\n→ Name it in a few words\n→ Say how loud it feels — honestly\n→ Decide, don't solve (rest is a decision)\n→ Integrate, don't suppress\n→ Tomorrow, you answer again\n\nA place outside your head for what you keep carrying inside it. On the App Store and Google Play." },
       linkedin: { caption: "We didn't build another task manager.\n\nOne Current is built on a handful of quiet convictions: an open loop you can see is lighter than one you carry blind; a small step counts, and so does honestly deciding that nothing can be done today; threads are integrated, never suppressed.\n\nThis 49-second film walks through the thinking. Feedback welcome — especially from practitioners." },
     },
   };

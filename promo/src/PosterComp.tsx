@@ -3,6 +3,7 @@ import { AbsoluteFill, Img, staticFile, useVideoConfig } from "remotion";
 import { Background, inkFor, subInkFor } from "./components/Background";
 import { PhoneFrame, BrowserFrame } from "./components/DeviceFrame";
 import { LogoMark } from "./components/LogoMark";
+import { StoreBadgesRow } from "./components/StoreBadges";
 import { brand } from "./brand";
 import type { Mood } from "./brand";
 
@@ -79,6 +80,7 @@ export const PosterComp: React.FC<{ def: PosterDef }> = ({ def }) => {
         <div style={{ fontSize: 38, lineHeight: 1.4, color: sub, maxWidth: width * 0.82 }}>{def.sub}</div>
       ) : null}
       {def.badge ? <Badge text={def.badge} /> : null}
+      <StoreBadgesRow height={Math.round(width * 0.058)} />
     </div>
   );
 
@@ -124,6 +126,7 @@ export const PosterComp: React.FC<{ def: PosterDef }> = ({ def }) => {
             </div>
             {def.sub ? <div style={{ fontSize: 40, lineHeight: 1.45, color: sub, maxWidth: width * 0.78 }}>{def.sub}</div> : null}
             {def.badge ? <Badge text={def.badge} /> : null}
+            <StoreBadgesRow height={Math.round(width * 0.058)} justify="center" />
           </div>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14 }}>
             <LogoMark ink={ink} size={64} />
@@ -267,6 +270,7 @@ export const PosterComp: React.FC<{ def: PosterDef }> = ({ def }) => {
             ) : null}
             <div style={{ fontSize: headlineSize * 0.82, fontWeight: 750, lineHeight: 1.1, color: ink, letterSpacing: -1 }}>{def.headline}</div>
             {def.sub ? <div style={{ fontSize: 33, lineHeight: 1.4, color: sub }}>{def.sub}</div> : null}
+            <StoreBadgesRow height={Math.round(width * 0.05)} />
           </AbsoluteFill>
         </>
       )}

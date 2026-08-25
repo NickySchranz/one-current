@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="es-CO">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>One Current — one line, one life</title>
+<title>One Current — una sola línea, una sola vida</title>
 <meta
   name="description"
-  content="One Current is a calm, private timeline of your life. Everything that pulls on your attention becomes a thread — and every thread can be brought back."
+  content="One Current es una línea de tiempo de tu vida, calmada y privada. Todo lo que jala tu atención se vuelve un hilo — y cada hilo puede volver contigo."
 />
-<meta property="og:title" content="One Current — one line, one life" />
-<meta property="og:description" content="A calm, private timeline of your life. Everything that pulls on your attention becomes a visible thread — and every thread can be brought back." />
+<meta property="og:title" content="One Current — una sola línea, una sola vida" />
+<meta property="og:description" content="Una línea de tiempo de tu vida, calmada y privada. Todo lo que jala tu atención se vuelve un hilo visible — y cada hilo puede volver contigo." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="img/timeline-desktop.png" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -203,15 +203,21 @@
     border-radius: 999px;
     padding: 3px 10px;
   }
-  @media (min-width: 1080px) {
+  @media (min-width: 1200px) {
     .mobile-nav { display: none !important; }
   }
-  /* Laptop widths: the full nav row would otherwise run past the edge. */
-  @media (max-width: 1439px) {
+  /* Laptop widths: the full nav row would otherwise run past the edge.
+     Spanish labels are longer, so the burger takes over a little earlier. */
+  @media (max-width: 1599px) {
     header.site .bar { gap: 10px; }
     nav.primary { gap: 0; margin-right: 2px; }
-    nav.primary a { padding: 7px 6px; font-size: 0.82rem; }
+    nav.primary a { padding: 7px 5px; font-size: 0.8rem; }
     header.site .btn { padding: 8px 12px; }
+  }
+  @media (max-width: 1199px) {
+    nav.primary { display: none; }
+    .nav-toggle { display: flex; }
+    .pro-pill { display: flex; }
   }
   @media (max-width: 1079px) {
     nav.primary { display: none; }
@@ -810,21 +816,21 @@
       </svg>
       <span class="brand-name">One Current</span>
     </a>
-    <nav class="primary" aria-label="Sections">
-      <a href="#what">What it is</a>
-      <a href="#how">How it works</a>
-      <a href="#companion">Companion</a>
+    <nav class="primary" aria-label="Secciones">
+      <a href="#what">Qué es</a>
+      <a href="#how">Cómo funciona</a>
+      <a href="#companion">Compañero</a>
       <a href="#wellspring">Wellspring</a>
       <a href="#pro">Pro</a>
-      <a href="#therapists">Therapists</a>
-      <a href="#themes">Themes</a>
-      <a href="#privacy">Privacy</a>
-      <a href="research.html">Research</a>
-      <a href="index.es.html" lang="es" aria-label="Leer en español">ES</a>
+      <a href="#therapists">Terapeutas</a>
+      <a href="#themes">Temas</a>
+      <a href="#privacy">Privacidad</a>
+      <a href="research.es.html">Investigación</a>
+      <a href="index.html" lang="en" aria-label="Read in English">EN</a>
     </nav>
     <a class="pro-pill" href="#pro">Pro</a>
-    <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open the app</a>
-    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
+    <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Abrir la app</a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menú">
       <svg class="ic-burger" width="20" height="16" viewBox="0 0 20 16" aria-hidden="true">
         <path d="M1 2 H19 M1 8 H19 M1 14 H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
@@ -833,17 +839,17 @@
       </svg>
     </button>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Sections" hidden>
-    <a href="#what">What it is</a>
-    <a href="#how">How it works</a>
-    <a href="#companion">Your companion</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Secciones" hidden>
+    <a href="#what">Qué es</a>
+    <a href="#how">Cómo funciona</a>
+    <a href="#companion">Tu compañero</a>
     <a href="#wellspring">Wellspring</a>
-    <a class="mn-pro" href="#pro">Pro <span class="mn-chip">Paid · from €4/mo</span></a>
-    <a href="#therapists">For therapists</a>
-    <a href="#themes">Themes</a>
-    <a href="#privacy">Privacy</a>
-    <a href="research.html">Research</a>
-    <a href="index.es.html" lang="es" aria-label="Leer en español">Español</a>
+    <a class="mn-pro" href="#pro">Pro <span class="mn-chip">De pago · desde €4/mes</span></a>
+    <a href="#therapists">Para terapeutas</a>
+    <a href="#themes">Temas</a>
+    <a href="#privacy">Privacidad</a>
+    <a href="research.es.html">Investigación</a>
+    <a href="index.html" lang="en" aria-label="Read in English">English</a>
   </nav>
 </header>
 
@@ -851,21 +857,21 @@
   <div class="wrap">
     <div class="hero">
       <div>
-        <h1>Your life is one line. Everything else is a thread that can come back.</h1>
+        <h1>Tu vida es una sola línea. Todo lo demás es un hilo que puede volver.</h1>
         <p class="lead">
-          One Current is a calm, private timeline of your life. Whatever pulls at your
-          attention — an unanswered message, a worry, a decision you keep postponing —
-          becomes a visible thread branching off your main line. You see it, you decide
-          what it needs, the line changes, and you return to your life.
+          One Current es una línea de tiempo de tu vida, calmada y privada. Lo que sea
+          que jale tu atención — un mensaje sin responder, una preocupación, una decisión
+          que sigues aplazando — se vuelve un hilo visible que se desprende de tu línea
+          principal. Lo ves, decides qué necesita, la línea cambia, y vuelves a tu vida.
         </p>
         <div class="cta-row">
-          <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open One Current</a>
-          <button class="btn quiet" type="button" data-install>Add to your phone</button>
+          <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Abrir One Current</a>
+          <button class="btn quiet" type="button" data-install>Agregar a tu celular</button>
         </div>
-        <p class="note"><strong>Free to start.</strong> Your threads stay on your device. No ads.</p>
+        <p class="note"><strong>Gratis para empezar.</strong> Tus hilos se quedan en tu dispositivo. Sin publicidad.</p>
       </div>
       <div class="device">
-        <img src="img/timeline-mobile.png" alt="One Current on a phone: a main line moving through Now, with colored threads running alongside it and a small wholeness chip in the corner." />
+        <img src="img/timeline-mobile.png" alt="One Current en un celular: una línea principal que avanza por Ahora, con hilos de colores corriendo a su lado y una pequeña ficha de integridad en la esquina." />
       </div>
     </div>
   </div>
@@ -873,40 +879,40 @@
 
 <section class="alt" id="what">
   <div class="wrap inner">
-    <p class="kicker">What it is</p>
-    <h2>A picture of where your attention actually is</h2>
+    <p class="kicker">Qué es</p>
+    <h2>Una imagen de dónde está realmente tu atención</h2>
     <p class="sub">
-      Most of what tires you out is not the work in front of you — it is everything
-      running in the background. The argument you keep replaying. The letter you have
-      not answered. The comparison that flares up every time you open your phone.
-      One Current gives each of those a line of its own, so instead of a vague weight
-      you see exactly what is open, how strongly it pulls, and how long it has been
-      running.
+      La mayor parte de lo que te agota no es el trabajo que tienes enfrente — es todo
+      lo que corre en el fondo. La discusión que sigues repitiendo en la cabeza. La carta
+      que no has respondido. La comparación que se enciende cada vez que abres el celular.
+      One Current le da a cada una de esas cosas una línea propia, para que en vez de un
+      peso difuso veas exactamente qué está abierto, con qué fuerza jala y cuánto tiempo
+      lleva corriendo.
     </p>
     <div class="cards">
       <div class="card">
-        <h3>One main line</h3>
-        <p>Your life, moving through Now. Everything on it is where you actually are.</p>
+        <h3>Una línea principal</h3>
+        <p>Tu vida, avanzando por Ahora. Todo lo que está en ella es donde realmente estás.</p>
       </div>
       <div class="card">
-        <h3>Threads</h3>
-        <p>Anything that split off and keeps pulling — a person, a fear, a task, a season of life. Each has a loudness, and the line shows it: louder threads run thicker and more restless.</p>
+        <h3>Hilos</h3>
+        <p>Cualquier cosa que se desprendió y sigue jalando — una persona, un miedo, una tarea, una etapa de la vida. Cada uno tiene su volumen, y la línea lo muestra: los hilos que suenan más fuerte corren más gruesos y más inquietos.</p>
       </div>
       <div class="card">
-        <h3>Loudness</h3>
-        <p>Threads left undecided grow louder on their own, day by day — just like real worries. Any honest decision quiets them again.</p>
+        <h3>Volumen</h3>
+        <p>Los hilos sin decidir suenan más fuerte solos, día tras día — igual que las preocupaciones reales. Cualquier decisión honesta los calma de nuevo.</p>
       </div>
       <div class="card">
-        <h3>Integration</h3>
-        <p>Threads are not deleted or suppressed. When one has given you what it can, it curves back into your main line and travels with you.</p>
+        <h3>Integración</h3>
+        <p>Los hilos no se borran ni se reprimen. Cuando uno ya te dio lo que podía, se curva de vuelta hacia tu línea principal y viaja contigo.</p>
       </div>
       <div class="card">
-        <h3>Living themes</h3>
-        <p>From quiet Riverbed to koi ponds, pomeranian pups, balloons, cats, anglerfish, ghosts, and dragons — each open thread becomes a small creature that settles when you decide.</p>
+        <h3>Temas vivos</h3>
+        <p>Del tranquilo Riverbed a estanques de koi, cachorros pomerania, globos, gatos, peces abisales, fantasmas y dragones — cada hilo abierto se vuelve una criaturita que se calma cuando decides.</p>
       </div>
       <div class="card">
-        <h3>In your language</h3>
-        <p>The whole app speaks English or Spanish — every word it says changes, while your own words stay exactly as you wrote them.</p>
+        <h3>En tu idioma</h3>
+        <p>Toda la app habla inglés o español — cada palabra que dice cambia, mientras tus propias palabras quedan exactamente como las escribiste.</p>
       </div>
     </div>
   </div>
@@ -914,132 +920,133 @@
 
 <section id="how">
   <div class="wrap inner">
-    <p class="kicker">How it works</p>
-    <h2>The whole loop takes about a minute</h2>
+    <p class="kicker">Cómo funciona</p>
+    <h2>La vuelta completa toma más o menos un minuto</h2>
     <p class="sub">
-      One Current is not a place to spend time. It is a place to make one small,
-      honest decision and leave.
+      One Current no es un lugar para pasar el rato. Es un lugar para tomar una
+      decisión pequeña y honesta, e irte.
     </p>
 
     <div class="step">
       <div>
-        <h3><span class="num">1</span> Name what is pulling at you</h3>
+        <h3><span class="num">1</span> Ponle nombre a lo que te jala</h3>
         <p>
-          Tap <strong>+</strong> and write it down in your own words. A new thread
-          appears on the timeline immediately — roughly when it started, colored,
-          with the strength of its pull.
+          Toca <strong>+</strong> y escríbelo con tus propias palabras. Un hilo nuevo
+          aparece en la línea de tiempo de inmediato — más o menos cuando empezó, con
+          color, y con la fuerza con la que jala.
         </p>
         <p>
-          That alone changes something: the pull now has a shape and a place,
-          instead of circling in your head.
+          Eso solo ya cambia algo: lo que jala ahora tiene forma y lugar,
+          en vez de dar vueltas en tu cabeza.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/timeline-desktop.png" alt="The full timeline: several named threads running parallel to the main line with day markers and the Now point where the main line continues." />
-        <p class="caption">Every open thread stays visible until you decide what it needs.</p>
+        <img src="img/timeline-desktop.png" alt="La línea de tiempo completa: varios hilos con nombre corriendo en paralelo a la línea principal, con marcas de los días y el punto Ahora donde la línea principal continúa." />
+        <p class="caption">Cada hilo abierto sigue visible hasta que decides qué necesita.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">2</span> Say how loud it is</h3>
+        <h3><span class="num">2</span> Di qué tan fuerte suena</h3>
         <p>
-          Tap a thread and a quick panel opens: its name and one dial —
-          <em>how loud is this thread right now?</em> Set it and go;
-          that touch is not a commitment to do anything.
+          Toca un hilo y se abre un panel rápido: su nombre y un solo control —
+          <em>¿qué tan fuerte suena este hilo ahora mismo?</em> Ajústalo y sigue;
+          ese toque no te compromete a hacer nada.
         </p>
         <p>
-          Or skip the panel entirely: press the thread and slide your thumb up
-          or down, and its loudness dials right there on the timeline.
+          O sáltate el panel del todo: mantén el dedo sobre el hilo y deslízalo
+          hacia arriba o hacia abajo, y su volumen se ajusta ahí mismo, sobre la
+          línea de tiempo.
         </p>
         <p>
-          Loudness is honest over time too. A thread left undecided grows
-          louder day by day, and the line shows it — thicker, more restless —
-          until you give it a decision.
+          El volumen también es honesto con el tiempo. Un hilo sin decidir suena
+          más fuerte día tras día, y la línea lo muestra — más gruesa, más
+          inquieta — hasta que le das una decisión.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/peek.png" alt="The quick panel for a thread: its name, a loudness control, and a note that undecided days have made it louder." />
-        <p class="caption">One control first. Everything else stays folded away.</p>
+        <img src="img/peek.png" alt="El panel rápido de un hilo: su nombre, un control de volumen y una nota de que los días sin decisión lo han hecho sonar más fuerte." />
+        <p class="caption">Un solo control primero. Todo lo demás queda guardado.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">3</span> Decide what it needs today</h3>
+        <h3><span class="num">3</span> Decide qué necesita hoy</h3>
         <p>
-          When you want to do more, open the full menu and answer one question:
-          <em>what does this thread need from you now?</em>
+          Cuando quieras hacer más, abre el menú completo y responde una sola
+          pregunta: <em>¿qué necesita este hilo de ti ahora?</em>
         </p>
         <p>
-          <strong>Act</strong> — take one small step.
-          <strong>Integrate</strong> — bring back what still matters.
-          <strong>Note</strong> — add what just happened.
-          Or say honestly: <strong>nothing can be done about it right now</strong> —
-          and that counts as a decision too.
+          <strong>Actuar</strong> — da un paso pequeño.
+          <strong>Integrar</strong> — trae de vuelta lo que todavía importa.
+          <strong>Anotar</strong> — agrega lo que acaba de pasar.
+          O di con honestidad: <strong>ahora no se puede hacer nada</strong> —
+          y eso también cuenta como decisión.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/quick-menu.png" alt="The full menu for a thread: the loudness control on top, then four answers to what the thread needs — act, integrate, note, or accept that nothing can be done." />
-        <p class="caption">Four honest answers. No forms, no scoring.</p>
+        <img src="img/quick-menu.png" alt="El menú completo de un hilo: el control de volumen arriba y luego cuatro respuestas a qué necesita el hilo — actuar, integrar, anotar o aceptar que no se puede hacer nada." />
+        <p class="caption">Cuatro respuestas honestas. Sin formularios, sin puntajes.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">4</span> The line changes</h3>
+        <h3><span class="num">4</span> La línea cambia</h3>
         <p>
-          Your decisions show up on the timeline itself. Steps you chose appear
-          ahead of Now. Threads you decided on today are marked.
-          A thread you integrate curves back into the main line and stays part of
-          your history.
+          Tus decisiones aparecen en la propia línea de tiempo. Los pasos que
+          elegiste aparecen adelante de Ahora. Los hilos que decidiste hoy quedan
+          marcados. Un hilo que integras se curva de vuelta hacia la línea
+          principal y queda como parte de tu historia.
         </p>
         <p>
-          The <strong>Actions</strong> view gathers it into one glance: which
-          threads still need a decision today, and which are already settled.
+          La vista de <strong>Acciones</strong> lo reúne todo en un vistazo: qué
+          hilos todavía necesitan una decisión hoy, y cuáles ya están resueltos.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/actions.png" alt="The Actions panel: threads still undecided today above, threads already decided below — each with a short human sentence." />
-        <p class="caption">Undecided above, decided below — nothing more to track.</p>
+        <img src="img/actions.png" alt="El panel de Acciones: arriba los hilos aún sin decidir hoy, abajo los ya decididos — cada uno con una frase corta y humana." />
+        <p class="caption">Sin decidir arriba, decidido abajo — nada más que rastrear.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">5</span> Go deeper only when you want to</h3>
+        <h3><span class="num">5</span> Profundiza solo cuando quieras</h3>
         <p>
-          Every thread has a quieter door: <em>understand this thread</em>.
-          There you can name what from it still belongs to you now — confidence,
-          rest, connection, closure — compare where it began with where you are,
-          and notice what feels less available while it stays open.
+          Cada hilo tiene una puerta más silenciosa: <em>comprender este hilo</em>.
+          Ahí puedes nombrar qué de él todavía te pertenece ahora — confianza,
+          descanso, conexión, cierre — comparar dónde empezó con dónde estás,
+          y notar qué se siente menos disponible mientras sigue abierto.
         </p>
-        <p>All of it is optional. Nothing here is required.</p>
+        <p>Todo eso es opcional. Nada aquí es obligatorio.</p>
       </div>
       <div class="step-media">
-        <img src="img/understand.png" alt="The understanding view for a thread: 'What from this still belongs to you now?' with gentle word chips like confidence, rest, closure, and optional deeper sections below." />
-        <p class="caption">Take what is still yours; leave the rest where it happened.</p>
+        <img src="img/understand.png" alt="La vista de comprensión de un hilo: '¿Qué de esto todavía te pertenece ahora?' con fichas suaves de palabras como confianza, descanso, cierre, y secciones opcionales más profundas debajo." />
+        <p class="caption">Toma lo que todavía es tuyo; deja el resto donde pasó.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">6</span> See how gathered you are</h3>
+        <h3><span class="num">6</span> Mira qué tan reunido estás</h3>
         <p>
-          A small chip in the corner shows your wholeness — how many threads are
-          pulling on you, and how loudly. When you are scattered, it tells you
-          plainly, and points at the one decision that would gather you most
-          right now.
+          Una pequeña ficha en la esquina muestra tu integridad — cuántos hilos
+          te están jalando, y con cuánta fuerza. Cuando estás disperso te lo dice
+          sin rodeos, y señala la única decisión que más te reuniría en este
+          momento.
         </p>
         <p>
-          The same loudness flows into your history: day by day you can see
-          which feelings your open threads were holding, and how deciding on
-          them gave the energy back.
+          Ese mismo volumen fluye hacia tu historia: día a día puedes ver qué
+          sentimientos estaban reteniendo tus hilos abiertos, y cómo decidir
+          sobre ellos te devolvió la energía.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/wholeness.png" alt="The wholeness panel open: a plain-language summary of how scattered you are, followed by the threads pulling hardest right now." />
-        <p class="caption">Not a score to optimize — a weather report, and one next step.</p>
+        <img src="img/wholeness.png" alt="El panel de integridad abierto: un resumen en lenguaje sencillo de qué tan disperso estás, seguido de los hilos que más jalan en este momento." />
+        <p class="caption">No es un puntaje para optimizar — es un reporte del clima, y un paso siguiente.</p>
       </div>
     </div>
   </div>
@@ -1047,81 +1054,81 @@
 
 <section id="companion">
   <div class="wrap inner">
-    <p class="kicker">Your companion</p>
-    <h2>Pip keeps watch while you live your day</h2>
+    <p class="kicker">Tu compañero</p>
+    <h2>Pip vigila mientras tú vives tu día</h2>
     <p class="sub">
-      A small animated character lives on your timeline. He patrols your threads,
-      spots what needs attention, and reacts every time you make a decision — like
-      having a patient, encouraging friend keeping tabs on things with you.
+      Un pequeño personaje animado vive en tu línea de tiempo. Patrulla tus hilos,
+      detecta lo que necesita atención y reacciona cada vez que tomas una decisión —
+      como tener un amigo paciente y animador pendiente de todo contigo.
     </p>
 
     <div class="step">
       <div>
-        <h3><span class="num">✦</span> He patrols your threads</h3>
+        <h3><span class="num">✦</span> Patrulla tus hilos</h3>
         <p>
-          Pip zigzags between your open timelines on his own — inspecting each one,
-          staying longer on the loudest threads. He's always doing something.
-          Nothing slips past him.
+          Pip zigzaguea solo entre tus líneas abiertas — inspeccionando cada una,
+          quedándose más tiempo en los hilos que suenan más fuerte. Siempre está
+          haciendo algo. Nada se le escapa.
         </p>
         <p>
-          When he picks his next destination, that thread lights up first so you
-          know exactly where he's heading before he moves.
+          Cuando elige su siguiente destino, ese hilo se ilumina primero, para que
+          sepas exactamente hacia dónde va antes de que se mueva.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/mascot-timeline.png" alt="The One Current timeline with Pip, the animated pixel-art companion character, sitting on one of the thread lines. Other threads are gently faded so the active one stands out." />
-        <p class="caption">Pip highlights the thread he's about to visit — then runs.</p>
+        <img src="img/mascot-timeline.png" alt="La línea de tiempo de One Current con Pip, el compañero animado de pixel art, sentado sobre una de las líneas de hilo. Los demás hilos se desvanecen suavemente para que el activo resalte." />
+        <p class="caption">Pip ilumina el hilo que está por visitar — y luego corre.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">✦</span> He nudges you, never nags</h3>
+        <h3><span class="num">✦</span> Te da un empujoncito, nunca te regaña</h3>
         <p>
-          When Pip lands on a thread he opens a small speech bubble with a
-          one-line read of the situation: <em>"This one's LOUD — want to sort it?"</em>
-          or <em>"Boss, I think this one's ready to close!"</em>
+          Cuando Pip aterriza en un hilo, abre una pequeña burbuja con una lectura
+          de una línea de la situación: <em>«¡Este hilo está TENAZ, parce! ¿Lo
+          resolvemos?»</em> o <em>«¡Jefe, este ya está listo para cerrar!»</em>
         </p>
         <p>
-          Tap him and the thread's action panel opens. One move and you're done.
+          Tócalo y se abre el panel de acciones del hilo. Un movimiento y listo.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/mascot-mobile.png" alt="Pip on mobile, sitting to the right of a thread endpoint with a speech bubble above him saying 'This one's LOUD — want to sort it?'" />
-        <p class="caption">Short reads, never demands. Tap him to act on the thread.</p>
+        <img src="img/mascot-mobile.png" alt="Pip en el celular, sentado a la derecha del extremo de un hilo con una burbuja de diálogo encima que dice 'This one's LOUD — want to sort it?'" />
+        <p class="caption">Lecturas cortas, nunca exigencias. Tócalo para actuar sobre el hilo.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">✦</span> He celebrates every move you make</h3>
+        <h3><span class="num">✦</span> Celebra cada movimiento que haces</h3>
         <p>
-          Merge a thread — <em>"HANDLED! One less thing, boss!"</em>
-          Add a note — <em>"Got it. Witnessed."</em>
-          Take an action — <em>"PLAN LOCKED. Let's go!"</em>
+          Integra un hilo — <em>«¡Listo, parce! ¡Una menos!»</em>
+          Agrega una nota — <em>«Anotado. Testigo de ello.»</em>
+          Toma una acción — <em>«¡PLAN LISTO! ¡Vamos!»</em>
         </p>
         <p>
-          Small wins deserve recognition. Pip gives it every single time,
-          in the voice of a friend who is genuinely rooting for you.
+          Las victorias pequeñas merecen reconocimiento. Pip lo da todas y cada
+          una de las veces, con la voz de un amigo que de verdad va contigo.
         </p>
       </div>
       <div class="step-media">
         <div class="companion-cards">
           <div class="companion-card">
-            <div class="companion-quote">"I got it handled, boss!"</div>
-            <div class="companion-label">On opening the app</div>
+            <div class="companion-quote">«¡Yo me encargo, parce! Trabajando contigo.»</div>
+            <div class="companion-label">Al abrir la app</div>
           </div>
           <div class="companion-card">
-            <div class="companion-quote">"HUGE ONE. You really did that!"</div>
-            <div class="companion-label">After a big merge</div>
+            <div class="companion-quote">«¡ESE ERA GRANDÍSIMO, PARCE! ¡Lo lograste!»</div>
+            <div class="companion-label">Después de una gran integración</div>
           </div>
           <div class="companion-card">
-            <div class="companion-quote">"Deep one. Worth a sit-down."</div>
-            <div class="companion-label">Inspecting an identity thread</div>
+            <div class="companion-quote">«Cosa profunda. Vale la pena sentarse con ella.»</div>
+            <div class="companion-label">Inspeccionando un hilo de identidad</div>
           </div>
           <div class="companion-card">
-            <div class="companion-quote">"Action taken. That's how we roll."</div>
-            <div class="companion-label">After deciding a step</div>
+            <div class="companion-quote">«Acción tomada. Así se hace, jefe.»</div>
+            <div class="companion-label">Después de decidir un paso</div>
           </div>
         </div>
       </div>
@@ -1129,23 +1136,24 @@
 
     <div class="step">
       <div>
-        <h3><span class="num">✦</span> Three companions, one for you</h3>
+        <h3><span class="num">✦</span> Tres compañeros, uno para ti</h3>
         <p>
-          Choose from three characters in Settings → Companion.
-          The <strong>Chronicler</strong> arrives with spectacles and a gold quill.
-          The <strong>Wisp</strong> floats between threads trailing ethereal light.
-          The <strong>Wanderer</strong> strides in with a wide hat and a staff.
+          Elige entre tres personajes en Ajustes → Compañero.
+          El <strong>Chronicler</strong> llega con gafas y una pluma dorada.
+          El <strong>Wisp</strong> flota entre los hilos dejando una estela de luz etérea.
+          El <strong>Wanderer</strong> entra a zancadas con sombrero ancho y bastón.
         </p>
         <p>
-          All three wear your current theme's accent color, move with the same
-          fluid zigzag patrol, and carry the same unmistakeable buddy energy.
+          Los tres visten el color de acento de tu tema actual, se mueven con la
+          misma patrulla fluida en zigzag y cargan la misma energía inconfundible
+          de parcero.
         </p>
       </div>
       <div class="step-media">
                 <div class="companion-variants">
           <div class="companion-variant">
             <!-- CHRONICLER -->
-<svg width="76" height="100" viewBox="0 0 76 100" aria-label="Chronicler companion character" xmlns="http://www.w3.org/2000/svg">
+<svg width="76" height="100" viewBox="0 0 76 100" aria-label="Personaje compañero Chronicler" xmlns="http://www.w3.org/2000/svg">
   <rect x="14" y="8" width="5.7" height="5.7" fill="#1a1a1a"/>
   <rect x="20" y="8" width="5.7" height="5.7" fill="#3f6f5f"/>
   <rect x="26" y="8" width="5.7" height="5.7" fill="#95b0a7"/>
@@ -1288,7 +1296,7 @@
           </div>
           <div class="companion-variant">
             <!-- WISP -->
-<svg width="76" height="100" viewBox="0 0 76 100" aria-label="Wisp companion character" xmlns="http://www.w3.org/2000/svg">
+<svg width="76" height="100" viewBox="0 0 76 100" aria-label="Personaje compañero Wisp" xmlns="http://www.w3.org/2000/svg">
   <rect x="2" y="20" width="5.7" height="5.7" fill="#95b0a7"/>
   <rect x="68" y="20" width="5.7" height="5.7" fill="#95b0a7"/>
   <rect x="8" y="8" width="5.7" height="5.7" fill="#3f6f5f"/>
@@ -1422,7 +1430,7 @@
           </div>
           <div class="companion-variant">
             <!-- WANDERER -->
-<svg width="76" height="100" viewBox="0 0 76 100" aria-label="Wanderer companion character" xmlns="http://www.w3.org/2000/svg">
+<svg width="76" height="100" viewBox="0 0 76 100" aria-label="Personaje compañero Wanderer" xmlns="http://www.w3.org/2000/svg">
   <rect x="14" y="8" width="5.7" height="5.7" fill="#1a1a1a"/>
   <rect x="20" y="8" width="5.7" height="5.7" fill="#3f6f5f"/>
   <rect x="26" y="8" width="5.7" height="5.7" fill="#29483e"/>
@@ -1573,7 +1581,7 @@
             <span class="companion-name">Wanderer</span>
           </div>
         </div>
-        <p class="caption">Three companions. Switch any time in Settings → Companion.</p>
+        <p class="caption">Tres compañeros. Cambia cuando quieras en Ajustes → Compañero.</p>
       </div>
     </div>
   </div>
@@ -1581,74 +1589,78 @@
 
 <section id="wellspring">
   <div class="wrap inner">
-    <p class="kicker">The sister app</p>
-    <h2>Wellspring — the same river, flowing toward what you're <em>for</em></h2>
+    <p class="kicker">La app hermana</p>
+    <h2>Wellspring — el mismo río, fluyendo hacia aquello por lo que <em>vives</em></h2>
     <p class="sub">
-      One Current holds what worries you. Wellspring holds what you value — patience,
-      honesty, craft, showing up — as springs that feed the same line of Now. Same
-      account, same calm, and the two apps talk to each other.
+      One Current guarda lo que te preocupa. Wellspring guarda lo que valoras — la
+      paciencia, la honestidad, el oficio, estar presente — como manantiales que
+      alimentan la misma línea de Ahora. La misma cuenta, la misma calma, y las dos
+      apps se hablan entre sí.
     </p>
 
     <div class="step">
       <div>
-        <h3><span class="num">⇄</span> Handled there, watered here</h3>
+        <h3><span class="num">⇄</span> Resuelto allá, regado acá</h3>
         <p>
-          Every worry you settle in One Current — a thread integrated, a decision
-          eased, an action done — arrives in Wellspring <em>under</em> the line and
-          rises up into it. Tap one and dedicate it: “handling the rent negotiation
-          watered Patience.” It becomes a moment of evidence on that spring.
+          Cada preocupación que resuelves en One Current — un hilo integrado, una
+          decisión que alivió, una acción hecha — llega a Wellspring <em>debajo</em>
+          de la línea y sube hacia ella. Toca una y dedícala: «resolver la
+          negociación del arriendo regó la Paciencia». Se vuelve un momento de
+          evidencia en ese manantial.
         </p>
         <p>
-          Nothing to export, nothing to copy. Sign in with the same account and the
-          apps sync through your own encrypted backup — handled worries flow in on
-          their own.
+          Nada que exportar, nada que copiar. Inicia sesión con la misma cuenta y
+          las apps se sincronizan a través de tu propia copia cifrada — las
+          preocupaciones resueltas fluyen solas.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/wellspring-bridge.png" alt="Wellspring's river: springs named Patience, Craft and Showing up flow down into the line of Now from above, while three small tributaries labelled 'Called the bank — done', 'Sleep going sideways — eased' and 'The rent negotiation — integrated' rise into the same line from below, marked 'handled in One Current'." loading="lazy" />
-        <p class="caption">Worries handled in One Current rise into the line from below — and water your values.</p>
+        <img src="img/wellspring-bridge.png" alt="El río de Wellspring: manantiales llamados Paciencia, Oficio y Estar presente bajan hacia la línea de Ahora desde arriba, mientras tres pequeños afluentes marcados 'Called the bank — done', 'Sleep going sideways — eased' y 'The rent negotiation — integrated' suben hacia la misma línea desde abajo, señalados como resueltos en One Current." loading="lazy" />
+        <p class="caption">Las preocupaciones resueltas en One Current suben a la línea desde abajo — y riegan tus valores.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">☀</span> How strong is it today?</h3>
+        <h3><span class="num">☀</span> ¿Qué tan fuerte está hoy?</h3>
         <p>
-          Tap a spring and the panel opens with one question and the same dial One
-          Current uses for loudness — a bar you drag with your thumb, from
-          <em>a whisper</em> to <em>leading</em>. The river answers while you move:
-          the spring thickens live behind the panel.
+          Toca un manantial y el panel se abre con una sola pregunta y el mismo
+          control que One Current usa para el volumen — una barra que arrastras
+          con el pulgar, desde <em>un susurro</em> hasta <em>lo que guía</em>.
+          El río responde mientras te mueves: el manantial se engrosa en vivo
+          detrás del panel.
         </p>
         <p>
-          Springs you feed run thick and bright. Leave one for a week and it only
-          whispers — nothing scolds, nothing turns red. Values here are evidence,
-          not streaks.
+          Los manantiales que alimentas corren gruesos y brillantes. Deja uno una
+          semana y apenas susurra — nada te regaña, nada se pone rojo. Aquí los
+          valores son evidencia, no rachas.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/wellspring-panel.png" alt="A spring panel open over the compressed river: 'Showing up', its identity sentence, a strength bar reading 'steady', and a Notice-a-moment button — while the river, its labels and the little companion stay visible above." loading="lazy" />
-        <p class="caption">The panel never hides the water — the line rides just above it, Pip included.</p>
+        <img src="img/wellspring-panel.png" alt="El panel de un manantial abierto sobre el río comprimido: 'Showing up', su frase de identidad, una barra de fuerza que marca 'steady' y un botón para notar un momento — mientras el río, sus etiquetas y el pequeño compañero siguen visibles arriba." loading="lazy" />
+        <p class="caption">El panel nunca tapa el agua — la línea corre justo encima, Pip incluido.</p>
       </div>
     </div>
 
     <div class="step">
       <div>
-        <h3><span class="num">❦</span> Living looks, living world</h3>
+        <h3><span class="num">❦</span> Aspectos vivos, mundo vivo</h3>
         <p>
-          Six looks, each a world behind the water: in Seaweed every spring is a kelp
-          strand with light shafts and rising bubbles — feed one and a small fish
-          visits. Meadow grows flowers and a slow bee, Lanternfall hangs paper
-          lanterns, Aurora flickers stars.
+          Seis aspectos, cada uno un mundo detrás del agua: en Seaweed cada
+          manantial es un tallo de alga con rayos de luz y burbujas que suben —
+          alimenta uno y lo visita un pececito. Meadow hace crecer flores y una
+          abeja lenta, Lanternfall cuelga faroles de papel, Aurora hace titilar
+          estrellas.
         </p>
         <p>
-          And your psychologist can see this river too: share springs, strengths and
-          moments with the same one-time code One Current uses, rendered beautifully
-          in the same free companion app.
+          Y tu psicólogo también puede ver este río: comparte manantiales, fuerzas
+          y momentos con el mismo código de un solo uso que usa One Current,
+          renderizado bellamente en la misma app acompañante gratuita.
         </p>
       </div>
       <div class="step-media">
-        <img src="img/wellspring-seaweed.png" alt="The Seaweed look: a deep-water teal river where each spring is a kelp strand crowned with swaying fronds, a small fish beside the freshly fed one, light shafts and bubbles behind." loading="lazy" />
-        <p class="caption">Seaweed — one of four living Pro looks, each with its own world.</p>
+        <img src="img/wellspring-seaweed.png" alt="El aspecto Seaweed: un río verde azulado de aguas profundas donde cada manantial es un tallo de alga coronado de frondas que se mecen, un pececito junto al recién alimentado, rayos de luz y burbujas al fondo." loading="lazy" />
+        <p class="caption">Seaweed — uno de cuatro aspectos vivos de Pro, cada uno con su propio mundo.</p>
       </div>
     </div>
   </div>
@@ -1656,74 +1668,77 @@
 
 <section class="alt" id="why">
   <div class="wrap inner">
-    <p class="kicker">Why it helps</p>
-    <h2>Built around a few quiet convictions</h2>
+    <p class="kicker">Por qué ayuda</p>
+    <h2>Construido alrededor de unas pocas convicciones tranquilas</h2>
     <p class="sub">
-      One Current is not a task manager and not a mood tracker. It sits somewhere
-      calmer: a way to stop carrying everything at once.
+      One Current no es un gestor de tareas ni un registro de estados de ánimo.
+      Está en un lugar más calmado: una forma de dejar de cargarlo todo a la vez.
     </p>
     <div class="cards">
       <div class="card">
-        <h3>Seeing it is half the relief</h3>
+        <h3>Verlo ya es la mitad del alivio</h3>
         <p>
-          An open loop you can see is lighter than one you carry blind. The timeline
-          turns background noise into a finite, visible set of lines.
+          Un pendiente abierto que puedes ver pesa menos que uno que cargas a
+          ciegas. La línea de tiempo convierte el ruido de fondo en un conjunto
+          finito y visible de líneas.
         </p>
       </div>
       <div class="card">
-        <h3>Every decision counts</h3>
+        <h3>Cada decisión cuenta</h3>
         <p>
-          Taking one small step counts. So does honestly deciding that nothing can be
-          done today. Rest is a decision, not a failure.
+          Dar un paso pequeño cuenta. También cuenta decidir con honestidad que
+          hoy no se puede hacer nada. Descansar es una decisión, no un fracaso.
         </p>
       </div>
       <div class="card">
-        <h3>Integration, not suppression</h3>
+        <h3>Integración, no represión</h3>
         <p>
-          Threads are never crossed out or locked away. When one completes for now,
-          you choose what comes back with you — and if it returns later, you meet
-          the new version of it.
+          Los hilos nunca se tachan ni se guardan bajo llave. Cuando uno se
+          completa por ahora, tú eliges qué vuelve contigo — y si regresa más
+          adelante, te encuentras con su nueva versión.
         </p>
       </div>
       <div class="card">
-        <h3>Small honest steps</h3>
+        <h3>Pasos pequeños y honestos</h3>
         <p>
-          The app never asks for a plan. It asks for the smallest honest step —
-          send one message, read the letter once, say one true sentence.
+          La app nunca te pide un plan. Te pide el paso honesto más pequeño —
+          enviar un mensaje, leer la carta una vez, decir una frase verdadera.
         </p>
       </div>
       <div class="card">
-        <h3>A minute, not an evening</h3>
+        <h3>Un minuto, no una noche entera</h3>
         <p>
-          Every screen has one purpose and a handful of words. You decide, the line
-          changes, and you go back to your life.
+          Cada pantalla tiene un solo propósito y un puñado de palabras. Decides,
+          la línea cambia, y vuelves a tu vida.
         </p>
       </div>
       <div class="card">
-        <h3>Support when it is heavy</h3>
+        <h3>Apoyo cuando pesa demasiado</h3>
         <p>
-          Some threads are too heavy to handle alone. One Current says so, plainly,
-          and makes reaching for support one of the normal answers.
+          Algunos hilos pesan demasiado para manejarlos a solas. One Current lo
+          dice sin rodeos, y hace que buscar apoyo sea una de las respuestas
+          normales.
         </p>
       </div>
     </div>
     <p style="margin-top: 28px;">
-      <a class="btn quiet" href="research.html">Read the research behind this</a>
+      <a class="btn quiet" href="research.es.html">Lee la investigación detrás de esto</a>
     </p>
   </div>
 </section>
 
 <section class="pro" id="pro">
   <div class="wrap inner">
-    <p class="kicker">Pro <span class="pro-badge">Paid upgrade</span></p>
-    <h2>More threads, all themes, and a direct line to your psychologist</h2>
+    <p class="kicker">Pro <span class="pro-badge">Mejora de pago</span></p>
+    <h2>Más hilos, todos los temas, y una línea directa con tu psicólogo</h2>
     <p class="sub">
-      The free app lets you keep up to ten open threads and use five quiet themes.
-      Pro removes those limits and adds cloud backup, all seven living creature themes,
-      and the ability to share your timeline with your psychologist using a single
-      eight-character code — no files, no complicated steps. And it carries across
-      the family: the same Pro unlocks Wellspring's living looks and its
-      psychologist sharing too.
+      La app gratuita te deja tener hasta diez hilos abiertos y usar cinco temas
+      tranquilos. Pro quita esos límites y agrega copia de seguridad en la nube,
+      los siete temas vivos de criaturas, y la posibilidad de compartir tu línea
+      de tiempo con tu psicólogo usando un solo código de ocho caracteres — sin
+      archivos, sin pasos complicados. Y aplica para toda la familia: el mismo Pro
+      desbloquea los aspectos vivos de Wellspring y su función de compartir con tu
+      psicólogo también.
     </p>
 
     <div class="pro-loop">
@@ -1734,8 +1749,8 @@
           <path d="M7 15 C11.5 15 10.5 6 16 6 C21.5 6 20.5 15 25 15" stroke="#8fbfa9" stroke-width="1.6" stroke-linecap="round" opacity="0.85" fill="none"/>
           <circle cx="25" cy="15" r="2.6" fill="#e0823f"/>
         </svg>
-        <strong>Your One Current</strong>
-        <span>private, on your device</span>
+        <strong>Tu One Current</strong>
+        <span>privado, en tu dispositivo</span>
       </div>
       <div class="pro-arrows">
         <div class="pro-arrow">
@@ -1743,14 +1758,14 @@
             <line x1="0" y1="5" x2="110" y2="5"/>
             <polygon points="110,1 119,5 110,9"/>
           </svg>
-          8-character code — you choose which threads
+          Código de 8 caracteres — tú eliges qué hilos
         </div>
         <div class="pro-arrow">
           <svg viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true">
             <line x1="10" y1="5" x2="120" y2="5"/>
             <polygon points="10,1 1,5 10,9"/>
           </svg>
-          (no return path needed — the session is the conversation)
+          (no hace falta camino de vuelta — la sesión es la conversación)
         </div>
       </div>
       <div class="pro-node">
@@ -1760,72 +1775,73 @@
           <circle cx="39.5" cy="20" r="2.4" fill="#e0823f"/>
           <path d="M 3 36 L 55 36 L 51 40 L 7 40 Z" fill="rgba(244,242,234,0.35)"/>
         </svg>
-        <strong>The companion app</strong>
-        <span>free for clinicians, no install</span>
+        <strong>La app acompañante</strong>
+        <span>gratis para clínicos, sin instalación</span>
       </div>
     </div>
 
     <div class="cards">
       <div class="card">
-        <h3><span class="num">1</span> You choose what they see</h3>
+        <h3><span class="num">1</span> Tú eliges qué ven</h3>
         <p>
-          Before a session, pick which threads to include — one by one. Then tap
-          <em>Upload and get a code</em>. An eight-character code appears: valid
-          once, for fourteen days, and nothing is sent until you hand it over.
+          Antes de una sesión, escoges qué hilos incluir — uno por uno. Luego tocas
+          <em>Subir y obtener un código</em>. Aparece un código de ocho caracteres:
+          válido una sola vez, por catorce días, y nada se envía hasta que tú lo entregues.
         </p>
       </div>
       <div class="card">
-        <h3><span class="num">2</span> The timeline on the table</h3>
+        <h3><span class="num">2</span> La línea de tiempo sobre la mesa</h3>
         <p>
-          Your psychologist enters the code in the companion app and your timeline
-          appears — read-only, no account needed on their end for the local version,
-          or free account for cloud redeem. Walking a thread together gives the
-          session a shape beyond a blank "how was your week?"
+          Tu psicólogo ingresa el código en la app acompañante y tu línea de tiempo
+          aparece — solo lectura, sin necesidad de cuenta de su lado para la versión
+          local, o cuenta gratis para canjear desde la nube. Recorrer un hilo juntos
+          le da forma a la sesión, más allá de un «¿cómo te fue esta semana?» en blanco.
         </p>
       </div>
       <div class="card">
-        <h3><span class="num">3</span> Day by day</h3>
+        <h3><span class="num">3</span> Día por día</h3>
         <p>
-          The companion app shows every day in the shared period: which threads moved,
-          which got louder, which were decided on. The conversation starts with the
-          picture already in front of both of you.
+          La app acompañante muestra cada día del periodo compartido: qué hilos se
+          movieron, cuáles sonaron más fuerte, sobre cuáles decidiste. La conversación
+          empieza con el panorama ya frente a los dos.
         </p>
       </div>
     </div>
 
-    <h3 class="pro-subhead" style="margin-top: 44px;">The companion app — real, running now</h3>
+    <h3 class="pro-subhead" style="margin-top: 44px;">La app acompañante — real, funcionando ya</h3>
     <p class="sub">
-      Not a concept. A working web app your psychologist can open at
+      No es un concepto. Es una app web que funciona y que tu psicólogo puede abrir en
       <a href="https://nickyschranz.github.io/one-current-psycho/" style="color: #8fbfa9;">one-current-psycho</a>
-      right now, for free.
+      ahora mismo, gratis.
     </p>
 
-    <figure class="pro-app-shot" role="img" aria-label="The One Current companion app for psychologists showing a client list on the left and shared timeline on the right.">
-      <img src="img/psycho-app.png" alt="The companion app: client sidebar, shared timeline with thread markers at the top, and the day-by-day record below." loading="lazy" />
-      <figcaption>The companion app — a real account, fully functional, free for clinicians.</figcaption>
+    <figure class="pro-app-shot" role="img" aria-label="La app acompañante de One Current para psicólogos, con la lista de clientes a la izquierda y la línea de tiempo compartida a la derecha.">
+      <img src="img/psycho-app.png" alt="La app acompañante: barra lateral de clientes, línea de tiempo compartida con marcadores de hilos arriba, y el registro día por día abajo." loading="lazy" />
+      <figcaption>La app acompañante — una cuenta real, completamente funcional, gratis para clínicos.</figcaption>
     </figure>
 
     <div class="cards">
       <div class="card">
-        <h3>Shared timeline</h3>
+        <h3>Línea de tiempo compartida</h3>
         <p>
-          The same branching timeline your patient knows, sized for the session.
-          Tap any marker to see what happened on that day and the thread's full arc.
+          La misma línea de tiempo con ramas que tu paciente conoce, ajustada a la sesión.
+          Toca cualquier marcador para ver qué pasó ese día y el recorrido completo del hilo.
         </p>
       </div>
       <div class="card">
-        <h3>Day by day</h3>
+        <h3>Día por día</h3>
         <p>
-          Every recorded day stacked under each other — loudness moves, decisions
-          taken, quiet runs folded into a single line. Nothing to interpret; just the
-          record.
+          Cada día registrado, uno debajo del otro — cambios de volumen, decisiones
+          tomadas, rachas tranquilas plegadas en una sola línea. Nada que interpretar;
+          solo el registro.
         </p>
       </div>
       <div class="card">
-        <h3>Multiple clients</h3>
+        <h3>Varios clientes</h3>
         <p>
-          Each client's shared files are kept under their name. New shares from the
-          same patient stack in order. Everything stays on the practitioner's device.
+          Los archivos compartidos de cada cliente se guardan bajo su nombre. Los nuevos
+          envíos del mismo paciente se apilan en orden. Todo se queda en el dispositivo
+          del profesional.
         </p>
       </div>
     </div>
@@ -1837,18 +1853,19 @@
         <circle cx="9" cy="15" r="1.6" fill="#8fbfa9"/>
       </svg>
       <p>
-        <strong>Share codes are one-time and expire in fourteen days.</strong>
-        Your timeline data moves only when you perform the act of sharing — the
-        code is useless after a single redeem. Cloud backup is opt-in and stored
-        on your account; your psychologist keeps only what you chose to share.
-        One Current is not a diagnostic tool, a medical record, or a crisis channel.
+        <strong>Los códigos para compartir son de un solo uso y caducan en catorce días.</strong>
+        Los datos de tu línea de tiempo solo se mueven cuando tú haces el acto de
+        compartir — el código queda inservible después de un canje. La copia en la nube
+        es opcional y se guarda en tu cuenta; tu psicólogo se queda únicamente con lo
+        que elegiste compartir. One Current no es una herramienta de diagnóstico, ni una
+        historia clínica, ni un canal para crisis.
       </p>
     </div>
 
-    <div class="pricing-tabs" role="tablist" aria-label="Billing period">
-      <button class="pricing-tab active" data-plan="monthly" role="tab" aria-selected="true">Monthly</button>
-      <button class="pricing-tab" data-plan="biannual" role="tab" aria-selected="false">6 months <span class="save-badge">Save 17%</span></button>
-      <button class="pricing-tab" data-plan="annual" role="tab" aria-selected="false">Yearly <span class="save-badge">Save 33%</span></button>
+    <div class="pricing-tabs" role="tablist" aria-label="Periodo de facturación">
+      <button class="pricing-tab active" data-plan="monthly" role="tab" aria-selected="true">Mensual</button>
+      <button class="pricing-tab" data-plan="biannual" role="tab" aria-selected="false">6 meses <span class="save-badge">Ahorra 17%</span></button>
+      <button class="pricing-tab" data-plan="annual" role="tab" aria-selected="false">Anual <span class="save-badge">Ahorra 33%</span></button>
     </div>
 
     <div class="pro-pricing">
@@ -1856,21 +1873,21 @@
         <p class="pro-price-kicker">One Current Pro</p>
         <p class="pro-price">
           <strong class="js-price">€6</strong>
-          <span>/ month</span>
+          <span>/ mes</span>
         </p>
-        <p class="pro-price-note js-price-note">Billed monthly. Cancel anytime.</p>
-        <a class="btn btn-gold" href="https://nickyschranz.github.io/one-current-app/">Upgrade to Pro</a>
-        <p class="pro-price-fine">One plan covers both apps — One Current and Wellspring. Your psychologist never pays — the companion app is always free for clinicians.</p>
+        <p class="pro-price-note js-price-note">Facturado cada mes. Cancela cuando quieras.</p>
+        <a class="btn btn-gold" href="https://nickyschranz.github.io/one-current-app/">Pasarme a Pro</a>
+        <p class="pro-price-fine">Un solo plan cubre las dos apps — One Current y Wellspring. Tu psicólogo nunca paga — la app acompañante siempre es gratis para clínicos.</p>
       </div>
       <ul class="pro-checks">
-        <li><span><strong>Unlimited open threads</strong> — no ten-thread cap</span></li>
-        <li><span><strong>All seven creature themes</strong> — Pompom, Demonfire, Koi pond, Carnival, Catnap, Abyss, Gravemist</span></li>
-        <li><span><strong>Share with your psychologist</strong> — one code, one use, your choice of which threads</span></li>
-        <li><span><strong>Cloud backup</strong> — restore your full history on a new device</span></li>
-        <li><span><strong>Wellspring's living looks</strong> — Seaweed, Meadow, Lanternfall, Aurora</span></li>
-        <li><span><strong>Wellspring sharing</strong> — your values river to the same psychologist, same one-time code</span></li>
-        <li><span><strong>The companion app</strong> for your psychologist — timeline, day-by-day, multiple clients</span></li>
-        <li><span><strong>Every future Pro feature</strong> — one plan, nothing tiered</span></li>
+        <li><span><strong>Hilos abiertos ilimitados</strong> — sin el tope de diez hilos</span></li>
+        <li><span><strong>Los siete temas con criaturas</strong> — Pompom, Demonfire, Koi pond, Carnival, Catnap, Abyss, Gravemist</span></li>
+        <li><span><strong>Compartir con tu psicólogo</strong> — un código, un uso, y tú eliges qué hilos</span></li>
+        <li><span><strong>Copia en la nube</strong> — recupera todo tu historial en un dispositivo nuevo</span></li>
+        <li><span><strong>Las apariencias vivas de Wellspring</strong> — Seaweed, Meadow, Lanternfall, Aurora</span></li>
+        <li><span><strong>Compartir Wellspring</strong> — tu río de valores al mismo psicólogo, con el mismo código de un solo uso</span></li>
+        <li><span><strong>La app acompañante</strong> para tu psicólogo — línea de tiempo, día por día, varios clientes</span></li>
+        <li><span><strong>Toda función Pro que venga</strong> — un solo plan, sin niveles</span></li>
       </ul>
     </div>
   </div>
@@ -1878,126 +1895,126 @@
 
 <section class="therapists" id="therapists">
   <div class="wrap inner">
-    <p class="kicker">For psychologists &amp; therapists</p>
-    <h2>A dedicated app for the session — free, forever</h2>
+    <p class="kicker">Para psicólogos y terapeutas</p>
+    <h2>Una app dedicada para la sesión — gratis, para siempre</h2>
     <p class="sub">
-      You never pay. Your patient shares their timeline with an eight-character code;
-      you enter it, and their threads appear in your app. Two views keep the
-      conversation grounded: the shared timeline with tappable markers, and a
-      day-by-day record of every moment they logged. Wellspring shares arrive the
-      same way — their values, daily strength readings and moments of evidence,
-      rendered alongside the threads, with a ⇄ mark wherever a handled worry fed
-      a value.
+      Tú nunca pagas. Tu paciente comparte su línea de tiempo con un código de ocho
+      caracteres; lo ingresas y sus hilos aparecen en tu app. Dos vistas mantienen la
+      conversación aterrizada: la línea de tiempo compartida con marcadores que puedes
+      tocar, y un registro día por día de cada momento que anotó. Lo compartido desde
+      Wellspring llega igual — sus valores, las lecturas diarias de fortaleza y los
+      momentos que las respaldan, mostrados junto a los hilos, con una marca ⇄ donde
+      una preocupación resuelta alimentó un valor.
     </p>
 
     <div class="psycho-shots">
       <figure>
-        <img src="img/psycho-app.png" alt="The companion app: a client list on the left and the shared timeline with thread markers on the right." loading="lazy" />
-        <figcaption>Shared timeline — tap any marker to see the thread arc</figcaption>
+        <img src="img/psycho-app.png" alt="La app acompañante: la lista de clientes a la izquierda y la línea de tiempo compartida con marcadores de hilos a la derecha." loading="lazy" />
+        <figcaption>Línea de tiempo compartida — toca cualquier marcador para ver el recorrido del hilo</figcaption>
       </figure>
       <figure>
-        <img src="img/psycho-daybyday.png" alt="The day-by-day view: each day stacked under each other with loudness moves, decisions, and quiet days folded into a single line." loading="lazy" />
-        <figcaption>Day by day — every logged moment, quiet days folded</figcaption>
+        <img src="img/psycho-daybyday.png" alt="La vista día por día: cada día apilado bajo el anterior, con cambios de volumen, decisiones y días tranquilos plegados en una sola línea." loading="lazy" />
+        <figcaption>Día por día — cada momento anotado, con los días tranquilos plegados</figcaption>
       </figure>
       <figure>
-        <img src="img/psycho-wellspring.png" alt="The companion app showing a client's Wellspring share: a flow-word day strip, spring cards for Patience and Honesty with identity sentences and 14-day strength sparklines, morning intentions, and moments day by day." loading="lazy" />
-        <figcaption>Wellspring shares render alongside — values, strengths, and what watered them</figcaption>
+        <img src="img/psycho-wellspring.png" alt="La app acompañante mostrando lo que un cliente compartió desde Wellspring: una franja de días con palabras de flujo, tarjetas de manantial para Paciencia y Honestidad con frases de identidad y minigráficas de fortaleza de 14 días, intenciones de la mañana, y momentos día por día." loading="lazy" />
+        <figcaption>Lo de Wellspring se muestra al lado — valores, fortalezas y lo que las regó</figcaption>
       </figure>
     </div>
 
     <div class="cards">
       <div class="card">
-        <h3>No install, no account needed for file import</h3>
-        <p>Open the web app in any browser. Your patient sends their threads as a file or a code — you import it, and the session begins. Nothing lives on a server you don't control.</p>
+        <h3>Sin instalar nada, sin cuenta para importar archivos</h3>
+        <p>Abre la app web en cualquier navegador. Tu paciente te envía sus hilos como archivo o como código — lo importas y la sesión empieza. Nada vive en un servidor que tú no controles.</p>
       </div>
       <div class="card">
-        <h3>Code-based sharing (with a free account)</h3>
-        <p>Create a free account, add your patient as a client, enter their eight-character code. The share arrives instantly — valid once, expired after fourteen days.</p>
+        <h3>Compartir por código (con una cuenta gratis)</h3>
+        <p>Crea una cuenta gratis, agrega a tu paciente como cliente e ingresa su código de ocho caracteres. Lo compartido llega al instante — válido una vez, caducado a los catorce días.</p>
       </div>
       <div class="card">
-        <h3>Multiple clients, kept separate</h3>
-        <p>Each client's timeline is stored under their name on your device. New shares from the same patient stack in order. You can delete any client's data at any time.</p>
+        <h3>Varios clientes, cada uno aparte</h3>
+        <p>La línea de tiempo de cada cliente se guarda bajo su nombre en tu dispositivo. Los nuevos envíos del mismo paciente se apilan en orden. Puedes borrar los datos de cualquier cliente cuando quieras.</p>
       </div>
     </div>
 
     <div class="therapist-cta">
-      <a class="btn" href="https://nickyschranz.github.io/one-current-psycho/">Open the companion app</a>
-      <span class="therapist-note">Free for clinicians — no subscription, no install, no account required for file import.</span>
+      <a class="btn" href="https://nickyschranz.github.io/one-current-psycho/">Abrir la app acompañante</a>
+      <span class="therapist-note">Gratis para clínicos — sin suscripción, sin instalación, sin cuenta para importar archivos.</span>
     </div>
   </div>
 </section>
 
 <section id="themes">
   <div class="wrap inner">
-    <p class="kicker">Themes</p>
-    <h2>Choose how your threads look at you</h2>
+    <p class="kicker">Temas</p>
+    <h2>Elige cómo te miran tus hilos</h2>
     <p class="sub">
-      Five quiet looks — Riverbed, Midnight, Sunprint, Duskwood, Porcelain — are free.
-      Seven living ones, where every open thread ends in a small creature facing you at Now,
-      come with Pro. Each creature grows more restless the louder its thread gets, and
-      the moment you give it an honest decision, it settles.
+      Cinco apariencias tranquilas — Riverbed, Midnight, Sunprint, Duskwood, Porcelain — son gratis.
+      Siete apariencias vivas, donde cada hilo abierto termina en una criatura pequeña que te mira
+      desde Ahora, vienen con Pro. Cada criatura se pone más inquieta entre más fuerte suena su hilo,
+      y en el momento en que le das una decisión honesta, se calma.
     </p>
     <div class="themes-grid">
       <div class="theme-card">
         <h3>Pompom <span class="pro-tag">Pro</span></h3>
-        <p>Peach fluff and button eyes. Every open thread is a pomeranian pup — leave it waiting and it barks.</p>
+        <p>Pelusa durazno y ojos de botón. Cada hilo abierto es un cachorrito pomerania — déjalo esperando y ladra.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/pompom.png" loading="lazy" alt="The Pompom theme: a warm peach timeline where each open thread ends in a small orange pomeranian." />
+            <img src="img/pompom.png" loading="lazy" alt="El tema Pompom: una línea de tiempo durazno cálido donde cada hilo abierto termina en un pequeño pomerania naranja." />
           </div>
         </div>
       </div>
       <div class="theme-card">
         <h3>Demonfire <span class="pro-tag">Pro</span></h3>
-        <p>Ember dark. Every open thread is a small dragon — face it kindly and it settles.</p>
+        <p>Oscuro de brasa. Cada hilo abierto es un dragoncito — enfréntalo con calma y se acomoda.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/demonfire.png" loading="lazy" alt="The Demonfire theme: a dark ember timeline where each open thread ends in a small dragon head." />
+            <img src="img/demonfire.png" loading="lazy" alt="El tema Demonfire: una línea de tiempo oscura de brasas donde cada hilo abierto termina en una cabecita de dragón." />
           </div>
         </div>
       </div>
       <div class="theme-card">
         <h3>Koi pond <span class="pro-tag">Pro</span></h3>
-        <p>Still water. Every open thread is a koi nosing at Now — feed it a decision and the pond settles.</p>
+        <p>Agua quieta. Cada hilo abierto es un koi husmeando en Ahora — dale una decisión y el estanque se calma.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/koipond.png" loading="lazy" alt="The Koi pond theme: a pale water-green timeline where each open thread ends in a koi fish nosing at the Now marker." />
+            <img src="img/koipond.png" loading="lazy" alt="El tema Koi pond: una línea de tiempo verde agua pálido donde cada hilo abierto termina en un pez koi husmeando el marcador de Ahora." />
           </div>
         </div>
       </div>
       <div class="theme-card">
         <h3>Carnival <span class="pro-tag">Pro</span></h3>
-        <p>Cream and bunting. Every open thread is a balloon — the longer it waits, the tighter it swells.</p>
+        <p>Crema y banderines. Cada hilo abierto es un globo — entre más espera, más se infla.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/carnival.png" loading="lazy" alt="The Carnival theme: a cream timeline with bunting colours where each open thread ends in a balloon." />
+            <img src="img/carnival.png" loading="lazy" alt="El tema Carnival: una línea de tiempo crema con colores de banderines donde cada hilo abierto termina en un globo." />
           </div>
         </div>
       </div>
       <div class="theme-card">
         <h3>Catnap <span class="pro-tag">Pro</span></h3>
-        <p>Lavender and soft paws. Every open thread is a cat watching you — answer it and it curls up.</p>
+        <p>Lavanda y paticas suaves. Cada hilo abierto es un gato que te observa — respóndele y se hace bolita.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/catnap.png" loading="lazy" alt="The Catnap theme: a soft lavender timeline where each open thread ends in a small cat's face watching you." />
+            <img src="img/catnap.png" loading="lazy" alt="El tema Catnap: una línea de tiempo lavanda suave donde cada hilo abierto termina en la carita de un gato que te observa." />
           </div>
         </div>
       </div>
       <div class="theme-card">
         <h3>Abyss <span class="pro-tag">Pro</span></h3>
-        <p>Deep-sea black. Every open thread is an anglerfish — the louder it grows, the brighter its lure.</p>
+        <p>Negro de mar profundo. Cada hilo abierto es un pez abisal — entre más fuerte suena, más brilla su señuelo.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/abyss.png" loading="lazy" alt="The Abyss theme: a deep-sea black timeline where each open thread ends in an anglerfish with a glowing lure." />
+            <img src="img/abyss.png" loading="lazy" alt="El tema Abyss: una línea de tiempo negra de mar profundo donde cada hilo abierto termina en un pez abisal con un señuelo brillante." />
           </div>
         </div>
       </div>
       <div class="theme-card">
         <h3>Gravemist <span class="pro-tag">Pro</span></h3>
-        <p>Fog and lantern light. Every open thread is a small ghost — its wail widens until you answer.</p>
+        <p>Niebla y luz de farol. Cada hilo abierto es un fantasmita — su lamento se abre más hasta que respondas.</p>
         <div class="shot">
           <div class="device">
-            <img src="img/gravemist.png" loading="lazy" alt="The Gravemist theme: a foggy lantern-lit timeline where each open thread ends in a small ghost." />
+            <img src="img/gravemist.png" loading="lazy" alt="El tema Gravemist: una línea de tiempo con niebla y luz de farol donde cada hilo abierto termina en un fantasmita." />
           </div>
         </div>
       </div>
@@ -2007,64 +2024,64 @@
 
 <section class="alt" id="privacy">
   <div class="wrap inner privacy">
-    <p class="kicker">Privacy</p>
-    <h2>Your threads stay on your device</h2>
+    <p class="kicker">Privacidad</p>
+    <h2>Tus hilos se quedan en tu dispositivo</h2>
     <p>
-      What you write in One Current is stored locally on your device — not on our servers.
-      Creating an account lets you back up your history to the cloud and share with your
-      psychologist using codes, but those features are opt-in. Your backup is encrypted
-      before it leaves your device. We have no ads, no analytics, and we never sell
-      your data.
+      Lo que escribes en One Current se guarda localmente en tu dispositivo — no en
+      nuestros servidores. Crear una cuenta te permite respaldar tu historial en la nube
+      y compartir con tu psicólogo mediante códigos, pero esas funciones son opcionales.
+      Tu respaldo se cifra antes de salir de tu dispositivo. No tenemos publicidad, ni
+      analítica, y nunca vendemos tus datos.
     </p>
     <p>
-      Share codes are one-time and expire in fourteen days. Your psychologist sees only
-      the threads you chose to include. You can export your full data as a file, and
-      delete your account and everything in it at any time from Settings.
+      Los códigos para compartir son de un solo uso y caducan en catorce días. Tu psicólogo
+      ve únicamente los hilos que elegiste incluir. Puedes exportar todos tus datos como
+      archivo, y borrar tu cuenta con todo lo que contiene cuando quieras, desde Ajustes.
     </p>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <h2>See your one current.</h2>
+    <h2>Mira tu única corriente.</h2>
     <div class="cta-row">
-      <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open One Current</a>
-      <button class="btn quiet" type="button" data-install>Add to your phone</button>
+      <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Abrir One Current</a>
+      <button class="btn quiet" type="button" data-install>Agregar a tu celular</button>
     </div>
-    <p class="small">Works on your phone and your desktop. Add it to your home screen and it opens like any app — still private, still yours.</p>
-    <p class="legal">One Current — a calm, private timeline of your life.</p>
+    <p class="small">Funciona en tu celular y en tu computador. Agrégala a tu pantalla de inicio y se abre como cualquier app — igual de privada, igual de tuya.</p>
+    <p class="legal">One Current — una línea de tiempo calmada y privada de tu vida.</p>
   </div>
 </footer>
 
 <div class="install-sheet" id="install-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="install-title">
   <div class="install-card">
-    <h3 id="install-title">Add One Current to your phone</h3>
+    <h3 id="install-title">Agrega One Current a tu celular</h3>
     <div data-install-ios hidden>
-      <p>One Current installs straight from Safari — no app store needed:</p>
+      <p>One Current se instala directo desde Safari — sin necesidad de tienda de apps:</p>
       <ol>
-        <li>Open <a href="https://nickyschranz.github.io/one-current-app/">the app</a> in <strong>Safari</strong>.</li>
-        <li>Tap the <strong>Share</strong> button
+        <li>Abre <a href="https://nickyschranz.github.io/one-current-app/">la app</a> en <strong>Safari</strong>.</li>
+        <li>Toca el botón <strong>Compartir</strong>
           <svg class="share-glyph" width="16" height="18" viewBox="0 0 16 18" aria-hidden="true"><path d="M8 1 v10 M4.5 4.5 L8 1 l3.5 3.5 M2 8 v7.5 h12 V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>.
         </li>
-        <li>Choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li>
+        <li>Elige <strong>Agregar a pantalla de inicio</strong> y luego <strong>Agregar</strong>.</li>
       </ol>
-      <p>It opens full screen with its own icon, and everything you write stays on your device.</p>
+      <p>Se abre en pantalla completa con su propio ícono, y todo lo que escribes se queda en tu dispositivo.</p>
     </div>
     <div data-install-generic hidden>
-      <p>One Current installs straight from your browser — no app store needed:</p>
+      <p>One Current se instala directo desde tu navegador — sin necesidad de tienda de apps:</p>
       <ol>
-        <li>Open <a href="https://nickyschranz.github.io/one-current-app/">the app</a> in your browser.</li>
-        <li>Open the browser menu (⋮ or the install icon in the address bar).</li>
-        <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
+        <li>Abre <a href="https://nickyschranz.github.io/one-current-app/">la app</a> en tu navegador.</li>
+        <li>Abre el menú del navegador (⋮ o el ícono de instalar en la barra de direcciones).</li>
+        <li>Elige <strong>Instalar app</strong> o <strong>Agregar a pantalla de inicio</strong>.</li>
       </ol>
-      <p>It opens in its own window with its own icon, and everything you write stays on your device.</p>
+      <p>Se abre en su propia ventana con su propio ícono, y todo lo que escribes se queda en tu dispositivo.</p>
     </div>
     <div data-install-standalone hidden>
-      <p>You are already using the installed app — One Current is on your home screen.</p>
+      <p>Ya estás usando la app instalada — One Current está en tu pantalla de inicio.</p>
     </div>
     <div class="row">
-      <button class="btn quiet" type="button" data-install-close>Close</button>
-      <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open the app</a>
+      <button class="btn quiet" type="button" data-install-close>Cerrar</button>
+      <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Abrir la app</a>
     </div>
   </div>
 </div>
@@ -2073,9 +2090,9 @@
   (function () {
     // Pricing tab switcher
     var plans = {
-      monthly:   { price: "€6",  note: "Billed monthly. Cancel anytime." },
-      biannual:  { price: "€5",  note: "€30 billed every 6 months. Cancel anytime." },
-      annual:    { price: "€4",  note: "€48 billed yearly. Cancel anytime." },
+      monthly:   { price: "€6",  note: "Facturado cada mes. Cancela cuando quieras." },
+      biannual:  { price: "€5",  note: "€30 facturados cada 6 meses. Cancela cuando quieras." },
+      annual:    { price: "€4",  note: "€48 facturados al año. Cancela cuando quieras." },
     };
     var priceEl = document.querySelector(".js-price");
     var noteEl  = document.querySelector(".js-price-note");

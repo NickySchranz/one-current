@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>One Current — the research behind the current</title>
+<meta
+  name="description"
+  content="Why a timeline you can touch: the published psychology behind One Current — visible gaps, externalized worries, calm play — and the working theory that ties them together."
+/>
+<meta property="og:title" content="One Current — the research behind the current" />
+<meta property="og:description" content="The published psychology behind One Current: visible gaps motivate, externalized worries quiet down, calm play keeps you coming back." />
+<meta property="og:type" content="article" />
+<link rel="icon" href="../icons/icon-192.png" />
+<link rel="manifest" href="../manifest.webmanifest" />
+<meta name="theme-color" content="#faf9f6" />
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png" />
+<style>
+  :root {
+    --bg: #faf9f6;
+    --bg-raised: #ffffff;
+    --ink: #26251f;
+    --ink-soft: #6b6a61;
+    --accent: #3f6f5f;
+    --accent-deep: #35604f;
+    --accent-soft: #e4ede9;
+    --gold: #dfb968;
+    --gold-deep: #b8934c;
+    --alarm: #b5654f;
+    --line: #e3e1d9;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 2px rgba(38, 37, 31, 0.06), 0 4px 14px rgba(38, 37, 31, 0.06);
+    --shadow-md: 0 2px 6px rgba(38, 37, 31, 0.08), 0 16px 40px rgba(38, 37, 31, 0.12);
+    --font-body: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
+      source-sans-pro, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 24px; }
+  section { scroll-margin-top: 84px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border: 0;
+    border-radius: var(--radius);
+    padding: 11px 22px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(38, 37, 31, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+  .btn:hover { background: var(--accent-deep); transform: translateY(-1px); }
+  .btn.quiet { background: var(--accent-soft); color: var(--accent-deep); box-shadow: none; }
+  .btn.quiet:hover { background: #d9e6e0; }
+
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(250, 249, 246, 0.82);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid rgba(227, 225, 217, 0.8);
+  }
+  header.site .bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .brand svg { display: block; }
+  nav.primary { display: flex; gap: 2px; margin-left: auto; margin-right: 6px; flex-wrap: nowrap; align-items: center; }
+  nav.primary a {
+    color: var(--ink-soft); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    padding: 7px 9px; border-radius: 8px; white-space: nowrap;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  nav.primary a:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
+  nav.primary a.here { color: var(--accent-deep); background: var(--accent-soft); }
+  header.site .btn { padding: 8px 16px; font-size: 0.88rem; }
+  @media (max-width: 860px) { nav.primary a:not(.here) { display: none; } }
+  @media (max-width: 560px) { nav.primary { display: none; } }
+
+  .hero-band { padding: 72px 0 8px; }
+  h1 { font-size: clamp(1.7rem, 4.2vw, 2.5rem); letter-spacing: -0.02em; margin: 0 0 14px; max-width: 720px; }
+  .lead { color: var(--ink-soft); font-size: 1.08rem; max-width: 640px; margin: 0 0 22px; }
+
+  section .inner { padding-top: 64px; padding-bottom: 64px; }
+  section.alt { background: var(--bg-raised); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  h2 { font-size: clamp(1.5rem, 3.2vw, 2rem); margin: 0 0 12px; letter-spacing: -0.018em; font-weight: 700; }
+  .kicker { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700; color: var(--accent); margin: 0 0 10px; }
+  .sub { color: var(--ink-soft); max-width: 640px; margin: 0 0 34px; font-size: 1.02rem; }
+  .prose { max-width: 680px; }
+  .prose p { margin: 0 0 16px; }
+  .prose p.evidence {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    border-left: 3px solid var(--accent-soft);
+    padding-left: 12px;
+    margin: -6px 0 20px;
+  }
+  .honest {
+    max-width: 680px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin: 22px 0 0;
+  }
+  section.alt .honest { background: var(--bg); }
+
+  figure.diagram {
+    margin: 34px auto;
+    max-width: 760px;
+    text-align: center;
+  }
+  figure.diagram svg { width: 100%; height: auto; display: block; overflow: hidden; }
+  figure.diagram figcaption { font-size: 0.82rem; color: var(--ink-soft); margin-top: 10px; }
+  .diag-label { font-size: 13px; fill: var(--ink-soft); font-family: var(--font-body); }
+  .diag-label.strong { fill: var(--ink); font-weight: 600; }
+  .diag-label.accent { fill: var(--accent-deep); font-weight: 600; }
+  .diag-label.gold { fill: var(--gold-deep); font-weight: 600; }
+  .diag-label.alarm { fill: var(--alarm); font-weight: 600; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; margin-top: 8px; }
+  .card { background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+  section.alt .card { background: var(--bg); box-shadow: none; }
+  .card h3 { margin: 0 0 8px; font-size: 1.02rem; letter-spacing: -0.01em; }
+  .card p { margin: 0; color: var(--ink-soft); font-size: 0.94rem; }
+
+  .idioms { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; max-width: 680px; }
+  .idioms span {
+    border: 1px solid var(--line);
+    background: var(--bg-raised);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 0.88rem;
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
+  section.alt .idioms span { background: var(--bg); }
+
+  .refs { max-width: 820px; }
+  .refs ol { padding-left: 20px; margin: 0; }
+  .refs li { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 8px; }
+  .refs a { word-break: break-word; }
+
+  footer { background: #22211c; color: #f4f2ea; margin-top: 0; }
+  footer .wrap { padding: 56px 24px; text-align: center; }
+  footer h2 { color: #f4f2ea; }
+  footer .small { color: #b9b6a9; font-size: 0.9rem; }
+  footer .legal { color: #8b887c; font-size: 0.8rem; margin-top: 26px; }
+  footer .btn.quiet { background: rgba(244, 242, 234, 0.12); color: #f4f2ea; }
+  .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 18px 0; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="./">
+      <svg width="33" height="22" viewBox="0 0 33 22" aria-hidden="true">
+        <path d="M2 15 H31" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M7 15 C11.5 15 10.5 6 16 6 C21.5 6 20.5 15 25 15" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="25" cy="15" r="3.2" fill="var(--accent)"/>
+      </svg>
+      <span class="brand-name">One Current</span>
+    </a>
+    <nav class="primary" aria-label="Sections">
+      <a href="./#what">What it is</a>
+      <a href="./#how">How it works</a>
+      <a href="./#therapists">Therapists</a>
+      <a class="here" href="research.html" aria-current="page">Research</a>
+    </nav>
+    <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open the app</a>
+  </div>
+</header>
+
+<div class="hero-band" id="top">
+  <div class="wrap">
+    <p class="kicker">The research</p>
+    <h1>Why a timeline you can touch</h1>
+    <p class="lead">
+      One Current draws what is on your mind as threads branching off your life's one
+      line — and lets you act on them. That design is not decoration. It sits on three
+      well-studied ideas from psychology and human–computer interaction. This page walks
+      through them in plain language, with the sources underneath.
+    </p>
+    <p class="lead" style="font-size: 0.95rem;">
+      One honest thing before anything else: One Current is <em>informed by</em> this
+      evidence. The app itself has not been through a clinical trial, and it is not a
+      treatment. Every claim below cites the study it comes from — including the ones
+      that complicate the story.
+    </p>
+  </div>
+</div>
+
+<section class="alt" id="split">
+  <div class="wrap inner">
+    <p class="kicker">Thread one</p>
+    <h2>A split you can see</h2>
+    <p class="sub">
+      The timeline's defining move — a thread visibly forking away from your main line —
+      is a picture of the most studied engine in the psychology of self-change.
+    </p>
+    <div class="prose">
+      <p>
+        Your mind runs a quiet comparison all day: the person you are being against the
+        person you intend to be. Psychologists call the difference a self-discrepancy,
+        and a long line of work shows the discrepancy itself — not vague guilt, not
+        willpower — is what moves people: we are motivated by the gap between our actual
+        path and a possible one we can still picture.
+      </p>
+      <p class="evidence">
+        Higgins (1987), Psychological Review — self-discrepancy theory · Markus &amp; Nurius
+        (1986), American Psychologist — possible selves.
+      </p>
+      <p>
+        But there is a catch: imagining the better path alone does little. What works in
+        randomized trials is holding the desired future and the present obstacle in view
+        <em>at the same time</em> — a technique called mental contrasting. And thinking
+        about the path not taken is not brooding: research on counterfactual thought finds
+        its main day-job is behavior regulation — "what might have been" quietly becomes
+        "what I will do next."
+      </p>
+      <p class="evidence">
+        Duckworth, Kirby, Gollwitzer &amp; Oettingen (2013) and Oettingen's mental-contrasting
+        programme — RCTs across health and study behavior · Epstude &amp; Roese (2008),
+        Personality and Social Psychology Review — the functional theory of counterfactual
+        thinking.
+      </p>
+      <p>
+        One Current draws exactly this: your intended line and the thread pulling away
+        from it, on one canvas, at the same time. And when a thread completes, it curves
+        back and rejoins your line — which matters more than it looks. A study of how
+        apps represent broken progress found the drawing itself changes behavior:
+        breaks shown as repairable keep people going; breaks shown as final make them
+        quit. Nothing in One Current is drawn as final.
+      </p>
+      <p class="evidence">
+        Silverman &amp; Barasch (2023), Journal of Consumer Research — how representing a
+        break as repairable (vs. permanent) changes whether people continue.
+      </p>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 250" role="img" aria-label="Diagram: the brain's gap detector compares the intended path with the actual path; One Current draws the same gap as a thread forking off a timeline and merging back.">
+        <!-- head profile -->
+        <path d="M150 218 C96 218 62 178 64 132 C66 84 104 44 156 42 C204 40 244 74 250 120 C253 143 246 158 252 172 C256 181 264 186 262 192 C259 199 244 197 240 202 C236 208 240 218 232 222 C222 227 208 219 196 221" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <!-- intended path (gold, dashed) and actual path (accent) diverging -->
+        <path d="M96 150 C120 138 150 122 196 106" stroke="var(--gold)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-dasharray="6 6" aria-hidden="true"/>
+        <path d="M96 150 C124 150 156 152 196 164" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <!-- comparator bracket + node -->
+        <path d="M206 108 C214 122 214 148 206 162" stroke="var(--alarm)" stroke-width="2" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <circle cx="222" cy="135" r="7" fill="none" stroke="var(--alarm)" stroke-width="2.4" aria-hidden="true"/>
+        <text x="118" y="96" class="diag-label gold">the path you intend</text>
+        <text x="120" y="188" class="diag-label accent">the path today took</text>
+        <text x="152" y="139" class="diag-label alarm">the gap you feel</text>
+
+        <!-- arrow between the two panels -->
+        <path d="M300 130 H366 M354 120 L368 130 L354 140" stroke="var(--ink-soft)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"/>
+        <text x="296" y="112" class="diag-label">drawn, it becomes</text>
+
+        <!-- the app's fork-and-merge glyph -->
+        <path d="M410 150 H730" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" fill="none" aria-hidden="true"/>
+        <path d="M452 150 C486 150 480 92 522 92 L600 92 C642 92 636 150 668 150" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <circle cx="452" cy="150" r="4.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2" aria-hidden="true"/>
+        <circle cx="668" cy="150" r="5.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2.4" aria-hidden="true"/>
+        <circle cx="712" cy="150" r="6" fill="var(--accent)" aria-hidden="true"/>
+        <text x="500" y="76" class="diag-label accent">a thread you can answer</text>
+        <text x="618" y="180" class="diag-label strong">…and merge back</text>
+        <text x="694" y="128" class="diag-label">Now</text>
+      </svg>
+      <figcaption>A simplified picture: the gap your mind computes anyway, made visible — with a way back drawn in.</figcaption>
+    </figure>
+
+    <div class="honest">
+      Honest note: mental contrasting and self-discrepancy have strong trial and theory
+      support; the "repairable break" finding comes from consumer research on streak-style
+      logs, and we extend it to timelines by analogy.
+    </div>
+  </div>
+</section>
+
+<section id="external">
+  <div class="wrap inner">
+    <p class="kicker">Thread two</p>
+    <h2>Out of the head, onto the line</h2>
+    <p class="sub">
+      A worry you are holding is a process. A worry you have drawn is an object. Objects
+      can be named, moved, set down, and changed — and there is converging evidence that
+      each of those acts changes how the worry feels.
+    </p>
+    <div class="prose">
+      <p>
+        Start with naming. In brain-imaging work, simply putting a feeling into words
+        dampens the amygdala — the brain's alarm — while recruiting the prefrontal region
+        that does the labeling. In a clinical experiment with spider phobia, people who
+        labeled their fear during exposure showed calmer physiology a week later than
+        people who reappraised or distracted. Naming is not nothing; it is regulation.
+      </p>
+      <p class="evidence">
+        Lieberman et al. (2007), Psychological Science — affect labeling and the amygdala ·
+        Kircanski, Lieberman &amp; Craske (2012), Psychological Science — labeling during
+        exposure.
+      </p>
+      <p>
+        Then externalize. A classic problem: unfinished business intrudes — the mind
+        rehearses open loops uninvited. But experiments show the intrusions stop when the
+        loop is written down as a concrete plan, <em>even though nothing has been done
+        yet</em>. The mind does not need the task finished. It needs the task held
+        somewhere it trusts. That is what a thread on your timeline is: an open loop the
+        app is now holding, so your head does not have to.
+      </p>
+      <p class="evidence">
+        Masicampo &amp; Baumeister (2011), Journal of Personality and Social Psychology —
+        "Consider it done!" · Risko &amp; Gilbert (2016), Trends in Cognitive Sciences —
+        cognitive offloading · Clark &amp; Chalmers (1998), Analysis — the extended mind.
+      </p>
+      <p>
+        Then make it a thing apart from you. Narrative therapy built a whole practice on
+        one sentence — "the person is not the problem; the problem is the problem" —
+        because a problem that stands apart from you is one you can have a relationship
+        with, instead of an identity. And once it is a thing, you can act on it: we
+        rotate puzzle pieces in the world because it is cheaper than rotating them in the
+        head; in one striking experiment, people who wrote a thought on paper and threw
+        the paper away were measurably less influenced by that thought afterwards. A 2024
+        VR study took this literally — participants grabbed object-versions of their
+        negative thoughts and sorted or discarded them, and reported less negative affect
+        and more distance from the thoughts.
+      </p>
+      <p class="evidence">
+        White &amp; Epston (1990) — externalizing conversations · Kirsh &amp; Maglio (1994),
+        Cognitive Science — epistemic actions · Briñol, Gascó, Petty &amp; Horcajo (2013),
+        Psychological Science — treating thoughts as material objects · "Mind Mansion",
+        DIS 2024 — manipulating thought-objects in VR.
+      </p>
+      <p>
+        Why draw it, specifically? Because imagery has privileged access to emotion:
+        pictures move feeling more than sentences do, in both directions — and the
+        best-tested consequence is that <em>changing</em> a distressing image changes the
+        distress (imagery-rescripting trials show large effects). Finally, the thread you
+        can act on feeds the variable that tracks anxiety most reliably across disorders:
+        the sense that you have some control. In a meta-analysis of 51 studies, low
+        perceived control ran through every anxiety disorder examined.
+      </p>
+      <p class="evidence">
+        Holmes &amp; Mathews (2010), Clinical Psychology Review — imagery and emotion ·
+        Morina, Lancee &amp; Arntz (2017), JBTEP — imagery rescripting meta-analysis ·
+        Gallagher, Bentley &amp; Barlow (2014), Cognitive Therapy and Research — perceived
+        control and anxiety, n = 11,218.
+      </p>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 260" role="img" aria-label="Diagram: naming a worry quiets the brain's alarm, and the worry leaves the head to become a thread on the timeline.">
+        <!-- head -->
+        <path d="M170 228 C112 228 76 186 78 138 C80 88 120 46 174 44 C224 42 266 78 272 126 C275 150 268 165 274 180 C278 189 286 194 284 200 C281 207 266 205 262 210 C258 216 262 228 254 232 C244 237 228 229 216 231" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <!-- alarm (amygdala) ringing -->
+        <circle cx="176" cy="150" r="9" fill="var(--alarm)" opacity="0.85" aria-hidden="true"/>
+        <path d="M156 132 C152 126 150 122 149 116 M196 132 C200 126 202 122 203 116 M176 128 C176 121 176 117 176 110" stroke="var(--alarm)" stroke-width="2" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <text x="118" y="184" class="diag-label alarm">the alarm, ringing</text>
+        <!-- naming band (front of head) -->
+        <path d="M236 96 C248 104 254 116 256 128" stroke="var(--accent)" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.5" aria-hidden="true"/>
+        <text x="216" y="82" class="diag-label accent">naming, here</text>
+        <!-- arrow: name it -->
+        <path d="M320 140 H396 M384 130 L398 140 L384 150" stroke="var(--ink-soft)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"/>
+        <text x="318" y="122" class="diag-label strong">"name it"</text>
+        <!-- calmed head -->
+        <path d="M520 228 C462 228 426 186 428 138 C430 88 470 46 524 44 C574 42 616 78 622 126 C625 150 618 165 624 180 C628 189 636 194 634 200 C631 207 616 205 612 210 C608 216 612 228 604 232 C594 237 578 229 566 231" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <circle cx="526" cy="150" r="5.5" fill="var(--alarm)" opacity="0.35" aria-hidden="true"/>
+        <text x="470" y="184" class="diag-label">quieter already</text>
+        <!-- the worry leaving the head as a thread -->
+        <path d="M560 120 C610 96 650 96 700 112" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-dasharray="1 7" aria-hidden="true"/>
+        <path d="M640 168 H744" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" fill="none" aria-hidden="true"/>
+        <path d="M656 168 C676 168 672 132 700 132 L716 132" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <circle cx="716" cy="132" r="5" fill="var(--accent)" aria-hidden="true"/>
+        <text x="576" y="252" class="diag-label accent">now a thread the app holds</text>
+      </svg>
+      <figcaption>A simplified picture: labeling recruits the brain's regulator, and an externalized loop stops asking to be rehearsed.</figcaption>
+    </figure>
+
+    <div class="honest">
+      Honest notes: the "consider it done" studies externalized tasks and plans, not
+      free-floating anxieties — the extension to worries is an inference. The
+      thoughts-as-objects experiments are suggestive rather than settled, and the VR
+      study was small and single-session. Naming and offloading are the strong links;
+      manipulating is the promising one.
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="play">
+  <div class="wrap inner">
+    <p class="kicker">Thread three</p>
+    <h2>Play that lowers the guard</h2>
+    <p class="sub">
+      Pip, the bonk, the charge meter — the playful layer is engineered from what the
+      trials actually support, and it deliberately leaves out what they warn against.
+    </p>
+    <div class="prose">
+      <p>
+        Games can carry real interventions. In a randomized trial, an anxiety-regulation
+        game for children matched a gold-standard CBT program at follow-up; a decade
+        earlier, a fantasy game delivering CBT proved non-inferior to face-to-face care
+        for depressed adolescents in the BMJ. The form works.
+      </p>
+      <p class="evidence">
+        Schoneveld, Lichtwarck-Aschoff &amp; Granic (2018), Prevention Science — MindLight
+        vs. CBT · Merry et al. (2012), BMJ — SPARX non-inferiority trial.
+      </p>
+      <p>
+        But the honest reading of the meta-analyses is humbling: game elements by
+        themselves are not the medicine. Across 38 studies, gamified mental-health apps
+        did not outperform plain ones on symptoms. Where gamification earns its keep is
+        adherence — in one three-arm RCT, the gamified app had roughly four times the
+        odds of keeping people on protocol — and adherence matters because engaging with
+        reflection at all is what predicts improvement.
+      </p>
+      <p class="evidence">
+        Six et al. (2021), JMIR Mental Health — meta-analysis, n = 8,110 · Litvin et al.
+        (2020), PLOS ONE — eQuoo RCT, ~4× adherence · Bakker &amp; Rickard (2018), Journal of
+        Affective Disorders — engagement with mood monitoring predicts gains.
+      </p>
+      <p>
+        The flavor of play matters too. Calm, casual play reduces measured state anxiety
+        — heart rate, blood pressure, self-report — across multiple trials and a
+        systematic review. Gentle, good-natured playfulness regulates negative emotion
+        better than sharp humor, and mild amusement measurably speeds the body's recovery
+        after anxiety. A small creature who soothes your worries — never mocks them — is
+        that finding, drawn.
+      </p>
+      <p class="evidence">
+        Russoniello et al. (2009) · Fish, Russoniello &amp; O'Brien (2014), Games for Health ·
+        Pine et al. (2020), Games for Health — review · Samson &amp; Gross (2012), Cognition
+        and Emotion · Fredrickson et al. (2000), Motivation and Emotion — the undoing
+        effect.
+      </p>
+      <p>
+        And what is missing from One Current is missing on purpose. Leaderboards and
+        badges eroded intrinsic motivation over a semester in a controlled comparison.
+        Streaks correlate with obligation and fear of missing out in adolescents. So
+        there are no leaderboards, no streaks to lose, nothing that punishes a bad day —
+        the super-bonk meter only ever fills, and a thread only yields bonk-charge once
+        an hour, so the reward stays tied to real reflection instead of grinding.
+      </p>
+      <p class="evidence">
+        Hanus &amp; Fox (2015), Computers &amp; Education — leaderboards backfire · van Essen &amp;
+        Van Ouytsel (2023) — streaks, obligation and FOMO · Cheng et al. (2019), JMIR
+        Mental Health — critique of pure extrinsic-reward loops.
+      </p>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 250" role="img" aria-label="Diagram: One Current's gentle loop — answer a thread, receive a small reward, return willingly — beside a crossed-out pressure loop of streaks and obligation.">
+        <!-- gentle loop -->
+        <circle cx="200" cy="122" r="84" fill="none" stroke="var(--accent-soft)" stroke-width="2.5" aria-hidden="true"/>
+        <path d="M200 38 A84 84 0 0 1 273 80 M268 62 L274 81 L255 83" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"/>
+        <path d="M273 164 A84 84 0 0 1 127 164 M148 158 L127 165 L133 184" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"/>
+        <path d="M127 80 A84 84 0 0 1 200 38 M180 42 L201 38 L197 58" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"/>
+        <circle cx="200" cy="38" r="17" fill="var(--accent-soft)" aria-hidden="true"/>
+        <circle cx="273" cy="164" r="17" fill="#f5e9cf" aria-hidden="true"/>
+        <circle cx="127" cy="164" r="17" fill="var(--accent-soft)" aria-hidden="true"/>
+        <text x="160" y="18" class="diag-label strong">answer a thread</text>
+        <text x="252" y="204" class="diag-label gold">a little gold</text>
+        <text x="60" y="204" class="diag-label accent">return, willingly</text>
+        <text x="152" y="128" class="diag-label">the gentle loop</text>
+
+        <!-- pressure loop, crossed out -->
+        <g opacity="0.5" aria-hidden="true">
+          <circle cx="560" cy="122" r="76" fill="none" stroke="var(--line)" stroke-width="2.5"/>
+          <path d="M560 46 L568 60 L552 60 Z" fill="var(--ink-soft)"/>
+          <text x="512" y="30" class="diag-label">keep the streak</text>
+          <text x="626" y="150" class="diag-label">fear of losing it</text>
+          <text x="452" y="216" class="diag-label">open the app out of duty</text>
+        </g>
+        <path d="M492 60 L630 186 M630 60 L492 186" stroke="var(--alarm)" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"/>
+        <text x="522" y="243" class="diag-label alarm">not in One Current</text>
+      </svg>
+      <figcaption>A simplified picture: rewards for answering, nothing to lose for resting. The pressure loop is left out, with citations for why.</figcaption>
+    </figure>
+
+    <div class="honest">
+      Honest notes: most game trials are in children and adolescents; several strong
+      studies found control games improved anxiety too; and one review found no reliable
+      adherence benefit from gamification at all — so the engagement claim is "evidence
+      suggests," not "evidence proves."
+    </div>
+  </div>
+</section>
+
+<section id="sweetspot">
+  <div class="wrap inner">
+    <p class="kicker">The cross-reference</p>
+    <h2>Where the three threads meet</h2>
+    <p class="sub">
+      Each literature on its own is incomplete. Read together, they describe one design —
+      and it is this one.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <h3>Seeing motivates, but does not soothe</h3>
+        <p>
+          The visible gap between your line and your thread is the engine of change — but
+          a gap you can only stare at can also just sit there and hum.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Holding soothes, but does not sustain</h3>
+        <p>
+          Naming and externalizing quiet the alarm — but a journal you stop opening stops
+          working. The evidence says the hard part is coming back.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Play sustains, but means nothing alone</h3>
+        <p>
+          Game loops keep people returning — and the meta-analyses show that without real
+          reflection underneath, that is all they do.
+        </p>
+      </div>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 300" role="img" aria-label="Diagram: three overlapping circles labeled see, hold, and play; One Current's fork-and-merge timeline sits in the centre where all three overlap.">
+        <circle cx="320" cy="120" r="100" fill="var(--accent-soft)" opacity="0.55" aria-hidden="true"/>
+        <circle cx="440" cy="120" r="100" fill="#f5e9cf" opacity="0.6" aria-hidden="true"/>
+        <circle cx="380" cy="196" r="100" fill="#e7e3f2" opacity="0.6" aria-hidden="true"/>
+        <text x="238" y="82" class="diag-label accent">SEE the gap</text>
+        <text x="452" y="82" class="diag-label gold">HOLD it outside you</text>
+        <text x="330" y="286" class="diag-label" style="fill:#6b5fa3; font-weight:600;">PLAY your way back</text>
+        <!-- centre glyph -->
+        <g aria-hidden="true">
+          <path d="M330 152 H436" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M344 152 C360 152 356 128 376 128 L396 128 C414 128 410 152 424 152" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <circle cx="430" cy="152" r="4.5" fill="var(--accent)"/>
+        </g>
+        <text x="322" y="180" class="diag-label strong">One Current</text>
+      </svg>
+      <figcaption>The sweet spot: a gap you can see, drawn as objects you can hold, inside a loop gentle enough to return to.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>
+        That is the argument for this design in one sentence: the timeline puts the
+        motivating gap on screen; the threads make each worry a nameable, holdable,
+        answerable object; and the playful layer — a companion, a soothing bonk, a meter
+        that only fills — keeps you returning to the part that actually helps, which is
+        the minute of honest reflection.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="theory">
+  <div class="wrap inner">
+    <p class="kicker">The working theory</p>
+    <h2>The Graspability Hypothesis</h2>
+    <p class="sub">
+      Cross-referencing these literatures points at one idea that has been sitting in
+      plain sight — inside the language you already use about your own mind.
+    </p>
+    <div class="prose">
+      <p>
+        Listen to how people talk about their inner life:
+      </p>
+    </div>
+    <div class="idioms" aria-label="Everyday idioms about handling thoughts">
+      <span>get a grip</span>
+      <span>hold that thought</span>
+      <span>put it down</span>
+      <span>let it go</span>
+      <span>carry a worry</span>
+      <span>handle it</span>
+      <span>drop it</span>
+      <span>pick it back up</span>
+    </div>
+    <div class="prose">
+      <p>
+        Every one of those is a hand word. Cognitive linguists showed decades ago that we
+        understand abstract things through physical metaphors — and the metaphor the
+        whole species picked for thoughts is <em>objects handled by hands</em>. The
+        research above suggests this is not just a manner of speaking. Naming a worry
+        (getting a grip) calms the alarm. Writing it down (putting it down) stops the
+        rehearsal. Acting on its written form (throwing it away) weakens it. Feeling able
+        to act on it at all tracks anxiety across every disorder measured.
+      </p>
+      <p class="evidence">
+        Lakoff &amp; Johnson (1980), Metaphors We Live By — conceptual metaphor · plus the
+        studies cited in threads one and two.
+      </p>
+      <p>
+        So here is the hypothesis One Current is built on, stated plainly:
+      </p>
+      <p style="font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; border-left: 3px solid var(--gold); padding-left: 16px;">
+        A feeling becomes regulable roughly in proportion to how graspable its
+        representation is. The mind manages what the hand could manage — so give the
+        mind a hand-shaped interface to itself.
+      </p>
+      <p>
+        The idioms were the clue, sitting under everyone's noses: language has always
+        described emotional regulation as object handling, and each verb in that
+        vocabulary turns out to have its own supporting literature. One Current simply
+        takes the idioms literally — it gives every worry a body you can name, a line you
+        can drag, a weight you can set down, and a way home you can watch happen.
+      </p>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 270" role="img" aria-label="Diagram: a hand grasping a thread that runs back into a head, ringed by everyday idioms about handling thoughts — the oldest interface the mind has.">
+        <!-- head -->
+        <path d="M232 232 C176 232 142 192 144 146 C146 98 184 58 236 56 C284 54 324 88 330 134 C333 157 326 172 332 186 C336 195 344 200 342 206 C339 213 324 211 320 216 C316 222 320 232 312 236 C302 241 288 233 276 235" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <!-- thread from head to hand -->
+        <path d="M300 120 C380 84 440 92 500 128 C516 138 526 146 538 152" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round" aria-hidden="true"/>
+        <circle cx="300" cy="120" r="4" fill="var(--accent)" aria-hidden="true"/>
+        <!-- hand grasping the thread -->
+        <g stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M560 210 C548 196 542 178 546 162 C549 150 558 144 566 148"/>
+          <path d="M566 148 C562 138 566 130 574 130 C582 130 586 138 586 146"/>
+          <path d="M586 146 C586 134 592 128 600 130 C608 132 610 140 609 148"/>
+          <path d="M609 148 C611 138 618 134 625 138 C632 142 632 150 630 158"/>
+          <path d="M630 158 C638 154 645 158 646 166 C648 178 638 196 624 208 C606 223 578 226 560 210"/>
+        </g>
+        <!-- return arc: hand back to head -->
+        <path d="M560 226 C460 258 330 252 260 240 M280 246 L258 240 L266 226" stroke="var(--ink-soft)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 7" aria-hidden="true"/>
+        <text x="352" y="252" class="diag-label">and the feeling follows the hand</text>
+        <text x="384" y="72" class="diag-label accent">the worry, made graspable</text>
+        <!-- idiom ring -->
+        <text x="80" y="40" class="diag-label">"get a grip"</text>
+        <text x="600" y="40" class="diag-label">"hold that thought"</text>
+        <text x="668" y="110" class="diag-label">"let it go"</text>
+        <text x="64" y="120" class="diag-label">"carry a worry"</text>
+        <text x="90" y="266" class="diag-label">"put it down"</text>
+        <text x="646" y="248" class="diag-label">"handle it"</text>
+      </svg>
+      <figcaption>A simplified picture: the hand is the mind's oldest interface for control — One Current builds the mind a hand-shaped mirror.</figcaption>
+    </figure>
+
+    <div class="honest">
+      To be clear about its status: this is One Current's working theory. Every link in
+      the chain has published evidence behind it, cited above. The chain as a whole —
+      draw, grasp, act, settle — has not been tested end to end by anyone. This app is
+      its test bench, not its proof.
+    </div>
+  </div>
+</section>
+
+<section id="references">
+  <div class="wrap inner refs">
+    <p class="kicker">Sources</p>
+    <h2>References</h2>
+    <p class="sub">Every study named on this page, with a link. Where a finding is contested or preliminary, the sections above say so.</p>
+    <ol>
+      <li>Higgins, E.T. (1987). Self-discrepancy: a theory relating self and affect. <em>Psychological Review</em>.</li>
+      <li>Markus, H. &amp; Nurius, P. (1986). Possible selves. <em>American Psychologist</em>.</li>
+      <li>Duckworth, Kirby, Gollwitzer &amp; Oettingen (2013). Mental contrasting with implementation intentions. <a href="https://www.psy.uni-hamburg.de/de/arbeitsbereiche/paedagogische-psychologie-und-motivation/personen/oettingen-gabriele/dokumente/duckworth-kirby-oettingen-2013.pdf">PDF</a></li>
+      <li>Epstude, K. &amp; Roese, N. (2008). The functional theory of counterfactual thinking. <em>PSPR</em>. <a href="https://journals.sagepub.com/doi/10.1177/1088868308316091">Link</a></li>
+      <li>Silverman, J. &amp; Barasch, A. (2023). On or off track: how (broken) streaks affect consumer decisions. <em>Journal of Consumer Research</em>. <a href="https://academic.oup.com/jcr/article-abstract/49/6/1095/6623414">Link</a></li>
+      <li>Lieberman, M. et al. (2007). Putting feelings into words. <em>Psychological Science</em>. <a href="https://journals.sagepub.com/doi/10.1111/j.1467-9280.2007.01916.x">Link</a></li>
+      <li>Kircanski, K., Lieberman, M. &amp; Craske, M. (2012). Feelings into words: contributions of language to exposure therapy. <em>Psychological Science</em>. <a href="https://journals.sagepub.com/doi/abs/10.1177/0956797612443830">Link</a></li>
+      <li>Masicampo, E.J. &amp; Baumeister, R. (2011). Consider it done! Plan making eliminates the Zeigarnik effect. <em>JPSP</em>. <a href="https://users.wfu.edu/masicaej/MasicampoBaumeister2011JPSP.pdf">PDF</a></li>
+      <li>Risko, E. &amp; Gilbert, S. (2016). Cognitive offloading. <em>Trends in Cognitive Sciences</em>. <a href="https://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613(16)30098-5">Link</a></li>
+      <li>Clark, A. &amp; Chalmers, D. (1998). The extended mind. <em>Analysis</em>. <a href="https://academic.oup.com/analysis/article-abstract/58/1/7/153111">Link</a></li>
+      <li>White, M. &amp; Epston, D. (1990). <em>Narrative Means to Therapeutic Ends</em>. W.W. Norton.</li>
+      <li>Vromans, L. &amp; Schweitzer, R. (2011). Narrative therapy for adults with major depression. <em>Psychotherapy Research</em>.</li>
+      <li>Kirsh, D. &amp; Maglio, P. (1994). On distinguishing epistemic from pragmatic action. <em>Cognitive Science</em>. <a href="https://onlinelibrary.wiley.com/doi/10.1207/s15516709cog1804_1">Link</a></li>
+      <li>Kirsh, D. (2010). Thinking with external representations. <em>AI &amp; Society</em>. <a href="https://mechanism.ucsd.edu/bill/teaching/F12/cs200/Readings/kirsh.thinkingwithexternalrepresentations.2010.pdf">PDF</a></li>
+      <li>Briñol, P., Gascó, M., Petty, R. &amp; Horcajo, J. (2013). Treating thoughts as material objects. <em>Psychological Science</em>. <a href="https://journals.sagepub.com/doi/abs/10.1177/0956797612449176">Link</a></li>
+      <li>Seiler, Schäfer et al. (2024). Mind Mansion: manipulating negative thoughts in virtual reality. <em>DIS 2024</em>. <a href="https://dl.acm.org/doi/10.1145/3643834.3661557">Link</a></li>
+      <li>Holmes, E. &amp; Mathews, A. (2010). Mental imagery in emotion and emotional disorders. <em>Clinical Psychology Review</em>.</li>
+      <li>Morina, N., Lancee, J. &amp; Arntz, A. (2017). Imagery rescripting: a meta-analysis. <em>JBTEP</em>. <a href="https://pubmed.ncbi.nlm.nih.gov/27855298/">Link</a></li>
+      <li>Gallagher, M., Bentley, K. &amp; Barlow, D. (2014). Perceived control and vulnerability to anxiety disorders: a meta-analytic review. <em>Cognitive Therapy and Research</em>. <a href="https://link.springer.com/article/10.1007/s10608-014-9624-x">Link</a></li>
+      <li>Li, I., Dey, A. &amp; Forlizzi, J. (2010). A stage-based model of personal informatics systems. <em>CHI</em>. <a href="https://dl.acm.org/doi/10.1145/1753326.1753409">Link</a></li>
+      <li>Schoneveld, E., Lichtwarck-Aschoff, A. &amp; Granic, I. (2018). Preventing childhood anxiety disorders: MindLight vs. CBT. <em>Prevention Science</em>. <a href="https://link.springer.com/article/10.1007/s11121-017-0843-8">Link</a></li>
+      <li>Merry, S. et al. (2012). The effectiveness of SPARX. <em>BMJ</em>.</li>
+      <li>Six, S. et al. (2021). Can gamification improve mental health? A meta-analysis. <em>JMIR Mental Health</em>. <a href="https://mental.jmir.org/2021/11/e32199">Link</a></li>
+      <li>Litvin, S. et al. (2020). Gamification as an approach to improve resilience and reduce attrition (eQuoo RCT). <em>PLOS ONE</em>. <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0237220">Link</a></li>
+      <li>Bakker, D. &amp; Rickard, N. (2018). Engagement in mobile phone app for self-monitoring of emotional wellbeing predicts changes in mental health (MoodPrism). <em>Journal of Affective Disorders</em>.</li>
+      <li>Brown, M. et al. (2016). Gamification and adherence to web-based mental health interventions: a systematic review. <em>JMIR Mental Health</em>. <a href="https://pubmed.ncbi.nlm.nih.gov/27558893/">Link</a></li>
+      <li>Cheng, V. et al. (2019). Gamification in apps and technologies for improving mental health and well-being. <em>JMIR Mental Health</em>. <a href="https://mental.jmir.org/2019/6/e13717/">Link</a></li>
+      <li>Russoniello, C., O'Brien, K. &amp; Parks, J. (2009). The effectiveness of casual video games in improving mood and decreasing stress. <em>J. CyberTherapy &amp; Rehabilitation</em>.</li>
+      <li>Fish, M., Russoniello, C. &amp; O'Brien, K. (2014). Casual video game play and anxiety. <em>Games for Health Journal</em>. <a href="https://pubmed.ncbi.nlm.nih.gov/26192483/">Link</a></li>
+      <li>Pine, R. et al. (2020). Casual video games for anxiety, depression, stress and low mood: a systematic review. <em>Games for Health Journal</em>. <a href="https://journals.sagepub.com/doi/10.1089/g4h.2019.0132">Link</a></li>
+      <li>Hanus, M. &amp; Fox, J. (2015). Assessing the effects of gamification in the classroom. <em>Computers &amp; Education</em>.</li>
+      <li>van Essen, C. &amp; Van Ouytsel, J. (2023). Snapchat streaks, problematic smartphone use and FOMO. <em>Telematics and Informatics Reports</em>. <a href="https://www.sciencedirect.com/science/article/pii/S2772503023000476">Link</a></li>
+      <li>Samson, A. &amp; Gross, J. (2012). Humour as emotion regulation. <em>Cognition and Emotion</em>.</li>
+      <li>Fredrickson, B. et al. (2000). The undoing effect of positive emotions. <em>Motivation and Emotion</em>. · Fredrickson (2001). Broaden-and-build. <em>American Psychologist</em>.</li>
+      <li>Lakoff, G. &amp; Johnson, M. (1980). <em>Metaphors We Live By</em>. University of Chicago Press.</li>
+    </ol>
+    <div class="honest" style="margin-top: 28px;">
+      One Current is a reflection tool, not a medical device or a therapy. If worry or
+      anxiety is heavy in your life, a human professional is the right next thread — the
+      app even has a button for saying so. Nothing here claims the app itself has been
+      clinically tested; it claims the app was built carefully on work that has been.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h2>See your one current.</h2>
+    <div class="cta-row">
+      <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open One Current</a>
+      <a class="btn quiet" href="./">Back to the main page</a>
+    </div>
+    <p class="small">Works on your phone and your desktop. Your threads stay on your device.</p>
+    <p class="legal">One Current — a calm, private timeline of your life.</p>
+  </div>
+</footer>
+
+</body>
+</html>

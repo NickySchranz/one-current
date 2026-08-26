@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>One Current — is the timeline confusing? A design study</title>
+<meta
+  name="description"
+  content="An internal design study: whether One Current's split timeline is legible to lay users, what the evidence says, and five alternative representations that keep every metric."
+/>
+<link rel="icon" href="../icons/icon-192.png" />
+<meta name="theme-color" content="#faf9f6" />
+<style>
+  :root {
+    --bg: #faf9f6;
+    --bg-raised: #ffffff;
+    --ink: #26251f;
+    --ink-soft: #6b6a61;
+    --accent: #3f6f5f;
+    --accent-deep: #35604f;
+    --accent-soft: #e4ede9;
+    --gold: #dfb968;
+    --gold-deep: #b8934c;
+    --alarm: #b5654f;
+    --line: #e3e1d9;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 2px rgba(38, 37, 31, 0.06), 0 4px 14px rgba(38, 37, 31, 0.06);
+    --font-body: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
+      source-sans-pro, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); line-height: 1.6; font-size: 17px;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 24px; }
+  section { scroll-margin-top: 84px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--accent); color: #fff; text-decoration: none; border: 0;
+    border-radius: var(--radius); padding: 11px 22px; font-weight: 600;
+    font-size: 0.95rem; white-space: nowrap; font-family: inherit; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(38, 37, 31, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+  .btn:hover { background: var(--accent-deep); transform: translateY(-1px); }
+  .btn.quiet { background: var(--accent-soft); color: var(--accent-deep); box-shadow: none; }
+
+  header.site {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(250, 249, 246, 0.82);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid rgba(227, 225, 217, 0.8);
+  }
+  header.site .bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .brand svg { display: block; }
+  nav.primary { display: flex; gap: 2px; margin-left: auto; margin-right: 6px; align-items: center; }
+  nav.primary a {
+    color: var(--ink-soft); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    padding: 7px 9px; border-radius: 8px; white-space: nowrap;
+  }
+  nav.primary a:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
+  nav.primary a.here { color: var(--accent-deep); background: var(--accent-soft); }
+  header.site .btn { padding: 8px 16px; font-size: 0.88rem; }
+  @media (max-width: 860px) { nav.primary a:not(.here) { display: none; } }
+  @media (max-width: 560px) { nav.primary { display: none; } }
+
+  .hero-band { padding: 64px 0 8px; }
+  h1 { font-size: clamp(1.7rem, 4.2vw, 2.4rem); letter-spacing: -0.02em; margin: 0 0 14px; max-width: 760px; }
+  .lead { color: var(--ink-soft); font-size: 1.06rem; max-width: 660px; margin: 0 0 20px; }
+
+  section .inner { padding-top: 56px; padding-bottom: 56px; }
+  section.alt { background: var(--bg-raised); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  h2 { font-size: clamp(1.4rem, 3vw, 1.85rem); margin: 0 0 12px; letter-spacing: -0.018em; font-weight: 700; }
+  h3 { font-size: 1.06rem; margin: 30px 0 8px; letter-spacing: -0.01em; }
+  .kicker { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700; color: var(--accent); margin: 0 0 10px; }
+  .sub { color: var(--ink-soft); max-width: 660px; margin: 0 0 28px; font-size: 1.01rem; }
+  .prose { max-width: 700px; }
+  .prose p { margin: 0 0 16px; }
+  .prose ul, .prose ol { max-width: 700px; padding-left: 22px; }
+  .prose li { margin-bottom: 10px; }
+
+  /* evidence grade badges */
+  .grade {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 999px; vertical-align: 1px;
+    white-space: nowrap;
+  }
+  .g-strong { background: #dfeae4; color: #2f5a4a; }
+  .g-lab { background: #e7e9f2; color: #454b73; }
+  .g-review { background: #efe7f2; color: #5f4570; }
+  .g-soft { background: #f5ecdc; color: #856420; }
+  .g-weak { background: #f4e3de; color: #8c4433; }
+  .cite { font-size: 0.84rem; color: var(--ink-soft); }
+  .cite a { word-break: break-word; }
+
+  .callout {
+    max-width: 700px; background: var(--bg-raised); border: 1px solid var(--line);
+    border-left: 3px solid var(--gold); border-radius: var(--radius);
+    padding: 14px 18px; color: var(--ink-soft); font-size: 0.93rem; margin: 20px 0;
+  }
+  section.alt .callout { background: var(--bg); }
+  .callout.warn { border-left-color: var(--alarm); }
+  .callout strong { color: var(--ink); }
+
+  figure { margin: 28px 0; max-width: 860px; }
+  figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: var(--radius); }
+  figure svg { width: 100%; height: auto; display: block; overflow: hidden; }
+  figcaption { font-size: 0.83rem; color: var(--ink-soft); margin-top: 10px; }
+  .diag-label { font-size: 12px; fill: var(--ink-soft); font-family: var(--font-body); }
+  .diag-label.strong { fill: var(--ink); font-weight: 600; }
+  .diag-label.accent { fill: var(--accent-deep); font-weight: 600; }
+  .diag-label.alarm { fill: var(--alarm); font-weight: 600; }
+  .diag-label.tiny { font-size: 10px; }
+
+  .tablewrap { overflow-x: auto; margin: 24px 0; }
+  table { border-collapse: collapse; font-size: 0.88rem; min-width: 720px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); }
+  td.yes { color: #2f5a4a; font-weight: 600; }
+  td.part { color: #856420; font-weight: 600; }
+  td.no { color: #8c4433; font-weight: 600; }
+  .opt { background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px; margin: 26px 0; box-shadow: var(--shadow-sm); }
+  section.alt .opt { background: var(--bg); box-shadow: none; }
+  .opt h3 { margin-top: 0; font-size: 1.14rem; }
+  .verdict-line { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; border-left: 3px solid var(--accent); padding-left: 16px; margin: 20px 0; max-width: 700px; }
+
+  footer { background: #22211c; color: #f4f2ea; }
+  footer .wrap { padding: 48px 24px; text-align: center; }
+  footer .small { color: #b9b6a9; font-size: 0.9rem; }
+  footer .legal { color: #8b887c; font-size: 0.8rem; margin-top: 22px; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="./">
+      <svg width="33" height="22" viewBox="0 0 33 22" aria-hidden="true">
+        <path d="M2 15 H31" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M7 15 C11.5 15 10.5 6 16 6 C21.5 6 20.5 15 25 15" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="25" cy="15" r="3.2" fill="var(--accent)"/>
+      </svg>
+      <span class="brand-name">One Current</span>
+    </a>
+    <nav class="primary" aria-label="Sections">
+      <a class="here" href="design-study.html" aria-current="page">Design study</a>
+    </nav>
+    <a class="btn" href="https://nickyschranz.github.io/one-current-app/">Open the app</a>
+  </div>
+</header>
+
+<div class="hero-band" id="top">
+  <div class="wrap">
+    <p class="kicker">Internal design study · 26 August 2026</p>
+    <h1>Is the split timeline confusing?</h1>
+    <p class="lead">
+      This page asks an uncomfortable question about One Current's defining view, follows
+      the published evidence wherever it goes, audits what the app actually draws today,
+      and sets out five alternative representations that keep every metric the timeline
+      carries — including a fair verdict on the open-world idea.
+    </p>
+    <div class="callout">
+      <strong>This is a working document, not marketing.</strong> It is unlisted — no link
+      to it appears anywhere on the site, and search engines are asked to skip it — but
+      anyone who has the address can read it. It criticises parts of the shipped app on
+      purpose.
+    </div>
+  </div>
+</div>
+
+<section class="alt" id="verdict">
+  <div class="wrap inner">
+    <p class="kicker">The verdict</p>
+    <h2>The axis is fine. The topology is the risk. And the biggest win is not a new picture.</h2>
+    <div class="prose">
+      <p>
+        Three separate things get conflated in the question "is the timeline confusing?".
+        Taken apart, they get three different answers.
+      </p>
+      <p class="verdict-line">
+        The horizontal time axis and thickness-for-loudness are the best-evidenced parts of
+        the design and should stay. The fork-and-merge topology is a genuine literacy risk
+        with no supporting evidence in its own genre. And in daily use the app does not
+        actually draw that topology at all — which makes the debate partly moot and the fix
+        partly free.
+      </p>
+      <p>
+        <strong>Confidence, honestly stated.</strong> High on the axis (direct
+        reaction-time studies, including in Spanish speakers). Moderate-to-high on the
+        topology risk — the evidence is by analogy, from a large literature on how novices
+        misread branching diagrams in biology, plus the striking absence of any
+        comprehension study of this visualization genre after fifteen years. Highest of all
+        on the audit finding below, because that one is not a judgement call: it is verified
+        in the app's own source.
+      </p>
+      <p>
+        <strong>What would change my mind.</strong> Six people, ten minutes each, answering
+        three questions in front of the current screen: <em>which of these started
+        longest ago? what does the thickness mean? what happened to this one that curves
+        back?</em> That would settle in an afternoon what this page can only reason about.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap inner">
+    <p class="kicker">Method, and what this is not</p>
+    <h2>Evidence review plus an expert audit — no users were tested</h2>
+    <div class="prose">
+      <p>
+        This study has three inputs: a review of published work on visualization literacy,
+        timeline comprehension and spatial-temporal mapping; a survey of how comparable
+        apps and games represent concurrent concerns; and a heuristic audit of One Current
+        itself, using fresh screenshots of the running app and a full inventory of what
+        every pixel currently encodes.
+      </p>
+      <p>
+        <strong>No user testing was performed.</strong> Nobody was recruited, nothing was
+        measured on a real person. Where this page says a design is likely to be misread,
+        that is an inference from studies of comparable designs, not an observation of
+        anyone using this one. Claims carry a grade:
+      </p>
+      <ul>
+        <li><span class="grade g-strong">Strong</span> replicated experiments, RCTs, or large representative samples.</li>
+        <li><span class="grade g-lab">Lab</span> single controlled studies, usually with students or convenience samples.</li>
+        <li><span class="grade g-review">Review</span> systematic reviews and meta-analyses.</li>
+        <li><span class="grade g-soft">Design</span> practitioner writing, design case studies, expert opinion.</li>
+        <li><span class="grade g-weak">Sentiment</span> app-store reviews, forums, press — treated as signal about feelings, never as evidence of fact.</li>
+      </ul>
+      <p>
+        Three things I deliberately refuse to cite. The widely-repeated claim that a
+        popular self-care pet app produces "56% higher retention" traces to no identifiable
+        study. The per-chart-type accuracy percentages often attributed to the VLAT
+        literacy test appear only in secondary sources reusing it as a benchmark, not in
+        the original paper. And a museum study's network-versus-chart contrast could not be
+        verified past its abstract. Where a number could not be checked, it is not used.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="audit">
+  <div class="wrap inner">
+    <p class="kicker">The audit</p>
+    <h2>What the app actually draws</h2>
+    <p class="sub">
+      Before any theory: here is the current view with ten realistic threads loaded, at
+      desktop width. Look for the forks.
+    </p>
+
+    <figure>
+      <img src="study/busy-1280.png" alt="One Current's Now view with ten example threads: eight roughly parallel wavy horizontal lines, none of them visibly branching off the main line." />
+      <figcaption>
+        The Now view, ten example threads, 1280px. Eight near-parallel wavy rails, each
+        entering from the left edge. Not one fork is drawn.
+      </figcaption>
+    </figure>
+
+    <div class="prose">
+      <h3>1. The signature geometry is unreachable in normal use</h3>
+      <p>
+        This is the most important finding on the page, and it is not a matter of opinion —
+        it is in the source. The visible time window is fixed at eight days: four behind
+        today and four ahead. The store resets to that window on launch and in nine other
+        places. A wider window function exists and is never called from the interface, and
+        a zoom function exists and is <em>never called at all</em>. There is no zoom
+        control in the app.
+      </p>
+      <p>
+        A thread only draws its fork if the fork date falls inside that eight-day window;
+        otherwise, in the code's own words, "the branch enters from the left as a parallel
+        line". Meanwhile the app's own creation flow offers "earlier this month", which it
+        stores as fifteen days ago, and "I am not sure", which it stores as ninety days
+        ago. Both are permanently outside the window. Closed threads are stricter still: an
+        integration older than about four days is not drawn at all.
+      </p>
+      <div class="callout warn">
+        <strong>So the split that the app is named for, and that its published research
+        page argues does the psychological work, is invisible for almost every thread.</strong>
+        What users actually see most days is a set of parallel wavy rails with a date strip
+        underneath. Any argument about whether people can read fork-and-merge topology is,
+        today, an argument about something they are rarely shown.
+      </div>
+      <p>
+        The good news is that this is the cheapest possible fix: the geometry already
+        exists, fully built, and is simply unreachable. A span control — or just choosing
+        the existing wider window when threads are older — restores it without designing
+        anything new.
+      </p>
+
+      <h3>2. Parallel rails read as a seismograph, and the main line does not lead</h3>
+      <p>
+        With seven or eight open threads, every line waves. The main line — the one the
+        whole metaphor rests on — is not visually dominant; several branch lines are
+        thicker and more animated than it. The hierarchy the design intends (one life,
+        several pulls) is not the hierarchy the eye receives (many similar wavy lines, one
+        of which happens to be dark).
+      </p>
+
+      <h3>3. One variable, four simultaneous encodings</h3>
+      <p>
+        Loudness is drawn as line thickness, as wave amplitude, as wave speed, as distance
+        pushed away from the lane centre, and in creature themes as the creature's
+        expression. Redundant encoding is usually good practice — but only when each
+        channel is unambiguous. Amplitude and speed read naturally as
+        <em>volatility</em> or <em>frequency</em>, not <em>volume</em>, and I could find no
+        evidence at all for amplitude-as-intensity being understood by lay viewers. Four
+        channels for one quantity also means four things changing when the user drags the
+        dial, which makes the causal link harder to see, not easier.
+      </p>
+
+      <h3>4. The vertical axis means nothing, and then suddenly means something</h3>
+      <p>
+        Lanes carry no stated meaning: a thread's row is the output of a packing
+        algorithm. But dragging a thread <em>up</em> makes it louder. So the vertical
+        direction is meaningless for reading and meaningful for writing — and the packing
+        alternates threads above and below the main line, which puts half of every user's
+        forks in the orientation that the research below found harder to read.
+      </p>
+
+      <h3>5. Labels collide, and on a phone they leave the screen</h3>
+      <figure>
+        <img src="study/map-390.png" alt="One Current at 390px width: thread labels clipped at the left edge, Pip's speech bubble overlapping his option pills, several parallel wavy lines." />
+        <figcaption>
+          390px. Labels run off the left edge ("na · returned ·", "and the unanswered
+          message"), the speech bubble sits on top of the option pills, and the map area is
+          reduced to a few rails.
+        </figcaption>
+      </figure>
+      <p>
+        Thread titles are drawn right-aligned at the line's end, so on a narrow screen a
+        long title extends off-canvas to the left with no truncation. The status suffixes
+        the app appends — "· returned", "· decided today" — make the longest labels longer.
+      </p>
+
+      <h3>6. Answered threads already turn into a list</h3>
+      <p>
+        Once a thread has today's answer it stops waving, fades, loses its label, and is
+        replaced by a small dotted entry to the right of Now reading "✓ resting · My sleep
+        is a mess again". Several answered threads therefore render as a short text list
+        beside the main line. The app already falls back to a list when the state is calm —
+        which is a hint about what the primary representation might want to be.
+      </p>
+
+      <h3>7. The aggregate is a word and a bar nobody can decode</h3>
+      <figure>
+        <img src="study/wholeness-1280.png" alt="The wholeness panel opened, showing a percentage, a forecast sentence and the loudest threads." />
+        <figcaption>
+          The wholeness chip expanded. Closed, it shows one word — "scattered" — and a
+          small braid glyph and bar. The explanation, which is good, is hidden behind a tap.
+        </figcaption>
+      </figure>
+      <p>
+        Collapsed, the chip labels the user's day with a single adjective. The panel behind
+        it is genuinely helpful — a percentage, a plain-language forecast, and the three
+        threads most worth answering — but it is one tap away, and the collapsed state
+        spends its space on a glyph rather than on the sentence.
+      </p>
+
+      <h3>8. The sparse case wastes almost all of the canvas</h3>
+      <figure>
+        <img src="study/sparse-1280.png" alt="One Current with a single thread: the content occupies a narrow band in the middle of a mostly empty canvas." />
+        <figcaption>
+          One thread, 1280px. The eight-day axis spans the full width while the content
+          occupies a narrow band around Now; the remaining canvas is scenery.
+        </figcaption>
+      </figure>
+      <p>
+        A new user's first screen is mostly empty. Because the window is eight days wide
+        regardless of content, a single fresh thread gets a few dozen pixels of run and the
+        rest of the width is backdrop.
+      </p>
+
+      <h3>9. Learning cost is front-loaded and hidden</h3>
+      <p>
+        The encoding key — "solid = active · curved back = integrated · thicker = louder ·
+        faint ✓ = decided today" — lives behind a small "i" in the corner. Four of the ten
+        tutorial steps exist to name geometry ("This horizontal line is your 'Now'", "These
+        lines are your threads", the loudness drag, the merge). A representation that needs
+        four steps of naming before it can be read is a representation carrying real
+        tuition cost.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="evidence">
+  <div class="wrap inner">
+    <p class="kicker">The evidence</p>
+    <h2>What the literature supports, and what it doesn't</h2>
+
+    <div class="prose">
+      <h3>Roughly a third of adults struggle with ordinary charts</h3>
+      <p>
+        Graph literacy in the general population is lower than designers assume, measured
+        on nationally representative samples with a validated scale
+        <span class="grade g-strong">Strong</span>. Eye-tracking shows low-literacy readers
+        don't merely score worse — they fixate on different parts of the image, skimming the
+        salient shapes and missing the parts that carry the answer
+        <span class="grade g-lab">Lab</span>. For One Current that means the loud, thick,
+        waving lines <em>are</em> the message for a large fraction of users; the topology
+        will not be studied.
+      </p>
+      <p class="cite">
+        Galesic &amp; Garcia-Retamero (2011), <em>Medical Decision Making</em> — Germany n=495, US n=492
+        (<a href="https://doi.org/10.1177/0272989X10373805">doi</a>) ·
+        Okan et al. (2016), <em>J. Behavioral Decision Making</em>
+        (<a href="https://doi.org/10.1002/bdm.1891">doi</a>) ·
+        Mini-VLAT: Pandey &amp; Ottley (2023) — literacy predicts aptitude for learning an
+        <em>unfamiliar</em> visualization (<a href="https://doi.org/10.1111/cgf.14809">doi</a>).
+      </p>
+
+      <h3>The horizontal axis is right — including in Spanish</h3>
+      <p>
+        Western readers map time left-to-right automatically, and the effect was
+        demonstrated in Spanish speakers, which settles the question for this app's second
+        and third languages <span class="grade g-strong">Strong</span>. The mapping is
+        driven by reading direction: Hebrew readers lay sequences out right-to-left, and a
+        few minutes of mirror-reversed text can flip a person's mental timeline
+        <span class="grade g-strong">Strong</span>. Practical consequence: keep the axis,
+        and make its direction a locale token before any right-to-left language ships,
+        because getting it wrong produces measurable interference rather than mere
+        awkwardness.
+      </p>
+      <p class="cite">
+        Santiago et al. (2007), <em>Psychonomic Bulletin &amp; Review</em> — Spanish speakers
+        (<a href="https://doi.org/10.3758/BF03194099">doi</a>) ·
+        Fuhrman &amp; Boroditsky (2010), <em>Cognitive Science</em>
+        (<a href="https://doi.org/10.1111/j.1551-6709.2010.01105.x">doi</a>) ·
+        Casasanto &amp; Bottini (2014), <em>JEP: General</em>
+        (<a href="https://casasanto.com/papers/Casasanto&Bottini_2014_JEPG.pdf">pdf</a>).
+        Mandarin's additional vertical mapping is <em>contested</em>, with failed replications.
+      </p>
+
+      <h3>Thickness for significance on a personal lifeline is a solved convention</h3>
+      <p>
+        Horizontal per-entity lifelines, with colour and thickness encoding significance,
+        were introduced and evaluated thirty years ago and have been in clinical and
+        records interfaces ever since <span class="grade g-lab">Lab</span> (the empirical
+        study was small, n=36). This is the part of One Current with the longest pedigree.
+      </p>
+      <p class="cite">
+        Plaisant et al. (1996), <em>CHI '96</em>, LifeLines
+        (<a href="https://dl.acm.org/doi/10.1145/238386.238493">doi</a>); Plaisant et al. (1998), AMIA.
+      </p>
+
+      <h3>Novices misread branching diagrams — and the analogy is cladograms, not git</h3>
+      <p>
+        The closest large literature to One Current's fork geometry is not visualization
+        research; it is biology education, where students read evolutionary trees. The
+        findings are consistent and unflattering: novices read along the tips and infer
+        relatedness from <em>adjacency</em> rather than from branching structure, and
+        diagram orientation measurably changes accuracy — a backbone slanting down-to-the-right
+        was read more accurately than up-to-the-right <span class="grade g-lab">Lab</span>.
+        These were motivated, instructed undergraduates: an easier audience than a person
+        opening a self-care app at eleven at night.
+      </p>
+      <p>
+        Translated: expect users to read "which line is nearest the main line" as
+        meaningful, and to ignore where a line forked. In One Current, lane proximity is
+        an artefact of a packing algorithm — so that is an active misreading, not a
+        harmless one.
+      </p>
+      <p class="cite">
+        Dees et al. (2014), <em>CBE—Life Sciences Education</em>
+        (<a href="https://doi.org/10.1187/cbe.14-01-0003">doi</a>) ·
+        Novick, Stull &amp; Catley (2012), <em>BioScience</em>
+        (<a href="https://doi.org/10.1525/bio.2012.62.8.8">doi</a>).
+      </p>
+      <p>
+        A useful reframe on the "does it look like git?" worry: most non-developers have
+        never seen a commit graph, so there is no false familiarity to fight. The problem is
+        the opposite — they have <em>no</em> schema for fork-and-merge lines. That is worse
+        in principle but more tractable in practice, because it is a teaching problem rather
+        than an unlearning one. Worth noting that even expert tooling finds these graphs
+        hard enough to require topology <em>simplification</em>
+        <span class="grade g-soft">Design</span>.
+      </p>
+      <p class="cite">
+        Githru (2021), <em>IEEE TVCG</em> — commit-graph complexity and simplification
+        (<a href="https://arxiv.org/abs/2009.03115">arXiv</a>) ·
+        "Challenges and Confusions in Learning Version Control with Git"
+        (<a href="https://www.cochez.nl/papers/dvcs-misconceptions-final.pdf">pdf</a>).
+      </p>
+
+      <h3>This visualization's own genre has never been evaluated</h3>
+      <p>
+        One Current is, formally, a storyline visualization with a single protagonist —
+        the family descended from xkcd's movie narrative charts. Fifteen years of that
+        literature is layout algorithms: how to route the ribbons with fewer crossings.
+        I could find no controlled study of whether lay viewers read them correctly. An
+        absence of evidence is not evidence of a problem, but it does mean the design
+        cannot claim support <span class="grade g-weak">Sentiment</span> — and the adjacent
+        family that <em>has</em> been tested, node-link diagrams, only outperforms
+        alternatives at very small sizes <span class="grade g-lab">Lab</span>.
+      </p>
+      <p class="cite">
+        Ghoniem, Fekete &amp; Castagliola (2005), <em>Information Visualization</em> — node-link
+        favoured only below roughly twenty nodes
+        (<a href="http://www-sop.inria.fr/orion/COGC/teams/INSITUghoniem-fivj05-final.pdf">pdf</a>) ·
+        Brehmer et al. (2017), <em>Timelines Revisited</em>, IEEE TVCG — a design space of
+        263 real timelines, including the <em>faceted</em> and <em>relative-scale</em>
+        options used later on this page
+        (<a href="https://timelinesrevisited.github.io/">site</a>).
+      </p>
+
+      <h3>You get one session</h3>
+      <p>
+        Median fifteen-day retention for non-FDA-cleared mental-health apps is around 3.9%,
+        and app-based depression trials show pooled dropout of 26% rising to nearly 48%
+        once publication bias is accounted for <span class="grade g-review">Review</span>.
+        Any encoding that needs a second session to click will not get one. Relatedly,
+        onboarding help has been shown to pay off <em>only</em> for unfamiliar
+        visualizations — and in-situ teaching beat a tutorial page
+        <span class="grade g-lab">Lab</span> (n=596). Teach the fork the first time a fork
+        appears, not in a carousel before the app.
+      </p>
+      <p class="cite">
+        Nwosu et al. (2022), <em>Frontiers in Psychiatry</em>
+        (<a href="https://doi.org/10.3389/fpsyt.2022.900615">doi</a>) ·
+        Stoiber et al. (2022), <em>Visual Informatics</em>
+        (<a href="https://arxiv.org/abs/2203.15418">arXiv</a>).
+      </p>
+
+      <h3>Charm is nearly free; novel meaning is not</h3>
+      <p>
+        A common assumption — simpler means clearer but duller — is only half true. Adding
+        pictographs and illustration costs little or nothing in accuracy and improves
+        engagement and preference <span class="grade g-lab">Lab</span>; embellished charts
+        were remembered better weeks later, though that finding is methodologically
+        contested <span class="grade g-lab">Lab</span>. What is <em>not</em> free is a novel
+        <em>encoding</em>. One Current currently spends its novelty budget on structure
+        rather than on surface, which is the wrong way round: it could keep every ounce of
+        its warmth, creatures and weather while making the semantics conventional.
+      </p>
+      <p class="cite">
+        Haroz, Kosara &amp; Franconeri (2015), <em>CHI</em> — ISOTYPE pictographs
+        (<a href="https://doi.org/10.1145/2702123.2702275">doi</a>) ·
+        Bateman et al. (2010), <em>CHI</em> — "Useful Junk?"
+        (<a href="https://sites.stat.columbia.edu/gelman/communication/Bateman2010.pdf">pdf</a>),
+        challenged by Li &amp; Moacdieh (2014).
+      </p>
+
+      <h3>The strongest finding in the whole review is about doing, not drawing</h3>
+      <p>
+        In a set of experiments on treating thoughts as physical objects, the third one was
+        digital: participants typed an unwanted thought and either dragged the file to the
+        recycle bin or saved it. <strong>Dragging it to the bin reduced the thought's
+        influence; merely imagining doing so did nothing</strong>
+        <span class="grade g-strong">Strong</span> (n=78 in that experiment). A VR study
+        converges from the other side: ten enacted physical verbs on individual thoughts —
+        bursting, watering, wiping, sorting — reduced negative affect with no diagram
+        literacy required <span class="grade g-lab">Lab</span> (n=30).
+      </p>
+      <div class="callout">
+        A worry curving home along a line is a <em>picture</em> of resolution. The evidence
+        says the therapeutic weight sits in the <em>enacted</em> gesture instead. One
+        Current already has real enacted moments — pressing a line and dragging its
+        loudness down, the bonk, the two-step burn. Those are its most defensible features,
+        and they are not the timeline.
+      </div>
+      <p class="cite">
+        Briñol, Gascó, Petty &amp; Horcajo (2013), <em>Psychological Science</em>
+        (<a href="https://doi.org/10.1177/0956797612449176">doi</a>) ·
+        Mind Mansion, <em>DIS '24</em>
+        (<a href="https://doi.org/10.1145/3643834.3661557">doi</a>).
+      </p>
+
+      <h3>People want words with their picture</h3>
+      <p>
+        Interview work with non-expert self-trackers found they want immediacy — an
+        impressionistic whole they can recognise themselves in — and with mood-tracking
+        specifically, the named gap was help <em>interpreting</em> their own data, with
+        calendar and figure forms preferred <span class="grade g-lab">Lab</span>
+        (qualitative). One plain sentence — "work has been loud for twelve days and hasn't
+        quieted" — probably does more than any amount of diagram refinement.
+      </p>
+      <p class="cite">
+        Rapp &amp; Cena (2016), <em>IJHCS</em>
+        (<a href="https://doi.org/10.1016/j.ijhcs.2016.05.006">doi</a>) ·
+        Schueller et al. (2021), <em>JMIR Mental Health</em>
+        (<a href="https://mental.jmir.org/2021/8/e29368">link</a>).
+      </p>
+
+      <h3>Two findings that cut against work already shipped here</h3>
+      <p>
+        <strong>Gamification.</strong> A meta-analysis of gamified mental-health apps found
+        the number of game elements did not predict effectiveness, and no effect of
+        gamification on adherence; one proposed mechanism is blunted reward sensitivity in
+        depression <span class="grade g-review">Review</span>. That is a direct challenge to
+        the tokens and super-bonk layer as a <em>retention</em> argument. It does not make
+        them harmful — a soothing companion is defensible on other grounds — but they should
+        not be counted on to bring people back.
+      </p>
+      <p>
+        <strong>Intensity that rises on its own.</strong> One Current's loudness drifts
+        upward for every day a thread goes unanswered. That is structurally the same as a
+        needs meter that decays, which is the documented failure mode of pet and simulation
+        design: the widely-shared complaint about The Sims' needs is that tending them
+        becomes "a chore", and analysis of companion design warns specifically against
+        mechanics that manufacture guilt <span class="grade g-weak">Sentiment</span>. The
+        mitigation that shipped in a comparable wellbeing product is blunt: the plants
+        never die. Worth asking whether drift should be capped sooner, softened, or made
+        opt-in — for an anxious user, an app that gets visibly angrier while they cope is a
+        real risk.
+      </p>
+      <p class="cite">
+        Six et al. (2021), <em>JMIR Mental Health</em>
+        (<a href="https://mental.jmir.org/2021/11/e32199">link</a>) ·
+        Brown et al. (2016), <em>JMIR Mental Health</em>
+        (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5014987/">link</a>) ·
+        pet-companion design critique
+        (<a href="https://yukaichou.com/advanced-gamification/the-pet-companion-design-in-gamification/">link</a>).
+      </p>
+
+      <h3>And a verdict on the open world, on its own terms</h3>
+      <p>
+        The one study that supports open worlds for wellbeing finds the benefit runs through
+        <em>cognitive escapism</em> and relaxation — getting away from your problems
+        <span class="grade g-lab">Lab</span> (n=609, cross-sectional, self-report). The
+        open-world idea here is the opposite mechanism: a world where you go
+        <em>to</em> your anxieties and handle them. The study does not license that
+        transfer. Meanwhile the design evidence is consistent about what makes small worlds
+        readable: density over size, a fixed camera, few objects, bounded space. Removing
+        those guardrails produces decision paralysis, and the older hypertext literature
+        has a name for the failure — getting lost in the space
+        <span class="grade g-soft">Design</span>. Sims-as-therapy, meanwhile, is press
+        coverage, not research.
+      </p>
+      <p class="cite">
+        Wang et al. (2024), <em>JMIR</em>
+        (<a href="https://www.jmir.org/2024/1/e63760">link</a>) ·
+        environment-art writing on Alba
+        (<a href="https://medium.com/@ustwogames/the-environment-art-of-alba-a-wildlife-adventure-6bddd8b56955">link</a>) ·
+        "lost in hyperspace"
+        (<a href="https://en.wikipedia.org/wiki/Lost_in_hyperspace">overview</a>).
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="matrix">
+  <div class="wrap inner">
+    <p class="kicker">The constraint</p>
+    <h2>Everything a replacement has to carry</h2>
+    <p class="sub">
+      Any alternative is only serious if it still expresses all of this. The timeline's
+      hardest-to-replace contributions are the ones that depend on a position in time.
+    </p>
+    <div class="prose">
+      <ul>
+        <li><strong>When it started</strong> — the fork's position is the only place "since when" is currently drawn, and the creation flow has a whole step feeding it.</li>
+        <li><strong>How long it has been pulling</strong> — the run's length, as distance.</li>
+        <li><strong>Loudness, and its upward drift</strong> — the stored level plus a day-by-day rise until answered.</li>
+        <li><strong>Today's state</strong> — decided, resting, waiting, needs support, returned before.</li>
+        <li><strong>Resolution, in four flavours</strong> — integrated (and partly), handed off to real work, burned away with only a lesson kept, and reopened.</li>
+        <li><strong>Moments</strong> — dated events along a thread's life, in order.</li>
+        <li><strong>Conflicts</strong> — two threads asking for opposite things.</li>
+        <li><strong>The aggregate</strong> — what share of attention runs with the main line, its forecast, and the calm/sacred end state.</li>
+        <li><strong>Pip</strong> — a companion who has to have somewhere to walk, someone to stand next to, and something to react to.</li>
+      </ul>
+      <p>
+        Two assets make several alternatives cheaper than they look. The app already
+        records every loudness change in a log that is <em>displayed nowhere</em> — free
+        history for any sparkline or grid. And it already contains a 56-pixel schematic of
+        a thread (fork, run, merge) drawn with no date axis at all, used as a context strip
+        while reading one thread. The geometry survives being shrunk to a card.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="options">
+  <div class="wrap inner">
+    <p class="kicker">Five alternatives</p>
+    <h2>Other ways to draw the same life</h2>
+    <p class="sub">
+      Each is mocked up below, scored honestly, and judged on whether it can carry the list
+      above. None of them is free; two of them are close to free.
+    </p>
+
+    <div class="opt">
+      <h3>A · The Ledger — cards that say it in words</h3>
+      <figure>
+        <svg viewBox="0 0 760 260" role="img" aria-label="Mockup: three stacked cards, each with a thread title, a loudness fill bar, a small sparkline of its loudness history, a duration, a state chip and a plain sentence.">
+          <rect x="8" y="8" width="744" height="74" rx="12" fill="var(--bg-raised)" stroke="var(--line)"/>
+          <rect x="8" y="8" width="4" height="74" rx="2" fill="#7796c4"/>
+          <text x="28" y="34" class="diag-label strong" style="font-size:14px">Waiting for the scan results</text>
+          <rect x="28" y="44" width="150" height="8" rx="4" fill="var(--accent-soft)"/>
+          <rect x="28" y="44" width="126" height="8" rx="4" fill="var(--alarm)"/>
+          <text x="188" y="52" class="diag-label tiny">calling · 4 of 5</text>
+          <path d="M300 52 L312 50 L324 46 L336 44 L348 40 L360 38" stroke="var(--alarm)" stroke-width="1.8" fill="none"/>
+          <text x="300" y="34" class="diag-label tiny">louder for 9 days</text>
+          <text x="28" y="70" class="diag-label">Open 12 days · never answered · hospital replies Thursday</text>
+          <rect x="640" y="30" width="96" height="22" rx="11" fill="#f7e4de"/>
+          <text x="654" y="45" class="diag-label alarm tiny">needs an answer</text>
+
+          <rect x="8" y="94" width="744" height="74" rx="12" fill="var(--bg-raised)" stroke="var(--line)"/>
+          <rect x="8" y="94" width="4" height="74" rx="2" fill="#8a7bb8"/>
+          <text x="28" y="120" class="diag-label strong" style="font-size:14px">The rent increase letter</text>
+          <rect x="28" y="130" width="150" height="8" rx="4" fill="var(--accent-soft)"/>
+          <rect x="28" y="130" width="60" height="8" rx="4" fill="var(--accent)"/>
+          <text x="188" y="138" class="diag-label tiny">murmuring · 2 of 5</text>
+          <path d="M300 130 L312 132 L324 134 L336 138 L348 140 L360 142" stroke="var(--accent)" stroke-width="1.8" fill="none"/>
+          <text x="300" y="120" class="diag-label tiny">quieter since you acted</text>
+          <text x="28" y="156" class="diag-label">Open 6 days · you took a step today · read it once, no reply yet</text>
+          <rect x="668" y="116" width="68" height="22" rx="11" fill="var(--accent-soft)"/>
+          <text x="684" y="131" class="diag-label accent tiny">answered</text>
+
+          <rect x="8" y="180" width="744" height="70" rx="12" fill="var(--bg)" stroke="var(--line)" stroke-dasharray="4 4"/>
+          <text x="28" y="206" class="diag-label strong" style="font-size:14px">How things ended with Ana</text>
+          <g transform="translate(28,216)">
+            <path d="M0 14 H190" stroke="var(--ink)" stroke-width="2"/>
+            <path d="M26 14 C40 14 36 4 52 4 L140 4 C156 4 152 14 166 14" stroke="#c07b8a" stroke-width="1.8" fill="none"/>
+            <circle cx="166" cy="14" r="3.4" fill="#c07b8a"/>
+          </g>
+          <text x="240" y="226" class="diag-label">Came home 3 days ago · carried back: patience, self-trust</text>
+          <text x="240" y="242" class="diag-label tiny">returned once before</text>
+        </svg>
+        <figcaption>
+          A · The Ledger. Every metric becomes a labelled element: a fill bar for loudness,
+          a sparkline from the log that already exists, a duration in words, a state chip,
+          and the axis-free fork-and-merge glyph for threads that have come home.
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <p>
+          <strong>The case for.</strong> Lists and fill bars are the two most reliably
+          understood patterns found anywhere in this study; no app in the survey has
+          published complaints about list comprehension. It answers the interpretation gap
+          directly, because each card can carry a sentence. It reuses the existing thread
+          panels untouched, and it is the cheapest of the five to build — the app already
+          ships two half-versions of it.
+        </p>
+        <p>
+          <strong>The case against.</strong> It loses the split. There is no visible gap
+          between the life you intend and the pull away from it, which is precisely the
+          mechanism the published research page argues for. It is also, frankly, ordinary:
+          it would make One Current look like every other tracker, and the charm would have
+          to be reintroduced deliberately.
+        </p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <h3>B · The Board — a fortnight of loudness, at a glance</h3>
+      <figure>
+        <svg viewBox="0 0 760 250" role="img" aria-label="Mockup: a grid with thread names down the left and fourteen day columns across the top, each cell shaded by that day's loudness, with marks for answered, rested, integrated and burned days.">
+          <text x="150" y="22" class="diag-label tiny">13 Aug</text>
+          <text x="640" y="22" class="diag-label tiny">today</text>
+          <g class="diag-label tiny" fill="var(--ink-soft)" text-anchor="end">
+            <text x="162" y="46">Scan results</text>
+            <text x="162" y="86">Rent letter</text>
+            <text x="162" y="126">Ana</text>
+            <text x="162" y="166">Sleep is a mess</text>
+            <text x="162" y="206">Bakery idea</text>
+          </g>
+          <!-- rows: 14 cells each, shade = loudness -->
+          <g>
+            <!-- row 1: rising to loud -->
+            <g transform="translate(170,32)">
+              <rect x="0" y="0" width="30" height="18" rx="3" fill="#efe4de"/><rect x="34" y="0" width="30" height="18" rx="3" fill="#eddcd4"/>
+              <rect x="68" y="0" width="30" height="18" rx="3" fill="#ead2c7"/><rect x="102" y="0" width="30" height="18" rx="3" fill="#e6c6b8"/>
+              <rect x="136" y="0" width="30" height="18" rx="3" fill="#e2b9a8"/><rect x="170" y="0" width="30" height="18" rx="3" fill="#dcab98"/>
+              <rect x="204" y="0" width="30" height="18" rx="3" fill="#d79c87"/><rect x="238" y="0" width="30" height="18" rx="3" fill="#d18e78"/>
+              <rect x="272" y="0" width="30" height="18" rx="3" fill="#cc8069"/><rect x="306" y="0" width="30" height="18" rx="3" fill="#c7735c"/>
+              <rect x="340" y="0" width="30" height="18" rx="3" fill="#c2664f"/><rect x="374" y="0" width="30" height="18" rx="3" fill="#bd5b45"/>
+              <rect x="408" y="0" width="30" height="18" rx="3" fill="#b8503b"/><rect x="442" y="0" width="30" height="18" rx="3" fill="#b34632"/>
+            </g>
+            <!-- row 2: falling after action, with a tick -->
+            <g transform="translate(170,72)">
+              <rect x="0" y="0" width="30" height="18" rx="3" fill="#cfdcd6"/><rect x="34" y="0" width="30" height="18" rx="3" fill="#c3d5cd"/>
+              <rect x="68" y="0" width="30" height="18" rx="3" fill="#b7cec4"/><rect x="102" y="0" width="30" height="18" rx="3" fill="#a9c6ba"/>
+              <rect x="136" y="0" width="30" height="18" rx="3" fill="#9dbfb1"/><rect x="170" y="0" width="30" height="18" rx="3" fill="#a9c6ba"/>
+              <rect x="204" y="0" width="30" height="18" rx="3" fill="#b7cec4"/><rect x="238" y="0" width="30" height="18" rx="3" fill="#c3d5cd"/>
+              <rect x="272" y="0" width="30" height="18" rx="3" fill="#cfdcd6"/><rect x="306" y="0" width="30" height="18" rx="3" fill="#dae4df"/>
+              <rect x="340" y="0" width="30" height="18" rx="3" fill="#e3ebe7"/><rect x="374" y="0" width="30" height="18" rx="3" fill="#e3ebe7"/>
+              <rect x="408" y="0" width="30" height="18" rx="3" fill="#dae4df"/><rect x="442" y="0" width="30" height="18" rx="3" fill="#cfdcd6"/>
+              <path d="M450 8 l4 5 l7 -9" stroke="var(--accent-deep)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- row 3: integrated mid-window, then empty -->
+            <g transform="translate(170,112)">
+              <rect x="0" y="0" width="30" height="18" rx="3" fill="#e0cdd2"/><rect x="34" y="0" width="30" height="18" rx="3" fill="#dcc4cb"/>
+              <rect x="68" y="0" width="30" height="18" rx="3" fill="#d7bbc3"/><rect x="102" y="0" width="30" height="18" rx="3" fill="#d2b2bb"/>
+              <rect x="136" y="0" width="30" height="18" rx="3" fill="#cda9b3"/>
+              <g transform="translate(170,0)">
+                <rect x="0" y="0" width="30" height="18" rx="3" fill="var(--accent-soft)"/>
+                <path d="M8 13 C13 13 12 5 17 5 L24 5" stroke="var(--accent-deep)" stroke-width="1.6" fill="none"/>
+              </g>
+              <g fill="none" stroke="var(--line)" stroke-dasharray="2 3">
+                <rect x="204" y="0" width="30" height="18" rx="3"/><rect x="238" y="0" width="30" height="18" rx="3"/>
+                <rect x="272" y="0" width="30" height="18" rx="3"/><rect x="306" y="0" width="30" height="18" rx="3"/>
+                <rect x="340" y="0" width="30" height="18" rx="3"/><rect x="374" y="0" width="30" height="18" rx="3"/>
+                <rect x="408" y="0" width="30" height="18" rx="3"/><rect x="442" y="0" width="30" height="18" rx="3"/>
+              </g>
+            </g>
+            <!-- row 4: resting days -->
+            <g transform="translate(170,152)">
+              <rect x="0" y="0" width="30" height="18" rx="3" fill="#dfd9cd"/><rect x="34" y="0" width="30" height="18" rx="3" fill="#dbd4c6"/>
+              <rect x="68" y="0" width="30" height="18" rx="3" fill="#d6cebe"/><rect x="102" y="0" width="30" height="18" rx="3" fill="#d1c8b6"/>
+              <rect x="136" y="0" width="30" height="18" rx="3" fill="#ccc2ae"/><rect x="170" y="0" width="30" height="18" rx="3" fill="#d1c8b6"/>
+              <rect x="204" y="0" width="30" height="18" rx="3" fill="#d6cebe"/><rect x="238" y="0" width="30" height="18" rx="3" fill="#dbd4c6"/>
+              <rect x="272" y="0" width="30" height="18" rx="3" fill="#dfd9cd"/><rect x="306" y="0" width="30" height="18" rx="3" fill="#e4dfd5"/>
+              <rect x="340" y="0" width="30" height="18" rx="3" fill="#e4dfd5"/><rect x="374" y="0" width="30" height="18" rx="3" fill="#e4dfd5"/>
+              <rect x="408" y="0" width="30" height="18" rx="3" fill="#e4dfd5"/>
+              <g transform="translate(442,0)"><rect width="30" height="18" rx="3" fill="#efece5"/><circle cx="15" cy="9" r="2.4" fill="var(--ink-soft)"/></g>
+            </g>
+            <!-- row 5: new thread, starts mid-window -->
+            <g transform="translate(170,192)">
+              <g fill="none" stroke="var(--line)" stroke-dasharray="2 3">
+                <rect x="0" y="0" width="30" height="18" rx="3"/><rect x="34" y="0" width="30" height="18" rx="3"/>
+                <rect x="68" y="0" width="30" height="18" rx="3"/><rect x="102" y="0" width="30" height="18" rx="3"/>
+                <rect x="136" y="0" width="30" height="18" rx="3"/><rect x="170" y="0" width="30" height="18" rx="3"/>
+                <rect x="204" y="0" width="30" height="18" rx="3"/>
+              </g>
+              <rect x="238" y="0" width="30" height="18" rx="3" fill="#e5dcc6"/><rect x="272" y="0" width="30" height="18" rx="3" fill="#e0d4b6"/>
+              <rect x="306" y="0" width="30" height="18" rx="3" fill="#dbcca7"/><rect x="340" y="0" width="30" height="18" rx="3" fill="#d6c497"/>
+              <rect x="374" y="0" width="30" height="18" rx="3" fill="#d1bc88"/><rect x="408" y="0" width="30" height="18" rx="3" fill="#ccb479"/>
+              <rect x="442" y="0" width="30" height="18" rx="3" fill="#c7ac6a"/>
+            </g>
+          </g>
+          <text x="170" y="238" class="diag-label tiny">shade = how loud it was that day · ✓ answered · ⌒ came home · • rested · dashed = not open yet</text>
+        </svg>
+        <figcaption>
+          B · The Board. Threads down, the last fortnight across, each cell shaded by that
+          day's loudness — drawn entirely from the log the app already keeps.
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <p>
+          <strong>The case for.</strong> This is the dark horse. It is a
+          <em>faceted</em> timeline — a named, catalogued representation in the timeline
+          design-space survey — and it is shaped exactly like a DBT diary card, a
+          multi-item intensity grid with real clinical usage and systematic-review support.
+          Day-grids are also culturally pretrained by contribution graphs and mood
+          mosaics. It keeps the time axis, kills fork topology entirely, shows drift as an
+          unmistakable darkening streak, and makes progress visible in a way the current
+          view cannot: a row that lightens is a worry getting quieter. It needs no new data.
+        </p>
+        <p>
+          <strong>The case against.</strong> It is a grid, so it is a little clinical — the
+          opposite of cosy — and it has no natural place for Pip to walk. Fork dates
+          survive only as "the row starts here", and the split disappears as thoroughly as
+          in the Ledger. Fine detail (moments, conflicts) has to move into the row's detail
+          view.
+        </p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <h3>C · The Current — the same topology, as water</h3>
+      <figure>
+        <svg viewBox="0 0 760 220" role="img" aria-label="Mockup: a wide river flowing left to right with three tributaries joining it, arrows showing flow direction and a landmark at the right end marking Now.">
+          <!-- tributaries first, ending on the river's centreline, so the band
+               drawn on top of them reads as water flowing in -->
+          <path d="M40 34 C110 46 130 96 230 116" stroke="#b7cfd6" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M150 200 C230 194 260 140 330 118" stroke="#c0b6d4" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <!-- an open thread does not join: it runs alongside and reaches Now on its own -->
+          <path d="M250 44 C330 40 470 48 640 44" stroke="#cbb8bd" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <circle cx="646" cy="44" r="7" fill="#c0a3ab"/>
+          <!-- the main current, painted over the confluences -->
+          <path d="M0 118 C120 112 240 122 380 116 C520 110 640 120 760 114" stroke="#c8d8dd" stroke-width="28" fill="none" stroke-linecap="round"/>
+          <path d="M0 118 C120 112 240 122 380 116 C520 110 640 120 760 114" stroke="#9fbfc9" stroke-width="16" fill="none" stroke-linecap="round"/>
+          <g stroke="#ffffff" stroke-width="2" fill="none" opacity="0.7" stroke-linecap="round">
+            <path d="M120 116 l16 -2"/><path d="M250 120 l16 -1"/><path d="M410 115 l16 -1"/><path d="M560 117 l16 -1"/>
+            <path d="M330 42 l14 1"/><path d="M470 45 l14 1"/>
+          </g>
+          <circle cx="700" cy="115" r="9" fill="var(--accent)"/>
+          <circle cx="700" cy="115" r="18" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.5"/>
+          <text x="676" y="150" class="diag-label accent">Now</text>
+          <text x="26" y="22" class="diag-label">the scan results flowed back in</text>
+          <text x="126" y="216" class="diag-label">Ana rejoined you here</text>
+          <text x="250" y="28" class="diag-label">the rent letter, still running its own course</text>
+          <text x="16" y="152" class="diag-label strong">your one current</text>
+        </svg>
+        <figcaption>
+          C · The Current. Identical structure to today — same forks, same merges, same
+          time axis — rendered so that direction, joining and volume read without a legend.
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <p>
+          <strong>The case for.</strong> Every metric survives unchanged, because nothing
+          about the model changes; only the drawing does. Water solves several legibility
+          problems for free: it has an obvious direction, tributaries obviously
+          <em>join</em> rather than merely touch, width obviously means volume, and one
+          landmark downstream gives the eye a goal — the trick a wordless game used to
+          orient players with no interface at all. It keeps the app's identity and the
+          published psychological claims intact, and Pip still has a bank to walk along.
+        </p>
+        <p>
+          <strong>The case against.</strong> It is a re-skin, not a rethink: if the fork
+          topology genuinely defeats people, prettier water will not fix it. It fights
+          precision (a river's edge is a poor scale), it risks looking busy with eight
+          tributaries, and it is a substantial rendering job — the current squiggle and
+          calm-wave systems would need rewriting around variable-width strokes.
+        </p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <h3>D · The Bounded Scene — the open world, tamed</h3>
+      <figure>
+        <svg viewBox="0 0 760 250" role="img" aria-label="Mockup: a single small fixed scene, a clearing with four worry-objects of different sizes, the companion beside one of them, and a door at the edge for letting things go.">
+          <rect x="8" y="8" width="744" height="234" rx="14" fill="#f4f1e8" stroke="var(--line)"/>
+          <path d="M8 186 C160 172 320 196 470 182 C600 170 690 188 752 180 L752 242 L8 242 Z" fill="#e7e6d8"/>
+          <!-- objects: size = loudness, ring = unanswered -->
+          <g>
+            <ellipse cx="150" cy="176" rx="40" ry="12" fill="#dcdac9"/>
+            <circle cx="150" cy="146" r="30" fill="#d18e78"/>
+            <circle cx="150" cy="146" r="38" fill="none" stroke="#d18e78" stroke-width="1.6" opacity="0.5"/>
+            <text x="104" y="206" class="diag-label">scan results · loud</text>
+          </g>
+          <g>
+            <ellipse cx="330" cy="182" rx="26" ry="8" fill="#dcdac9"/>
+            <circle cx="330" cy="166" r="16" fill="#8a7bb8"/>
+            <text x="292" y="210" class="diag-label">rent letter</text>
+          </g>
+          <g>
+            <ellipse cx="470" cy="178" rx="20" ry="7" fill="#dcdac9"/>
+            <circle cx="470" cy="166" r="11" fill="#9dbfb1"/>
+            <path d="M464 166 l4 4 l7 -8" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <text x="440" y="204" class="diag-label">answered today</text>
+          </g>
+          <g>
+            <ellipse cx="592" cy="184" rx="18" ry="6" fill="#dcdac9"/>
+            <circle cx="592" cy="172" r="9" fill="#c7ac6a"/>
+            <text x="560" y="206" class="diag-label">bakery idea</text>
+          </g>
+          <!-- companion -->
+          <g transform="translate(196,140)">
+            <rect x="0" y="0" width="7" height="7" fill="#c9a36a"/><rect x="7" y="0" width="7" height="7" fill="#e0be86"/>
+            <rect x="0" y="7" width="7" height="7" fill="#3f6f5f"/><rect x="7" y="7" width="7" height="7" fill="#5b8b78"/>
+            <rect x="0" y="14" width="7" height="7" fill="#8a7f6a"/><rect x="7" y="14" width="7" height="7" fill="#8a7f6a"/>
+          </g>
+          <text x="180" y="122" class="diag-label tiny">Pip, standing with it</text>
+          <!-- door -->
+          <g>
+            <rect x="686" y="120" width="44" height="62" rx="6" fill="#ded9cb" stroke="var(--line)"/>
+            <circle cx="696" cy="152" r="2.2" fill="var(--ink-soft)"/>
+            <text x="662" y="200" class="diag-label">the door out</text>
+          </g>
+          <text x="26" y="36" class="diag-label strong">one small clearing · fixed camera · never more than a handful</text>
+          <text x="26" y="56" class="diag-label tiny">size = how loud · ring = still waiting for an answer · walk it to the door to let it go</text>
+        </svg>
+        <figcaption>
+          D · The Bounded Scene. Not a world to explore: one screen-sized place, a few
+          objects, an explicit door. The idea Nicky described, with the parts the evidence
+          warns about removed.
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <p>
+          <strong>The case for.</strong> This is where the strongest single finding in the
+          study cashes out: enacted gestures on individual thoughts have direct causal
+          support, and a scene of discrete objects invites them — pick it up, carry it,
+          set it down, walk it to the door. It needs no diagram literacy whatsoever, it
+          gives Pip a real job, and closure becomes a ritual rather than a curve. Bounded,
+          fixed-camera, low-density scenes are exactly what the game-design evidence says
+          stays readable.
+        </p>
+        <p>
+          <strong>The case against.</strong> Time is its weak axis. "This started three
+          weeks ago" has no natural carrier in a clearing — you would need an explicit
+          marker (dust, position, a label), which is admitting the metaphor cannot express
+          it. It also caps out: a handful of objects is legible, twelve is a junk drawer,
+          and the free plan already allows ten open threads. And it is the second most
+          expensive option here.
+        </p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <h3>E · The full open world — and why I would not build it</h3>
+      <figure>
+        <svg viewBox="0 0 760 200" role="img" aria-label="Mockup showing the problem with a large open world: a wide map with scattered objects, most off-screen, a small viewport rectangle and a question mark indicating disorientation.">
+          <rect x="8" y="8" width="744" height="184" rx="14" fill="#f1efe6" stroke="var(--line)" stroke-dasharray="5 4"/>
+          <g fill="#cfcdbc">
+            <circle cx="70" cy="60" r="10"/><circle cx="150" cy="150" r="7"/><circle cx="250" cy="40" r="13"/>
+            <circle cx="430" cy="150" r="9"/><circle cx="560" cy="52" r="11"/><circle cx="660" cy="140" r="8"/>
+            <circle cx="700" cy="40" r="6"/><circle cx="360" cy="110" r="12"/>
+          </g>
+          <rect x="286" y="66" width="150" height="86" rx="8" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <text x="292" y="60" class="diag-label accent tiny">what you can see</text>
+          <text x="470" y="100" class="diag-label alarm">where was the rent letter?</text>
+          <text x="26" y="34" class="diag-label strong">a world bigger than the screen</text>
+          <text x="26" y="182" class="diag-label tiny">size without density · no landmark · the worry you need is somewhere off-camera</text>
+        </svg>
+        <figcaption>
+          E · Drawn as the problem rather than the promise: once the world exceeds the
+          viewport, finding a specific worry becomes navigation work.
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <p>
+          Nicky's instinct that this is "too Sims-like and more complex" is right, and the
+          evidence says so for reasons worth stating precisely. The failure is not
+          legibility — needs meters are extremely legible — it is that tending decaying
+          meters becomes a chore, and a chore is the last thing to hand an anxious person.
+          Add the disorientation literature, the decision paralysis that appears when a
+          world loses its guardrails, and the fact that the one supportive wellbeing study
+          works through escaping your problems rather than facing them, and the case
+          collapses. It also has the weakest carriers for dates and durations and the
+          highest build cost of anything here. <strong>Recommendation: don't.</strong> Take
+          option D instead, which keeps what is appealing about the idea.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="scores">
+  <div class="wrap inner">
+    <p class="kicker">Side by side</p>
+    <h2>How they score</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Today's timeline</th>
+            <th>A · Ledger</th>
+            <th>B · Board</th>
+            <th>C · Current</th>
+            <th>D · Scene</th>
+            <th>E · Open world</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>When it started</td><td class="part">in theory — invisible in practice</td><td class="yes">as words</td><td class="yes">row start</td><td class="yes">position</td><td class="no">needs a marker</td><td class="no">weak</td></tr>
+          <tr><td>How long it has pulled</td><td class="part">length, if in window</td><td class="yes">"open 12 days"</td><td class="yes">row length</td><td class="yes">length</td><td class="part">implied</td><td class="no">weak</td></tr>
+          <tr><td>Loudness</td><td class="yes">four channels</td><td class="yes">bar + sparkline</td><td class="yes">cell shade</td><td class="yes">width</td><td class="yes">size</td><td class="yes">size</td></tr>
+          <tr><td>Upward drift visible</td><td class="part">gradual, unlabelled</td><td class="yes">sparkline</td><td class="yes">darkening streak</td><td class="part">widening</td><td class="part">growing</td><td class="part">growing</td></tr>
+          <tr><td>Integration / burn / hand-off</td><td class="yes">distinct geometry</td><td class="part">chips + glyph</td><td class="yes">cell marks</td><td class="yes">confluence</td><td class="yes">door rituals</td><td class="yes">rituals</td></tr>
+          <tr><td>The split made visible</td><td class="yes">its whole point</td><td class="no">lost</td><td class="no">lost</td><td class="yes">kept</td><td class="part">objects vs you</td><td class="part">objects vs you</td></tr>
+          <tr><td>Comprehension load</td><td class="no">highest</td><td class="yes">lowest</td><td class="yes">low</td><td class="part">medium</td><td class="yes">low</td><td class="no">high</td></tr>
+          <tr><td>Enacted interaction</td><td class="part">dial, bonk, burn</td><td class="part">buttons</td><td class="part">tap a cell</td><td class="part">dial, bonk</td><td class="yes">strongest</td><td class="yes">strong</td></tr>
+          <tr><td>Room for Pip</td><td class="yes">native</td><td class="no">awkward</td><td class="no">awkward</td><td class="yes">native</td><td class="yes">native</td><td class="yes">native</td></tr>
+          <tr><td>Build cost</td><td class="yes">already built</td><td class="yes">smallest</td><td class="yes">small</td><td class="no">large</td><td class="no">large</td><td class="no">largest</td></tr>
+          <tr><td>Narrow screens &amp; long Spanish</td><td class="no">labels clip today</td><td class="yes">reflows</td><td class="part">needs scroll</td><td class="part">same risk</td><td class="part">crowds</td><td class="no">worst</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <p class="cite">
+        Scores are my judgement against the evidence and the code, not measurements. The
+        column that would move most under real user testing is "comprehension load" — which
+        is exactly the column the whole argument turns on.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="recommendation">
+  <div class="wrap inner">
+    <p class="kicker">Recommendation</p>
+    <h2>Keep the timeline. Stop leaning on its hardest idea. Fix the window first.</h2>
+    <div class="prose">
+      <p class="verdict-line">
+        Do not replace the timeline. Do three cheaper things instead, in this order: make
+        the split actually visible, stop requiring anyone to read it, and move the next
+        chunk of effort from drawing to doing.
+      </p>
+      <p>
+        <strong>1 · Fix the window (days of work, not weeks).</strong> The most damaging
+        finding in this study is also the cheapest to fix, and it needs no new design: give
+        the view a span the content deserves — the wider window function already exists and
+        is never called — or add the zoom that was written and never wired up. Until then
+        the app is spending an enormous amount of rendering craft on geometry its users
+        almost never see.
+      </p>
+      <p>
+        <strong>2 · Add the Ledger as the first surface, and let the map be the reward.</strong>
+        With one session's grace before most people leave, the opening screen should be
+        readable with zero tuition: cards, a loudness bar, a duration, a sentence. The
+        timeline becomes the view you graduate to — the picture that explains what the
+        cards mean, taught in place the first time a fork appears rather than in a tour
+        before the app. This is the layered answer the literacy and attrition evidence
+        both point to, and the app is already most of the way there: two stripped-down list
+        views ship today.
+      </p>
+      <p>
+        <strong>3 · Spend the next big effort on enacted gestures, not on a new picture.</strong>
+        The single strongest causal result in this review is that dragging a written thought
+        to a bin changed how much it mattered, while imagining the same thing did not. That
+        is an argument for more verbs — carry, set down, put away, hand over, close the
+        door — attached to individual threads. If a second representation is ever built,
+        the Bounded Scene is the one to build, because it is where those verbs live
+        naturally. Not the open world.
+      </p>
+      <p>
+        <strong>The counter-case, stated fairly.</strong> If the goal is the largest number
+        of people understanding One Current on first contact, the honest answer is that the
+        Board should be the default and the timeline should be optional. It carries more of
+        the metric set than the Ledger, keeps a real time axis, shows progress better than
+        anything else here, and asks almost nothing of the reader. The reason I do not lead
+        with it is not evidence — it is identity: the split timeline is the argument this
+        app is making about how a life feels, and the published research page stakes real
+        claims on it. That is a product decision, not a research one, and it is Nicky's to
+        make.
+      </p>
+      <div class="callout">
+        <strong>The one decision to make.</strong> Is the split timeline the product's
+        thesis (keep it central, spend on making it visible and teachable — options 1–3
+        above), or is it the product's <em>visualization</em> (in which case put the Board
+        or the Ledger first and treat the timeline as a view)? Everything else on this page
+        follows from that answer.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="wins">
+  <div class="wrap inner">
+    <p class="kicker">Worth doing either way</p>
+    <h2>Cheap wins, independent of the big decision</h2>
+    <div class="prose">
+      <ol>
+        <li><strong>Give the view a usable span.</strong> The fixed eight-day window is the single highest-impact bug-shaped design flaw found here.</li>
+        <li><strong>Show the loudness log.</strong> It is already recorded, displayed nowhere, and it is the only evidence the app has that things get better. A sparkline per thread is nearly free.</li>
+        <li><strong>Write one sentence per thread.</strong> "Loud for nine days, never answered." The named gap in this whole product category is interpretation, not visualization.</li>
+        <li><strong>Say what the vertical axis means, or stop pretending it means something.</strong> Lanes are packing output; up-is-louder only applies while dragging.</li>
+        <li><strong>Test amplitude, or drop it.</strong> Wave motion is the one loudness channel with no evidence and a likely misreading as volatility. Thickness already does the job.</li>
+        <li><strong>Try forks below the line only.</strong> The one orientation finding available says down-to-the-right reads more accurately; today lanes alternate, so half are in the harder direction.</li>
+        <li><strong>Bring the legend out from behind the "i".</strong> A persistent, quiet key costs one line of screen and removes a tuition step.</li>
+        <li><strong>Truncate labels, and give the wholeness chip its sentence instead of its glyph.</strong> Both fail first on a phone in Spanish.</li>
+        <li><strong>Revisit loudness drift.</strong> Cap it sooner, soften it, or make it opt-in. An app that gets visibly louder while an anxious person is coping is taking a real risk for a mechanic that has never been tested.</li>
+        <li><strong>Keep the reward layer, but stop counting on it.</strong> The meta-analytic evidence says game elements do not move adherence. Tokens and the bonk are defensible as warmth; they are not a retention strategy.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="small">
+      Internal design study · written 26 August 2026 · unlisted, and deliberately critical.
+      Evidence reviewed and graded; no users were tested. The claims about the app's own
+      behaviour were verified against its source.
+    </p>
+    <p class="legal">One Current — a calm, private timeline of your life.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -14,33 +14,9 @@ import { TitleCard } from "./components/TitleCard";
 import { Captions, Cue } from "./components/Captions";
 import { EndCard } from "./components/EndCard";
 import type { Mood } from "./brand";
+export type { Clip, PromoDef, RawPromoDef, FocusKeyframe } from "./beats";
+import type { Clip, PromoDef, FocusKeyframe } from "./beats";
 
-export type FocusKeyframe = {
-  at: number; // frame within the clip segment
-  x: number; // focus center in footage px (2400x1600 for desktop)
-  y: number;
-  scale: number; // 1 = footage fits container width exactly
-};
-
-export type Clip = {
-  src: string; // file in public/footage/
-  from: number; // first footage frame to show
-  to: number; // last footage frame (exclusive)
-  cues?: Cue[];
-  focus?: FocusKeyframe[]; // desktop only
-};
-
-export type PromoDef = {
-  id: string;
-  mood: Mood;
-  device: "phone" | "browser";
-  intro: { kicker?: string; headline: string; sub?: string };
-  introFrames?: number;
-  clips: Clip[];
-  outroFrames?: number;
-  pro?: boolean;
-  endLine?: string;
-};
 
 export const promoDuration = (def: PromoDef) =>
   (def.introFrames ?? 66) +

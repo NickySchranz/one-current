@@ -1,4 +1,5 @@
 import React from "react";
+import { resolveFrame as at } from "./beats.js";
 import {
   AbsoluteFill,
   Easing,
@@ -319,7 +320,7 @@ export const Flagship: React.FC = () => {
       node: (
         <PhoneClip
           src="01-hero.webm"
-          from={70}
+          from={at("01-hero.webm", "naming")}
           rate={1.2}
           segmentDuration={285}
           cues={[
@@ -330,7 +331,7 @@ export const Flagship: React.FC = () => {
         />
       ),
     },
-    { from: 390, dur: 120, mood: "night", node: <Statement mood="night" headline="Ignored threads get louder." /> },
+    { from: 390, dur: 120, mood: "night", node: <Statement mood="night" headline="Unanswered threads get louder." /> },
     {
       from: 510,
       dur: 161,
@@ -338,7 +339,7 @@ export const Flagship: React.FC = () => {
       node: (
         <PhoneClip
           src="03-louder-a.webm"
-          from={66}
+          from={at("03-louder-a.webm", "act")}
           rate={1.3}
           segmentDuration={161}
           zoom={{ x: 0.62, y: 0.42, scale: 1.4, at: 30, dur: 24, hold: 50 }}
@@ -356,7 +357,7 @@ export const Flagship: React.FC = () => {
       node: (
         <PhoneClip
           src="03-louder-b.webm"
-          from={0}
+          from={at("03-louder-b.webm", "days")}
           rate={1.8}
           segmentDuration={111}
           cues={[{ at: 16, text: "Then the days roll on — and it all restarts." }]}
@@ -371,7 +372,7 @@ export const Flagship: React.FC = () => {
       node: (
         <PhoneClip
           src="02-pip.webm"
-          from={60}
+          from={at("02-pip.webm", "offers-120")}
           rate={1.17}
           segmentDuration={180}
           zoom={{ x: 0.6, y: 0.28, scale: 1.7, at: 90, dur: 26, hold: 44 }}
@@ -386,7 +387,7 @@ export const Flagship: React.FC = () => {
       node: (
         <PhoneClip
           src="04-merge.webm"
-          from={330}
+          from={at("04-merge.webm", "wizard")}
           rate={1.14}
           segmentDuration={210}
           zoom={{ x: 0.5, y: 0.45, scale: 1.12, at: 60, dur: 60, hold: 200 }}
@@ -410,7 +411,7 @@ export const Flagship: React.FC = () => {
         />
       ),
     },
-    { from: 1502, dur: 80, mood: "river", node: <Statement mood="river" headline="Nothing is sent anywhere." /> },
+    { from: 1502, dur: 80, mood: "river", node: <Statement mood="river" headline="Nothing leaves unless you send it." /> },
     {
       from: 1582,
       dur: 70,
@@ -418,7 +419,7 @@ export const Flagship: React.FC = () => {
       node: (
         <PhoneClip
           src="09-share.webm"
-          from={205}
+          from={at("09-share.webm", "upload")}
           segmentDuration={70}
           cues={[{ at: 10, text: "Share only what you choose — with your therapist. (Pro)" }]}
         />

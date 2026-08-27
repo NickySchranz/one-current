@@ -1,4 +1,5 @@
 import React from "react";
+import { resolveFrame as at } from "./beats.js";
 import { AbsoluteFill, Sequence } from "remotion";
 import { Background } from "./components/Background";
 import { EndCard } from "./components/EndCard";
@@ -37,7 +38,7 @@ export const WhyFilm: React.FC = () => {
       node: (
         <PhoneClip
           src="01-hero.webm"
-          from={78}
+          from={at("01-hero.webm", "fab")}
           rate={1.25}
           segmentDuration={210}
           cues={[
@@ -54,7 +55,7 @@ export const WhyFilm: React.FC = () => {
       node: (
         <PhoneClip
           src="01-hero.webm"
-          from={230}
+          from={at("01-hero.webm", "loudness-40")}
           segmentDuration={160}
           zoom={{ x: 0.5, y: 0.78, scale: 1.5, at: 26, dur: 22, hold: 70 }}
           cues={[{ at: 12, text: "Say how loud it feels. Honestly. Seeing it is half the relief." }]}
@@ -68,12 +69,12 @@ export const WhyFilm: React.FC = () => {
       node: (
         <PhoneClip
           src="03-louder-a.webm"
-          from={66}
+          from={at("03-louder-a.webm", "act")}
           rate={1.25}
           segmentDuration={190}
           cues={[
             { at: 10, text: "Then decide — don't solve." },
-            { at: 100, text: "A small step counts. So does “nothing today.” Rest is a decision." },
+            { at: 100, text: "A small step counts. So does letting it rest." },
           ]}
         />
       ),
@@ -85,7 +86,7 @@ export const WhyFilm: React.FC = () => {
       node: (
         <PhoneClip
           src="04-merge.webm"
-          from={380}
+          from={at("04-merge.webm", "reclaim")}
           segmentDuration={190}
           zoom={{ x: 0.5, y: 0.45, scale: 1.1, at: 40, dur: 60, hold: 200 }}
           cues={[
@@ -102,7 +103,7 @@ export const WhyFilm: React.FC = () => {
       node: (
         <PhoneClip
           src="03-louder-b.webm"
-          from={0}
+          from={at("03-louder-b.webm", "days")}
           rate={1.8}
           segmentDuration={140}
           cues={[{ at: 14, text: "Tomorrow you answer again. A minute, not an evening." }]}

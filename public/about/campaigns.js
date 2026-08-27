@@ -214,7 +214,7 @@ window.CAMPAIGN_DATA = (() => {
     {
       id: "why-it-works",
       title: "Why it works",
-      description: "The conviction series: open loops, honest steps, integration over suppression, rituals, and the anti-feed positioning.",
+      description: "The conviction series: open loops, honest steps, integration over suppression, rituals, and the anti-feed positioning. The beliefs, stated plainly — where Show Your Work is the evidence underneath them. Run them in alternate weeks, never the same day.",
       goal: "Education & conviction — why this beats a todo list.",
       audience: "Skeptics; productivity crowd; people burned by streak apps.",
       cadence: "2/week — alternate manifesto lines and product-detail zooms.",
@@ -260,6 +260,99 @@ window.CAMPAIGN_DATA = (() => {
           hook: "Small steps live on your line.", body: "Decided actions sit right on today, where you can actually do them.", alt: "Close-up of small action steps on the timeline." },
         { file: "social/z10-zoom-loud", kind: "image", formats: ["45", "story"], title: "What loud looks like",
           hook: "This is what “loud” looks like.", body: "Thicker, wilder, further from your line. Loudness isn't a feeling here — it's visible.", alt: "Close-up of a loud, thick thread line." },
+      ],
+    },
+    {
+      id: "show-your-work",
+      title: "Show Your Work",
+      description:
+        "The research series: the mechanism under the app, the published studies it rests on, and the claims we refuse to make. Four arcs — Hand Words, The Three Threads, Why All Three, What We Can't Claim. Every post drives to research.html, not the store.",
+      goal: "Credibility & conviction — earn the skeptic by explaining the mechanism instead of asserting a benefit.",
+      audience:
+        "Thoughtful skeptics burned by streak apps and wellness fluff; psychology-curious readers who share what they learn. Reads on X and LinkedIn, saves on Instagram.",
+      cadence:
+        "2/week for ~9 weeks, in arc order — the arcs build. Arc 4 (the caveats) is the close, never the opener. Pin the “Why it works” film for the run.",
+      tags: ["psychology", "mentalload", "cognitivescience", "calmtech", "evidence", "openloops", "antifeed"],
+      assets: [
+        // ---- Arc 1 — Hand Words -----------------------------------------
+        { file: "social/e1-feelings", kind: "image", formats: ["45", "story"], title: "Arc 1 · Hand words",
+          hook: "Get a grip. Hold that thought. Put it down. Let it go.",
+          body: "Every phrase you use for your own mind is a hand word. Cognitive linguists (Lakoff & Johnson, 1980) showed we understand abstract things through physical metaphors — and the metaphor our whole species picked for thoughts is objects, handled by hands. That is not a figure of speech we chose at random. It is a clue.",
+          alt: "Poster listing feelings — worry, dread, guilt, overwhelm — as things that can live on a line." },
+        { file: "social/m2-not-noise", kind: "image", formats: ["45", "story"], title: "Arc 1 · Process vs object",
+          hook: "A worry you are holding is a process. A worry you have drawn is an object.",
+          body: "Objects can be named, moved, set down and changed — and there is converging evidence that each of those acts changes how the worry feels. That is the whole reason One Current draws your worries instead of listing them.",
+          alt: "Manifesto poster about worries as visible threads beside your line." },
+        { file: "social/p01-hero", kind: "image", formats: ["45", "story", "sq"], title: "Arc 1 · The hypothesis",
+          hook: "The mind manages what the hand could manage.",
+          body: "Our working theory, in one line: a feeling becomes regulable roughly in proportion to how graspable its representation is. So give the mind a hand-shaped interface to itself. We call it the Graspability Hypothesis — and we published the reasoning, sources and holes.",
+          alt: "Hero poster: the One Current timeline on a phone, threads branching off one main line." },
+        { file: "social/x1-tilt-hero", kind: "image", formats: ["45", "story"], title: "Arc 1 · Taken literally",
+          hook: "We took the idioms literally.",
+          body: "Every worry gets a body you can name, a line you can drag, a weight you can set down, and a way home you can watch happen. The language was already there. We just built the interface it describes.",
+          alt: "Tilted device shot: everything on one line." },
+
+        // ---- Arc 2 — The Three Threads ----------------------------------
+        { file: "social/b1-visible", kind: "image", formats: ["45", "story"], title: "Arc 2 · The gap is the engine",
+          hook: "Your mind runs a quiet comparison all day: who you are being against who you intend to be.",
+          body: "Psychologists call that difference a self-discrepancy (Higgins, 1987), and a long line of work says the gap itself — not guilt, not willpower — is what actually moves people. One Current draws the gap instead of leaving it humming in the background.",
+          alt: "Poster: same worries, finally visible." },
+        { file: "social/b2-one-thing", kind: "image", formats: ["45", "story"], title: "Arc 2 · Wishing is not the method",
+          hook: "Picturing the better version of your life does almost nothing on its own.",
+          body: "What holds up in randomized trials is mental contrasting: holding the future you want and the obstacle in front of you in view at the same time (Oettingen; Duckworth et al., 2013). One canvas, both things — your intended line, and the thread pulling away from it.",
+          alt: "Poster: from everything-at-once to one thing today." },
+        { file: "social/z7-zoom-curve", kind: "image", formats: ["45", "story"], title: "Arc 2 · Nothing is drawn as final",
+          hook: "How an app draws a broken streak changes whether you quit.",
+          body: "In consumer research on progress logs, breaks shown as repairable kept people going; breaks shown as permanent made them stop (Silverman & Barasch, 2023). So nothing here is ever crossed out — finished threads curve back and rejoin your line.",
+          alt: "Close-up of a thread curving home into the main line." },
+        { file: "social/q2-pip-named", kind: "image", formats: ["45", "story"], title: "Arc 2 · Naming is regulation",
+          hook: "Naming is not nothing. It is regulation.",
+          body: "In brain imaging, putting a feeling into words dampens the amygdala while recruiting the region doing the labeling (Lieberman et al., 2007). In a spider-phobia experiment, people who labeled their fear had calmer physiology a week later than those who reappraised or distracted (Kircanski et al., 2012). Step one here is: name it, in a few words.",
+          alt: "Pip quote poster: named things are easier to work with." },
+        { file: "social/b3-ten-threads", kind: "image", formats: ["45", "story"], title: "Arc 2 · What the loop actually wants",
+          hook: "Your mind does not need the task finished. It needs it held somewhere it trusts.",
+          body: "Unfinished business intrudes — but the intrusions stop once the loop is written down as a concrete plan, even though nothing has been done yet (Masicampo & Baumeister, 2011). A thread on your timeline is exactly that: an open loop the app now holds, so your head does not have to.",
+          alt: "Poster: ten open threads, one line through them all." },
+        { file: "social/p08-action", kind: "image", formats: ["story", "sq"], title: "Arc 2 · The variable that tracks",
+          hook: "Across 51 studies and 11,218 people, low perceived control ran through every anxiety disorder examined.",
+          body: "That sense of “I could do something about this” is the variable that tracks most reliably (Gallagher et al., 2014). It is why every thread here is answerable — and why deciding that nothing can be done today counts as an answer.",
+          alt: "Quote card: an action counts, and so does deciding that nothing can be done." },
+        { file: "social/p05-pip", kind: "image", formats: ["45", "story"], title: "Arc 2 · Play is the delivery, not the medicine",
+          hook: "Across 38 studies and 8,110 people, gamified mental-health apps did not beat plain ones on symptoms.",
+          body: "We are quoting the number that argues against our own genre (Six et al., 2021). Game elements are not the medicine — they buy adherence, and in one three-arm trial roughly four times the odds of staying on protocol (Litvin et al., 2020). So Pip's job is not to heal you. It is to make you come back to the minute that does.",
+          alt: "Poster: meet Pip, a companion on your timeline." },
+        { file: "social/a1-no-streaks", kind: "image", formats: ["45", "story"], title: "Arc 2 · Missing on purpose",
+          hook: "What is missing from One Current is missing on purpose.",
+          body: "Leaderboards and badges eroded intrinsic motivation over a semester (Hanus & Fox, 2015). Streaks track with obligation and fear of missing out in adolescents (van Essen & Van Ouytsel, 2023). So: no leaderboards, no streak to lose, nothing that punishes a bad day. The charge meter only ever fills.",
+          alt: "Poster: no streaks, no guilt, just your current." },
+
+        // ---- Arc 3 — Why All Three --------------------------------------
+        { file: "social/z10-zoom-loud", kind: "image", formats: ["45", "story"], title: "Arc 3 · Seeing motivates",
+          hook: "Seeing motivates, but it does not soothe.",
+          body: "The visible gap between your line and your thread is the engine of change — but a gap you can only stare at can also just sit there and hum. Which is why visibility is one third of the design, not the whole of it.",
+          alt: "Close-up of a loud, thick thread line." },
+        { file: "social/a4-close-lighter", kind: "image", formats: ["45", "story"], title: "Arc 3 · Holding soothes",
+          hook: "Holding soothes, but it does not sustain.",
+          body: "Naming and externalizing quiet the alarm — but a journal you stop opening stops working. The evidence is blunt about where the difficulty actually lives: coming back.",
+          alt: "Poster: an app you close feeling lighter." },
+        { file: "social/y11-zoom-pip", kind: "image", formats: ["45", "story"], title: "Arc 3 · Play sustains",
+          hook: "Play sustains, but alone it means nothing.",
+          body: "Game loops keep people returning, and the meta-analyses show that without real reflection underneath, that is all they do. Read the three together and they describe one design: a gap you can see, drawn as objects you can hold, inside a loop gentle enough to return to.",
+          alt: "Close-up of Pip keeping watch on a thread." },
+
+        // ---- Arc 4 — What We Can't Claim --------------------------------
+        { file: "social/z8-zoom-check", kind: "image", formats: ["45", "story"], title: "Arc 4 · Answered, not solved",
+          hook: "The check mark here does not mean solved. It means answered.",
+          body: "We are careful about that word because the research is careful. Naming and offloading are the strong links in our chain; manipulating a thought as an object is the promising one — suggestive rather than settled, and the vivid VR study behind it was small and single-session.",
+          alt: "Close-up of the quiet decided-today check mark." },
+        { file: "social/z6-zoom-now", kind: "image", formats: ["45", "story"], title: "Arc 4 · Test bench, not proof",
+          hook: "Every link in our chain has published evidence behind it. The chain as a whole has never been tested end to end by anyone.",
+          body: "Draw, grasp, act, settle — that is the theory, and this app is its test bench, not its proof. Most of the game trials we lean on were run with children and teenagers. One review found no reliable adherence benefit at all. Evidence suggests; it does not prove.",
+          alt: "Close-up of the pulsing Now marker on the timeline." },
+        { file: "social/m1-mainline", kind: "image", formats: ["45", "story"], title: "Arc 4 · Read the caveats yourself",
+          hook: "Nothing here claims the app has been clinically tested. It claims the app was built carefully on work that has been.",
+          body: "One Current is a reflection tool, not a therapy — and if worry sits heavy in your life, a person is the right next thread. We published all 35 sources, plus the five places our own reasoning is thin. We would rather you understood it than downloaded it.",
+          alt: "Manifesto poster: your life continues on one main line." },
       ],
     },
     {
@@ -395,8 +488,29 @@ window.CAMPAIGN_DATA = (() => {
     }
   }
 
-  // hand-tuned overrides for the flagship films
+  // hand-tuned overrides for the flagship films and the research series
+  // (teaching copy needs more room than the generic assembly gives it)
   const overrides = {
+    "social/e1-feelings": {
+      instagram: { caption: "Listen to how you talk about your own mind:\n\n→ get a grip\n→ hold that thought\n→ put it down\n→ let it go\n→ carry a worry\n→ handle it\n→ drop it\n→ pick it back up\n\nEvery one is a hand word.\n\nCognitive linguists showed decades ago that we understand abstract things through physical metaphors (Lakoff & Johnson, 1980) — and the metaphor our whole species picked for thoughts is objects, handled by hands.\n\nWe don't think that's an accident. We think it's an instruction. The reasoning, the sources and the holes: one-current.app/about/research.html" },
+      x: { caption: "get a grip · hold that thought · put it down · let it go · carry a worry · handle it · drop it\n\nEvery phrase you use for your own mind is a hand word.\n\nThe species picked one metaphor for thoughts: objects, handled by hands. We built the interface that language already describes." },
+      linkedin: { caption: "Every phrase we use for our own thinking is borrowed from the hands: get a grip, hold that thought, put it down, let it go.\n\nLakoff & Johnson showed in 1980 that abstract concepts are understood through physical metaphor. The metaphor our species settled on for thoughts is objects — things that can be grasped, carried, set down.\n\nOur working theory is that this is more than a manner of speaking: a feeling becomes regulable roughly in proportion to how graspable its representation is. Naming a worry calms the alarm. Writing it down stops the rehearsal. Acting on its written form weakens it.\n\nWe published the full reasoning, all 35 sources, and the five places our own argument is thin. Critique welcome — especially from practitioners." },
+    },
+    "social/p08-action": {
+      x: { caption: "51 studies. 11,218 people.\n\nLow perceived control ran through every anxiety disorder examined (Gallagher et al., 2014).\n\nNot “think positive”. Not “try harder”. The sense that you could do something about it.\n\nSo every thread in our app is answerable — and “nothing can be done today” counts as an answer." },
+      linkedin: { caption: "The most reliable finding we build on is not a productivity one.\n\nIn a meta-analysis of 51 studies covering 11,218 people, low perceived control ran through every anxiety disorder examined (Gallagher, Bentley & Barlow, 2014).\n\nThat shaped a product decision: every thread has to be answerable, and one of the answers has to be “nothing can be done about this today”. An app that only accepts progress teaches you that rest is failure — which is the opposite of what the evidence supports." },
+    },
+    "social/p05-pip": {
+      x: { caption: "38 studies. 8,110 people. Gamified mental-health apps did NOT beat plain ones on symptoms (Six et al., 2021).\n\nWe make one, and we're telling you that.\n\nGame elements aren't the medicine. They buy adherence — ~4× the odds of staying on protocol in one RCT. Our mascot's job isn't to heal you. It's to bring you back to the minute that helps." },
+      linkedin: { caption: "Here is the number that argues against our own product category.\n\nAcross 38 studies and 8,110 participants, gamified mental-health apps did not outperform plain ones on symptom outcomes (Six et al., 2021, JMIR Mental Health).\n\nWe still built a playful one, for a narrow and specific reason: where gamification does earn its keep is adherence — roughly four times the odds of staying on protocol in a three-arm RCT (Litvin et al., 2020) — and engaging with reflection at all is what predicts improvement.\n\nSo the playful layer is explicitly the delivery mechanism, not the treatment. It exists to return you to sixty seconds of honest reflection. Anything that would make you return out of obligation — streaks, leaderboards, a meter that empties — is left out, with citations for why." },
+    },
+    "social/z6-zoom-now": {
+      x: { caption: "Every link in our chain has published evidence behind it.\n\nThe chain as a whole — draw, grasp, act, settle — has never been tested end to end by anyone.\n\nThis app is its test bench, not its proof.\n\n(Most of the game trials we lean on were run with kids. One review found no adherence benefit at all. We publish that too.)" },
+      linkedin: { caption: "A thing we put on our own research page:\n\n“This app is its test bench, not its proof.”\n\nEvery mechanism we build on has published evidence — affect labeling, open loops, mental contrasting, perceived control. The chain as a whole has not been tested end to end by anyone, including us.\n\nWe also publish the parts that complicate our story: most game trials are in children and adolescents; several control games improved outcomes too; one review found no reliable adherence benefit from gamification at all.\n\nIf you work in this field and think a link in the chain is weaker than we've stated it, we'd genuinely like to hear it." },
+    },
+    "social/m1-mainline": {
+      linkedin: { caption: "We wrote a research page for our own app and filled it with the reasons it might be wrong.\n\nThirty-five sources. Three mechanisms. One working theory. And five honest notes marking exactly where our reasoning is an inference rather than a finding — including that the app itself has never been through a clinical trial.\n\nOne Current is a reflection tool, not a therapy. If worry sits heavy in someone's life, a person is the right next thread; the app has a button that says so.\n\nNothing there claims the app has been clinically tested. It claims the app was built carefully on work that has been. We'd rather you understood it than downloaded it." },
+    },
     "video/00-flagship": {
       instagram: { caption: "60 seconds, the whole idea:\n\nYour worries become threads beside your life's main line. You name them, hear how loud they are, decide something small — and watch the energy come home.\n\nNo streaks. No feed. Just your current.\n\nOne Current — on the App Store and Google Play." },
       tiktok: { caption: "POV: your mental load, but visible. 60 seconds, the whole idea. 🧵" },

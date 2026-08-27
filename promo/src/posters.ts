@@ -73,7 +73,7 @@ const concepts: Concept[] = [
     mood: "river",
     layout: "quote",
     kicker: "One Current",
-    headline: "Nothing is sent anywhere.",
+    headline: "Nothing leaves your device unless you send it.",
     sub: "Your threads live on your device. No feed. No tracking. Just your current.",
   },
   {
@@ -122,6 +122,15 @@ const concepts: Concept[] = [
       "Share with your psychologist",
       "Seven living creature themes",
     ],
+  },
+  {
+    key: "p11-stage",
+    formats: ["45", "story"],
+    mood: "river",
+    layout: "device",
+    still: "still-stage.png",
+    headline: "One thread at a time.",
+    sub: "Answering a thread gives it the whole screen — so you can still see where it sits against today.",
   },
   // ---- campaign: worry hooks — one universal thread title per poster ----
   ...[

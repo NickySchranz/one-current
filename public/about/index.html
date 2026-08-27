@@ -26,6 +26,9 @@
     --accent: #3f6f5f;
     --accent-deep: #35604f;
     --accent-soft: #e4ede9;
+    --gold: #dfb968;
+    --gold-deep: #b8934c;
+    --alarm: #b5654f;
     --line: #e3e1d9;
     --radius: 10px;
     --radius-lg: 16px;
@@ -95,6 +98,8 @@
     backdrop-filter: saturate(1.4) blur(14px);
     border-bottom: 1px solid rgba(227, 225, 217, 0.8);
   }
+  /* The header spans wider than the reading column: the nav row needs it. */
+  header.site .wrap { max-width: 1140px; }
   header.site .bar {
     display: flex;
     align-items: center;
@@ -203,17 +208,18 @@
     border-radius: 999px;
     padding: 3px 10px;
   }
-  @media (min-width: 1080px) {
+  @media (min-width: 1130px) {
     .mobile-nav { display: none !important; }
   }
-  /* Laptop widths: the full nav row would otherwise run past the edge. */
-  @media (max-width: 1439px) {
+  /* Whenever the full nav row is shown it uses the compact metrics — at any
+     width it is the widest thing in the header. */
+  @media (min-width: 1130px) {
     header.site .bar { gap: 10px; }
     nav.primary { gap: 0; margin-right: 2px; }
     nav.primary a { padding: 7px 6px; font-size: 0.82rem; }
     header.site .btn { padding: 8px 12px; }
   }
-  @media (max-width: 1079px) {
+  @media (max-width: 1129px) {
     nav.primary { display: none; }
     .nav-toggle { display: flex; }
     .pro-pill { display: flex; }
@@ -790,10 +796,220 @@
     .brand-name { display: none; }
     header.site .btn { padding: 8px 13px; }
   }
+  /* ---------- why it works: animated infographics ----------
+     Each figure rests at its finished pose. The animation only travels from a
+     "before" pose to that rest, once the figure is on screen, then holds. So
+     the drawing still says everything with motion switched off. */
+  .beat {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 52px;
+    align-items: center;
+    padding: 42px 0;
+  }
+  .beat + .beat { border-top: 1px solid var(--line); }
+  .beat:nth-child(even) .beat-fig { order: -1; }
+  .beat h3 {
+    margin: 0 0 12px;
+    font-size: clamp(1.15rem, 2.1vw, 1.34rem);
+    letter-spacing: -0.014em;
+    line-height: 1.32;
+  }
+  .beat p { color: var(--ink-soft); margin: 0 0 14px; }
+  .beat p.lede { color: var(--ink); font-size: 1.04rem; }
+  .beat p:last-child { margin-bottom: 0; }
+  .cite {
+    font-size: 0.79rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    border-left: 2px solid var(--accent-soft);
+    padding-left: 13px;
+  }
+  .cite b { color: var(--ink); font-weight: 600; }
+  .beat-fig { margin: 0; }
+  .beat-fig svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    border: 1px solid var(--line);
+  }
+  section.alt .beat-fig svg { background: var(--bg-raised); }
+
+  /* the philosophy beat */
+  .grasp {
+    margin-top: 8px;
+    padding: 34px 32px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
+  section.alt .grasp { background: var(--bg-raised); }
+  .grasp-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.85fr;
+    gap: 44px;
+    align-items: center;
+  }
+  .grasp h3 { margin: 0 0 12px; font-size: clamp(1.2rem, 2.3vw, 1.45rem); letter-spacing: -0.016em; }
+  .grasp p { color: var(--ink-soft); margin: 0 0 14px; }
+  .grasp p.lede { color: var(--ink); font-size: 1.05rem; }
+  .idioms { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 18px; }
+  .idioms span {
+    font-size: 0.86rem;
+    color: var(--accent-deep);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 4px 13px;
+    white-space: nowrap;
+  }
+  .honest {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+  }
+  .honest p {
+    margin: 0;
+    flex: 1 1 340px;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  /* Motion is purely additive: the animation only exists once the figure has
+     scrolled into view. With no JavaScript, or with reduced motion, every
+     element below sits at the finished pose declared here. */
+  .m { transform-box: fill-box; transform-origin: center; }
+
+  /* 1 · out of your head */
+  .f1-tangle { opacity: 0.1; }
+  .f1-thread { stroke-dasharray: 330; }
+  .in-view .f1-tangle { animation: tangleGo 9s ease-in-out infinite; }
+  .in-view .f1-thread { animation: draw 9s ease-in-out infinite; }
+  .in-view .f1-dot { animation: popIn 9s ease-in-out infinite; }
+  @keyframes tangleGo {
+    0%, 14% { opacity: 0.95; transform: none; }
+    38%, 100% { opacity: 0.1; transform: translate(6px, -4px) scale(0.94); }
+  }
+  @keyframes draw {
+    0%, 16% { stroke-dashoffset: 330; }
+    46%, 100% { stroke-dashoffset: 0; }
+  }
+  @keyframes popIn {
+    0%, 44% { opacity: 0; transform: scale(0.3); }
+    56%, 100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* 2 · naming turns the volume down */
+  .f2-ring { opacity: 0; }
+  .f2-loud { opacity: 0.17; }
+  .in-view .f2-ring { animation: ringCalm 9s ease-in-out infinite; }
+  .in-view .f2-ring-b { animation-delay: 0.18s; }
+  .in-view .f2-ring-c { animation-delay: 0.36s; }
+  .in-view .f2-loud { animation: fadeOut 9s ease-in-out infinite; }
+  .in-view .f2-calm { animation: fadeIn 9s ease-in-out infinite; }
+  .in-view .f2-tag { animation: tagIn 9s ease-in-out infinite; }
+  @keyframes ringCalm {
+    0%, 18% { opacity: 0.85; transform: scale(1); }
+    52%, 100% { opacity: 0; transform: scale(0.35); }
+  }
+  @keyframes fadeOut {
+    0%, 26% { opacity: 1; }
+    50%, 100% { opacity: 0.17; }
+  }
+  @keyframes fadeIn {
+    0%, 26% { opacity: 0; }
+    50%, 100% { opacity: 1; }
+  }
+  @keyframes tagIn {
+    0%, 12% { opacity: 0; transform: translateX(-26px); }
+    34%, 100% { opacity: 1; transform: translateX(0); }
+  }
+
+  /* 3 · rest is an answer */
+  .f3-check { stroke-dasharray: 40; }
+  .f3-strike { stroke-dasharray: 200; }
+  .f3-streak { opacity: 0.32; }
+  .in-view .f3-check { animation: draw40 9s ease-in-out infinite; }
+  .in-view .f3-rest { animation: popIn 9s ease-in-out infinite; }
+  .in-view .f3-strike { animation: draw200 9s ease-in-out infinite; }
+  .in-view .f3-streak { animation: dimOut 9s ease-in-out infinite; }
+  @keyframes draw40 {
+    0%, 22% { stroke-dashoffset: 40; }
+    44%, 100% { stroke-dashoffset: 0; }
+  }
+  @keyframes draw200 {
+    0%, 52% { stroke-dashoffset: 200; }
+    72%, 100% { stroke-dashoffset: 0; }
+  }
+  @keyframes dimOut {
+    0%, 52% { opacity: 1; }
+    76%, 100% { opacity: 0.32; }
+  }
+
+  /* 4 · it comes back into you */
+  .f4-thread { stroke-dasharray: 420; }
+  .f4-after { stroke-width: 5; opacity: 1; }
+  .in-view .f4-thread { animation: draw420 10s ease-in-out infinite; }
+  .in-view .f4-chip { animation: chipHome 10s ease-in-out infinite; }
+  .in-view .f4-after { animation: brighten 10s ease-in-out infinite; }
+  @keyframes draw420 {
+    0%, 10% { stroke-dashoffset: 420; }
+    46%, 100% { stroke-dashoffset: 0; }
+  }
+  @keyframes chipHome {
+    0%, 46% { opacity: 0; transform: translate(0, -64px); }
+    58% { opacity: 1; transform: translate(0, -64px); }
+    78%, 100% { opacity: 1; transform: translate(0, 0); }
+  }
+  @keyframes brighten {
+    0%, 62% { stroke-width: 3; opacity: 0.34; }
+    82%, 100% { stroke-width: 5; opacity: 1; }
+  }
+
+  /* 5 · the hand that already knew */
+  .g-thread { stroke-dasharray: 300; }
+  .in-view .g-thread { animation: draw300 11s ease-in-out infinite; }
+  .in-view .g-grip { animation: grip 11s ease-in-out infinite; }
+  .idioms span { opacity: 1; }
+  .idioms.in-view span { animation: idiomIn 11s ease-in-out infinite; }
+  .idioms.in-view span:nth-child(1) { animation-delay: 0.05s; }
+  .idioms.in-view span:nth-child(2) { animation-delay: 0.18s; }
+  .idioms.in-view span:nth-child(3) { animation-delay: 0.31s; }
+  .idioms.in-view span:nth-child(4) { animation-delay: 0.44s; }
+  .idioms.in-view span:nth-child(5) { animation-delay: 0.57s; }
+  .idioms.in-view span:nth-child(6) { animation-delay: 0.7s; }
+  .idioms.in-view span:nth-child(7) { animation-delay: 0.83s; }
+  .idioms.in-view span:nth-child(8) { animation-delay: 0.96s; }
+  @keyframes idiomIn {
+    0%, 4% { opacity: 0; transform: translateY(5px); }
+    18%, 100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes draw300 {
+    0%, 8% { stroke-dashoffset: 300; }
+    40%, 100% { stroke-dashoffset: 0; }
+  }
+  @keyframes grip {
+    0%, 40% { transform: rotate(-13deg); }
+    62%, 100% { transform: rotate(0deg); }
+  }
+
+  @media (max-width: 860px) {
+    .beat { grid-template-columns: 1fr; gap: 26px; padding: 34px 0; }
+    .beat:nth-child(even) .beat-fig { order: 0; }
+    .grasp-grid { grid-template-columns: 1fr; gap: 26px; }
+    .grasp { padding: 26px 22px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .btn, .theme-card { transition: none; }
     .btn:hover, .theme-card:hover { transform: none; }
+    /* Every figure already rests at its finished pose: just stop travelling. */
+    .in-view .m, .idioms.in-view span { animation: none !important; }
   }
 </style>
 </head>
@@ -815,11 +1031,11 @@
       <a href="#how">How it works</a>
       <a href="#companion">Companion</a>
       <a href="#wellspring">Wellspring</a>
+      <a href="#why">Why it works</a>
       <a href="#pro">Pro</a>
       <a href="#therapists">Therapists</a>
       <a href="#themes">Themes</a>
       <a href="#privacy">Privacy</a>
-      <a href="research.html">Research</a>
       <a href="index.es.html" lang="es" aria-label="Leer en español">ES</a>
     </nav>
     <a class="pro-pill" href="#pro">Pro</a>
@@ -838,6 +1054,7 @@
     <a href="#how">How it works</a>
     <a href="#companion">Your companion</a>
     <a href="#wellspring">Wellspring</a>
+    <a href="#why">Why it works</a>
     <a class="mn-pro" href="#pro">Pro <span class="mn-chip">Paid · from €4/mo</span></a>
     <a href="#therapists">For therapists</a>
     <a href="#themes">Themes</a>
@@ -1656,60 +1873,277 @@
 
 <section class="alt" id="why">
   <div class="wrap inner">
-    <p class="kicker">Why it helps</p>
-    <h2>Built around a few quiet convictions</h2>
+    <p class="kicker">Why it works</p>
+    <h2>You were never built to hold it all at once</h2>
     <p class="sub">
-      One Current is not a task manager and not a mood tracker. It sits somewhere
-      calmer: a way to stop carrying everything at once.
+      Nothing is wrong with you. A mind holding six open worries is a mind doing
+      exactly what minds do — rehearsing anything unfinished, over and over, so it
+      isn't lost. One Current gives all of it somewhere to sit. Here is what happens
+      when it does.
     </p>
-    <div class="cards">
-      <div class="card">
-        <h3>Seeing it is half the relief</h3>
-        <p>
-          An open loop you can see is lighter than one you carry blind. The timeline
-          turns background noise into a finite, visible set of lines.
-        </p>
+
+    <div class="beats">
+
+      <!-- 1 · externalisation -->
+      <div class="beat">
+        <div>
+          <h3>The moment it's outside your head, it stops being everything</h3>
+          <p class="lede">
+            A worry you're carrying has no edges. Drawn as a line with a beginning
+            and an end, it becomes one thing among a few — finite, and visibly
+            smaller than you.
+          </p>
+          <p>
+            That's the whole first move. You don't have to solve it. You just have
+            to set it down somewhere you can see it.
+          </p>
+          <p class="cite">
+            The mind rehearses open loops uninvited — but experiments find the
+            intrusions quiet down once the loop is written down concretely,
+            <b>even though nothing has been done about it yet</b>.
+            <a href="research.html">See the studies</a>
+          </p>
+        </div>
+        <figure class="beat-fig">
+          <svg viewBox="0 62 520 196" role="img" aria-label="A tangle of worry inside a head fades as it leaves and becomes a single clean thread arcing above a straight timeline.">
+            <!-- head -->
+            <path d="M138 232 C92 232 62 198 64 158 C66 116 100 82 145 80 C186 78 221 108 226 148 C229 168 223 181 228 193 C232 201 239 205 237 210 C234 216 221 214 218 219 C214 224 218 232 211 236 C202 240 190 233 180 235"
+                  stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <!-- the tangle, which fades -->
+            <path class="m f1-tangle" d="M104 150 C126 128 96 122 118 142 C140 162 104 168 130 174 C156 180 120 190 148 186 C176 182 150 156 172 148 C194 140 160 132 178 122 C196 112 148 118 138 138"
+                  stroke="var(--alarm)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <!-- main line -->
+            <path d="M244 214 H500" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <!-- the thread, which draws itself out of the head -->
+            <path class="m f1-thread" d="M236 200 C268 196 286 132 344 130 C404 128 412 196 448 210"
+                  stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle class="m f1-dot" cx="448" cy="210" r="6" fill="var(--accent)"/>
+            <text x="448" y="240" text-anchor="middle" font-size="14" fill="var(--ink-soft)" font-family="var(--font-body)">now</text>
+          </svg>
+        </figure>
       </div>
-      <div class="card">
-        <h3>Every decision counts</h3>
-        <p>
-          Taking one small step counts. So does honestly deciding that nothing can be
-          done today. Rest is a decision, not a failure.
-        </p>
+
+      <!-- 2 · affect labelling -->
+      <div class="beat">
+        <div>
+          <h3>Give it a name and the volume comes down on its own</h3>
+          <p class="lede">
+            One Current only ever asks for a few words in your language — not a
+            score, not a category. That plain naming is doing more than record-keeping.
+          </p>
+          <p>
+            You'll feel it as the difference between a hum you can't place and a
+            sentence you could say out loud.
+          </p>
+          <p class="cite">
+            In brain-imaging work, putting a feeling into words quiets the amygdala —
+            the brain's alarm — while lighting up the region doing the naming.
+            <b>Naming isn't nothing; it's regulation.</b>
+            <a href="research.html">See the studies</a>
+          </p>
+        </div>
+        <figure class="beat-fig">
+          <svg viewBox="0 8 520 236" role="img" aria-label="Alarm rings around a jagged thread shrink away and the line settles calm as a plain-language label arrives beside it.">
+            <!-- alarm rings, which shrink to nothing -->
+            <circle class="m f2-ring f2-ring-a" cx="300" cy="112" r="52" stroke="var(--alarm)" stroke-width="2" fill="none"/>
+            <circle class="m f2-ring f2-ring-b" cx="300" cy="112" r="72" stroke="var(--alarm)" stroke-width="1.6" fill="none" opacity="0.6"/>
+            <circle class="m f2-ring f2-ring-c" cx="300" cy="112" r="92" stroke="var(--alarm)" stroke-width="1.2" fill="none" opacity="0.35"/>
+            <!-- loud line fades into calm line -->
+            <path class="m f2-loud" d="M60 112 L92 78 L124 146 L156 74 L188 150 L220 76 L252 148 L284 78 L316 146 L348 76 L380 148 L412 82 L444 140 L476 112"
+                  stroke="var(--alarm)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path class="m f2-calm" d="M60 112 C104 112 122 100 166 100 C210 100 228 124 272 124 C316 124 334 104 378 104 C422 104 440 114 476 112"
+                  stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- the label -->
+            <g class="m f2-tag">
+              <rect x="126" y="184" width="268" height="42" rx="12" fill="var(--accent-soft)"/>
+              <text x="260" y="211" text-anchor="middle" font-size="16" fill="var(--accent-deep)" font-family="var(--font-body)">“I think she's already gone”</text>
+            </g>
+          </svg>
+        </figure>
       </div>
-      <div class="card">
-        <h3>Integration, not suppression</h3>
-        <p>
-          Threads are never crossed out or locked away. When one completes for now,
-          you choose what comes back with you — and if it returns later, you meet
-          the new version of it.
-        </p>
+
+      <!-- 3 · rest as a decision -->
+      <div class="beat">
+        <div>
+          <h3>Resting counts. There is no streak to break</h3>
+          <p class="lede">
+            Deciding that nothing can be done today is a real answer, and the app
+            records it as one. The thread goes quiet, and you did that on purpose.
+          </p>
+          <p>
+            No counters, no rising numbers, nothing that punishes you for a hard
+            week. The only thing that ever grows is the part of you that isn't
+            somewhere else.
+          </p>
+          <p class="cite">
+            We built the playful layer from what trials support — game elements help
+            people <b>keep going</b>, not feel better by themselves — and left out
+            what the same literature warns against.
+            <a href="research.html">See the studies</a>
+          </p>
+        </div>
+        <figure class="beat-fig">
+          <svg viewBox="0 20 520 180" role="img" aria-label="A week of days along a line: one day is marked as rested with a tick, while a streak counter beside it is dimmed and struck through.">
+            <path d="M44 138 H476" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <g stroke="var(--line)" stroke-width="2">
+              <path d="M80 122 V154"/><path d="M146 122 V154"/><path d="M212 122 V154"/>
+              <path d="M278 122 V154"/><path d="M344 122 V154"/><path d="M410 122 V154"/>
+            </g>
+            <!-- the rested day -->
+            <g class="m f3-rest">
+              <circle cx="278" cy="138" r="20" fill="var(--accent-soft)"/>
+              <path class="m f3-check" d="M268 138 L276 147 L290 129" stroke="var(--accent-deep)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <text x="278" y="184" text-anchor="middle" font-size="15" fill="var(--accent-deep)" font-family="var(--font-body)">rested — on purpose</text>
+            <!-- the streak the app does not keep -->
+            <g class="m f3-streak">
+              <rect x="180" y="34" width="160" height="40" rx="10" fill="none" stroke="var(--ink-soft)" stroke-width="1.6"/>
+              <text x="260" y="60" text-anchor="middle" font-size="15" fill="var(--ink-soft)" font-family="var(--font-body)">12-day streak</text>
+            </g>
+            <path class="m f3-strike" d="M168 64 L352 44" stroke="var(--alarm)" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          </svg>
+        </figure>
       </div>
-      <div class="card">
-        <h3>Small honest steps</h3>
+
+      <!-- 4 · integration, not deletion -->
+      <div class="beat">
+        <div>
+          <h3>Nothing gets crossed out. It comes back into you</h3>
+          <p class="lede">
+            When a thread is finished for now, it curves back and rejoins your line —
+            and you choose what it hands over. The patience you found. The
+            self-respect. It goes into the line, not into a bin.
+          </p>
+          <p>
+            And if it returns one day, that isn't failure either. You meet the newer,
+            smaller version of it, standing on everything the last one gave you.
+          </p>
+          <p class="cite">
+            A study of how apps draw broken progress found the drawing itself changes
+            behaviour: breaks shown as repairable keep people going, breaks shown as
+            final make them quit. <b>Nothing here is ever drawn as final.</b>
+            <a href="research.html">See the studies</a>
+          </p>
+        </div>
+        <figure class="beat-fig">
+          <svg viewBox="0 78 520 190" role="img" aria-label="A thread forks away from the main line and curves back to rejoin it; as it merges, a small tag reading self-respect drops down into the line, which thickens afterwards.">
+            <!-- main line before the merge -->
+            <path d="M40 200 H300" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <!-- main line after the merge, which thickens as it takes the thread in -->
+            <path class="m f4-after" d="M300 200 H482" stroke="var(--accent-deep)" stroke-linecap="round" fill="none"/>
+            <!-- the thread out and back -->
+            <path class="m f4-thread" d="M96 200 C142 200 132 96 210 96 C288 96 278 200 300 200"
+                  stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="300" cy="200" r="6" fill="var(--accent-deep)"/>
+            <!-- what it hands over, arriving in the line -->
+            <g class="m f4-chip">
+              <rect x="326" y="216" width="136" height="36" rx="11" fill="var(--gold)" opacity="0.28"/>
+              <rect x="326" y="216" width="136" height="36" rx="11" fill="none" stroke="var(--gold-deep)" stroke-width="1.6"/>
+              <text x="394" y="240" text-anchor="middle" font-size="15" fill="var(--gold-deep)" font-family="var(--font-body)">self-respect</text>
+            </g>
+          </svg>
+        </figure>
+      </div>
+
+    </div>
+
+    <!-- the philosophy -->
+    <div class="grasp">
+      <p class="kicker" style="margin-bottom:14px;">The idea underneath</p>
+      <div class="grasp-grid">
+        <div>
+          <h3>Your own language worked this out a long time ago</h3>
+          <p>Listen to how everyone already talks about their inner life:</p>
+          <div class="idioms" aria-label="Everyday phrases about handling thoughts">
+            <span>get a grip</span>
+            <span>hold that thought</span>
+            <span>put it down</span>
+            <span>let it go</span>
+            <span>carry a worry</span>
+            <span>handle it</span>
+            <span>drop it</span>
+            <span>pick it back up</span>
+          </div>
+          <p class="lede">
+            Every one of those is a <em>hand</em> word. Of all the metaphors available,
+            the one our whole species reached for is: thoughts are objects, and hands
+            handle them.
+          </p>
+          <p>
+            So we stopped treating that as a figure of speech and built it. A thread
+            you can see, touch, turn down, set aside and pick up again. We call the
+            working idea the <b>Graspability Hypothesis</b> — a feeling becomes easier
+            to steady roughly in proportion to how graspable you can make its shape.
+          </p>
+        </div>
+        <figure class="grasp-fig" style="margin:0;">
+          <svg viewBox="0 26 420 224" role="img" aria-label="A hand closes gently around a thread that runs back into a head seen in profile.">
+            <!-- head, small and quiet, on the right -->
+            <g transform="translate(216.2 31.9) scale(0.52)" opacity="0.5">
+              <path d="M232 232 C176 232 142 192 144 146 C146 98 184 58 236 56 C284 54 324 88 330 134 C333 157 326 172 332 186 C336 195 344 200 342 206 C339 213 324 211 320 216 C316 222 320 232 312 236 C302 241 288 233 276 235"
+                    stroke="var(--ink)" stroke-width="4.4" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- the thread, drawn out of the head and into the grip -->
+            <path class="m g-thread" d="M292 108 C240 84 176 92 128 116 C108 126 92 130 74 134"
+                  stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="292" cy="108" r="4.5" fill="var(--accent)"/>
+            <!-- the hand, which settles its grip closed -->
+            <g class="m g-grip">
+              <g transform="translate(-414.7 11.2) scale(0.85)"
+                 stroke="var(--ink)" stroke-width="2.8" fill="none"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M560 210 C548 196 542 178 546 162 C549 150 558 144 566 148"/>
+                <path d="M566 148 C562 138 566 130 574 130 C582 130 586 138 586 146"/>
+                <path d="M586 146 C586 134 592 128 600 130 C608 132 610 140 609 148"/>
+                <path d="M609 148 C611 138 618 134 625 138 C632 142 632 150 630 158"/>
+                <path d="M630 158 C638 154 645 158 646 166 C648 178 638 196 624 208 C606 223 578 226 560 210"/>
+              </g>
+            </g>
+            <text x="196" y="76" text-anchor="middle" font-size="14" fill="var(--accent-deep)" font-family="var(--font-body)">the worry, made graspable</text>
+            <!-- and the feeling follows the hand: a shallow arc back to the head -->
+            <path d="M112 202 C176 214 254 208 296 178" stroke="var(--ink-soft)" stroke-width="1.8"
+                  fill="none" stroke-linecap="round" stroke-dasharray="2 7"/>
+            <path d="M288 190 L297 176 L306 186" stroke="var(--ink-soft)" stroke-width="1.8"
+                  fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="206" y="240" text-anchor="middle" font-size="13.5" fill="var(--ink-soft)" font-family="var(--font-body)">the feeling follows the hand</text>
+          </svg>
+        </figure>
+      </div>
+      <div class="honest">
         <p>
-          The app never asks for a plan. It asks for the smallest honest step —
-          send one message, read the letter once, say one true sentence.
+          Said plainly: One Current is <b>built on</b> this research, not proven by it.
+          It has not been through a clinical trial, and we will never pretend the app
+          treats anything. The full page shows every study, including the ones that
+          complicate our case.
+        </p>
+        <a class="btn quiet" href="research.html">Read the research in full</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:72px;">And a few convictions we won't trade</h2>
+    <div class="cards" style="margin-top:24px;">
+      <div class="card">
+        <h3>It asks for the smallest honest step</h3>
+        <p>
+          Never a plan. Send one message, read the letter once, say one true
+          sentence. Small enough that you'll actually do it today.
         </p>
       </div>
       <div class="card">
         <h3>A minute, not an evening</h3>
         <p>
           Every screen has one purpose and a handful of words. You decide, the line
-          changes, and you go back to your life.
+          changes, and you get your evening back.
         </p>
       </div>
       <div class="card">
-        <h3>Support when it is heavy</h3>
+        <h3>Some things are too heavy alone</h3>
         <p>
-          Some threads are too heavy to handle alone. One Current says so, plainly,
-          and makes reaching for support one of the normal answers.
+          When a thread is one of those, One Current says so plainly — and makes
+          reaching for another person one of the ordinary answers, not the last one.
         </p>
       </div>
     </div>
-    <p style="margin-top: 28px;">
-      <a class="btn quiet" href="research.html">Read the research behind this</a>
-    </p>
   </div>
 </section>
 
@@ -2163,6 +2597,25 @@
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !mobileNav.hidden) closeMenu();
+    });
+
+    // The "why it works" figures only move while they are on screen. Each one
+    // rests at its finished pose, so a figure that never animates still reads
+    // correctly — this only adds the journey towards that pose.
+    var figures = document.querySelectorAll(".beat-fig, .grasp-fig, .grasp .idioms");
+    if (!figures.length) return;
+    var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (calm || typeof IntersectionObserver !== "function") return;
+    var watcher = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          entry.target.classList.toggle("in-view", entry.isIntersecting);
+        });
+      },
+      { threshold: 0.28 },
+    );
+    figures.forEach(function (fig) {
+      watcher.observe(fig);
     });
   })();
 </script>

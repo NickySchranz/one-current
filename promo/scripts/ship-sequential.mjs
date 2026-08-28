@@ -33,7 +33,12 @@ const FILMS = [
   { id: "00-flagship", frames: 1800 },
   { id: "00-why-it-works", frames: 1470 },
 ];
-const all = [...FILMS, ...videos.map((d) => ({ id: d.id, frames: duration(d) }))];
+// Shortest first. Every finished render publishes immediately, so ordering by
+// length puts the most videos live the soonest; the two long films — a third
+// of the total frames between them — go last.
+const all = [...videos.map((d) => ({ id: d.id, frames: duration(d) })), ...FILMS].sort(
+  (a, b) => a.frames - b.frames,
+);
 
 const only = process.argv.slice(2);
 const mb = (n) => (statSync(n).size / 1e6).toFixed(2) + "MB";

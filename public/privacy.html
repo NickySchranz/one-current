@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- OWNER REVIEW REQUIRED: this page was drafted by an assistant and must be
+     reviewed by the owner before launch. Replace every [BRACKETED] placeholder
+     (legal entity, address, jurisdiction) and have a lawyer read it. -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>One Current — Privacy</title>
+<meta
+  name="description"
+  content="One Current is local-first: your timeline lives on your device, and nothing leaves unless you send it. Here is exactly what the server stores, and when."
+/>
+<link rel="icon" href="icons/icon-192.png" />
+<meta name="theme-color" content="#faf9f6" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<style>
+  :root {
+    --bg: #faf9f6;
+    --bg-raised: #ffffff;
+    --ink: #26251f;
+    --ink-soft: #6b6a61;
+    --accent: #3f6f5f;
+    --accent-deep: #35604f;
+    --accent-soft: #e4ede9;
+    --gold: #dfb968;
+    --gold-deep: #b8934c;
+    --alarm: #b5654f;
+    --line: #e3e1d9;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 2px rgba(38, 37, 31, 0.06), 0 4px 14px rgba(38, 37, 31, 0.06);
+    --font-body: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
+      source-sans-pro, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 24px; }
+
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(250, 249, 246, 0.82);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid rgba(227, 225, 217, 0.8);
+  }
+  header.site .bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .brand svg { display: block; }
+  nav.primary { display: flex; gap: 2px; margin-left: auto; margin-right: 6px; flex-wrap: nowrap; align-items: center; }
+  nav.primary a {
+    color: var(--ink-soft); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    padding: 7px 9px; border-radius: 8px; white-space: nowrap;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  nav.primary a:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
+  nav.primary a.here { color: var(--accent-deep); background: var(--accent-soft); }
+  header.site .lang {
+    color: var(--ink-soft); text-decoration: none; font-size: 0.85rem; font-weight: 700;
+    padding: 6px 9px; border-radius: 8px; white-space: nowrap; letter-spacing: 0.03em;
+    border: 1px solid var(--line);
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  header.site .lang:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
+  @media (max-width: 560px) { nav.primary a:not(.here) { display: none; } }
+
+  .hero-band { padding: 64px 0 8px; }
+  h1 { font-size: clamp(1.7rem, 4.2vw, 2.5rem); letter-spacing: -0.02em; margin: 0 0 14px; max-width: 720px; }
+  .lead { color: var(--ink-soft); font-size: 1.08rem; max-width: 640px; margin: 0 0 8px; }
+  .kicker { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700; color: var(--accent); margin: 0 0 10px; }
+  .updated { color: var(--ink-soft); font-size: 0.85rem; margin: 0; }
+
+  main .inner { padding: 40px 0 72px; }
+  h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); margin: 44px 0 12px; letter-spacing: -0.015em; font-weight: 700; }
+  h2:first-child { margin-top: 0; }
+  .prose { max-width: 680px; }
+  .prose p { margin: 0 0 16px; }
+  .prose ul { margin: 0 0 16px; padding-left: 22px; }
+  .prose li { margin-bottom: 8px; }
+  .honest {
+    max-width: 680px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin: 22px 0;
+  }
+  .placeholder {
+    max-width: 680px;
+    background: #fdf6ec;
+    border: 1px dashed var(--gold-deep);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    margin: 22px 0;
+  }
+
+  footer { background: #22211c; color: #f4f2ea; margin-top: 0; }
+  footer .wrap { padding: 56px 24px; text-align: center; }
+  footer .small { color: #b9b6a9; font-size: 0.9rem; }
+  footer .legal { color: #8b887c; font-size: 0.8rem; margin-top: 26px; }
+  footer .legal a { color: #b9b6a9; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="./">
+      <svg width="33" height="22" viewBox="0 0 33 22" aria-hidden="true">
+        <path d="M2 15 H31" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M7 15 C11.5 15 10.5 6 16 6 C21.5 6 20.5 15 25 15" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="25" cy="15" r="3.2" fill="var(--accent)"/>
+      </svg>
+      <span>One Current</span>
+    </a>
+    <nav class="primary" aria-label="Pages">
+      <a href="./">Home</a>
+      <a class="here" href="privacy.html" aria-current="page">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+    <a class="lang" href="privacy.es.html" lang="es" aria-label="Leer en español">ES</a>
+  </div>
+</header>
+
+<div class="hero-band">
+  <div class="wrap">
+    <p class="kicker">Privacy</p>
+    <h1>Your timeline lives on your device. This page says exactly when that changes.</h1>
+    <p class="lead">
+      One Current is built local-first: everything you write is stored on your own
+      phone or computer, and nothing leaves unless you send it. The few things our
+      server ever holds are listed below — all of them, plainly.
+    </p>
+    <p class="updated">Last updated: August 2026</p>
+  </div>
+</div>
+
+<main>
+  <div class="wrap inner">
+    <div class="prose">
+
+      <h2>The short version</h2>
+      <p>
+        You can use One Current forever without an account, and in that case we hold
+        nothing about you at all — no analytics, no tracking, no profile. Your threads,
+        your history, your wholeness check-ins: all of it stays in your device's own storage.
+      </p>
+      <p>
+        Data moves off your device only when you take a deliberate action: creating an
+        account, uploading a backup, or sharing threads with your psychologist. Each of
+        those is described below, and each can be undone.
+      </p>
+
+      <h2>On your device</h2>
+      <p>
+        The app writes your timeline to your browser's local storage on the device where
+        you use it. It works offline. We cannot read it, and neither can anyone else who
+        doesn't hold your device. If you never create an account, this section is the
+        whole story.
+      </p>
+
+      <h2>If you create an account</h2>
+      <p>For account holders, the server stores only what an account needs to function:</p>
+      <ul>
+        <li>your email address,</li>
+        <li>a display name, if you chose to give one,</li>
+        <li>a hash of your password — never the password itself,</li>
+        <li>your plan, and — if you subscribe to Pro — the Stripe customer and subscription
+            identifiers that connect your account to your payment.</li>
+      </ul>
+      <p>That's the complete list. Your timeline is not on it.</p>
+
+      <h2>Cloud backups</h2>
+      <p>
+        Backup is opt-in. When you upload a backup, the server stores a full export of
+        your app data so you can restore it on a new device. Each upload replaces the
+        previous one — we keep the latest backup, not a history of them. If you never
+        press upload, no backup exists.
+      </p>
+
+      <h2>Shares with your psychologist</h2>
+      <p>
+        When you share, only the threads you picked leave your device — nothing else.
+        A share code works exactly once, expires after fourteen days if unused, and you
+        can revoke a share at any time, which removes it from the server and from your
+        psychologist's view.
+      </p>
+
+      <h2>Push notifications</h2>
+      <p>
+        If you turn notifications on, the server stores a push registration for that
+        device — the technical address it needs to deliver a notification. Turn
+        notifications off and it's no longer used.
+      </p>
+
+      <h2>Services we rely on</h2>
+      <p>Running the account features means working with a few processors. Each sees only what its job requires:</p>
+      <ul>
+        <li><strong>Stripe</strong> — payments. Your card details go directly to Stripe and never touch our server.</li>
+        <li><strong>Twilio SendGrid</strong> — transactional email only: verification codes and password-reset codes.</li>
+        <li><strong>Railway</strong> — hosts the server.</li>
+        <li><strong>Cloudflare</strong> — DNS and content delivery for this website.</li>
+      </ul>
+      <p>We do not sell data, share it with advertisers, or use third-party analytics.</p>
+
+      <h2>Deleting everything</h2>
+      <p>
+        <strong>Delete everything</strong> in the app's settings means what it says: it
+        erases the data on your device <em>and</em> deletes your server account in the
+        same action — your subscription is canceled, your backup is removed, and any
+        outstanding shares are revoked. Nothing is retained to “win you back.”
+      </p>
+
+      <h2>Taking your data with you</h2>
+      <p>
+        <strong>Export everything</strong>, also in settings, writes your complete data
+        to a file you keep. No request form, no waiting period — it's your data, on your
+        device, so exporting it is just a button.
+      </p>
+
+      <div class="honest">
+        One Current is not a diagnostic tool, a medical record, or a crisis channel.
+        The privacy design above is about keeping your reflections yours — it is not a
+        substitute for professional care.
+      </div>
+
+      <h2>Who we are</h2>
+      <div class="placeholder">
+        This service is operated by <strong>[LEGAL ENTITY NAME]</strong>,
+        <strong>[ADDRESS]</strong>, registered in <strong>[JURISDICTION]</strong>.
+      </div>
+      <p>
+        Questions, concerns, or a request we haven't automated yet? Write to
+        <a href="mailto:hello@onecurrentapp.com">hello@onecurrentapp.com</a> — a person reads it.
+      </p>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="small">Nothing leaves unless you send it — and now you know exactly what “send” means.</p>
+    <p class="legal">
+      One Current — a calm, private timeline of your life.<br />
+      <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="mailto:hello@onecurrentapp.com">hello@onecurrentapp.com</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

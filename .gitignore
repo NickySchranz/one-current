@@ -7,3 +7,4 @@ tsconfig.tsbuildinfo
 promo/node_modules/
 promo/public/footage/
 promo/public/stills/
+dist-landing/

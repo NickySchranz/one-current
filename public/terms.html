@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- OWNER REVIEW REQUIRED: this page was drafted by an assistant and must be
+     reviewed by the owner before launch. Replace every [BRACKETED] placeholder
+     (legal entity, address, jurisdiction) and have a lawyer read it. -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>One Current — Terms of Service</title>
+<meta
+  name="description"
+  content="The terms for using One Current and One Current — Practice: what the service is, how Pro subscriptions work, and what we ask of you."
+/>
+<link rel="icon" href="icons/icon-192.png" />
+<meta name="theme-color" content="#faf9f6" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<style>
+  :root {
+    --bg: #faf9f6;
+    --bg-raised: #ffffff;
+    --ink: #26251f;
+    --ink-soft: #6b6a61;
+    --accent: #3f6f5f;
+    --accent-deep: #35604f;
+    --accent-soft: #e4ede9;
+    --gold: #dfb968;
+    --gold-deep: #b8934c;
+    --alarm: #b5654f;
+    --line: #e3e1d9;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 2px rgba(38, 37, 31, 0.06), 0 4px 14px rgba(38, 37, 31, 0.06);
+    --font-body: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
+      source-sans-pro, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 24px; }
+
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(250, 249, 246, 0.82);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid rgba(227, 225, 217, 0.8);
+  }
+  header.site .bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .brand svg { display: block; }
+  nav.primary { display: flex; gap: 2px; margin-left: auto; margin-right: 6px; flex-wrap: nowrap; align-items: center; }
+  nav.primary a {
+    color: var(--ink-soft); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    padding: 7px 9px; border-radius: 8px; white-space: nowrap;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  nav.primary a:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
+  nav.primary a.here { color: var(--accent-deep); background: var(--accent-soft); }
+  header.site .lang {
+    color: var(--ink-soft); text-decoration: none; font-size: 0.85rem; font-weight: 700;
+    padding: 6px 9px; border-radius: 8px; white-space: nowrap; letter-spacing: 0.03em;
+    border: 1px solid var(--line);
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  header.site .lang:hover { color: var(--ink); background: rgba(38, 37, 31, 0.05); }
+  @media (max-width: 560px) { nav.primary a:not(.here) { display: none; } }
+
+  .hero-band { padding: 64px 0 8px; }
+  h1 { font-size: clamp(1.7rem, 4.2vw, 2.5rem); letter-spacing: -0.02em; margin: 0 0 14px; max-width: 720px; }
+  .lead { color: var(--ink-soft); font-size: 1.08rem; max-width: 640px; margin: 0 0 8px; }
+  .kicker { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700; color: var(--accent); margin: 0 0 10px; }
+  .updated { color: var(--ink-soft); font-size: 0.85rem; margin: 0; }
+
+  main .inner { padding: 40px 0 72px; }
+  h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); margin: 44px 0 12px; letter-spacing: -0.015em; font-weight: 700; }
+  h2:first-child { margin-top: 0; }
+  .prose { max-width: 680px; }
+  .prose p { margin: 0 0 16px; }
+  .prose ul { margin: 0 0 16px; padding-left: 22px; }
+  .prose li { margin-bottom: 8px; }
+  .honest {
+    max-width: 680px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--alarm);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    color: var(--ink);
+    font-size: 0.95rem;
+    margin: 22px 0;
+  }
+  .placeholder {
+    max-width: 680px;
+    background: #fdf6ec;
+    border: 1px dashed var(--gold-deep);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    margin: 22px 0;
+  }
+
+  footer { background: #22211c; color: #f4f2ea; margin-top: 0; }
+  footer .wrap { padding: 56px 24px; text-align: center; }
+  footer .small { color: #b9b6a9; font-size: 0.9rem; }
+  footer .legal { color: #8b887c; font-size: 0.8rem; margin-top: 26px; }
+  footer .legal a { color: #b9b6a9; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="./">
+      <svg width="33" height="22" viewBox="0 0 33 22" aria-hidden="true">
+        <path d="M2 15 H31" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M7 15 C11.5 15 10.5 6 16 6 C21.5 6 20.5 15 25 15" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="25" cy="15" r="3.2" fill="var(--accent)"/>
+      </svg>
+      <span>One Current</span>
+    </a>
+    <nav class="primary" aria-label="Pages">
+      <a href="./">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a class="here" href="terms.html" aria-current="page">Terms</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero-band">
+  <div class="wrap">
+    <p class="kicker">Terms of Service</p>
+    <h1>The agreement, in plain words.</h1>
+    <p class="lead">
+      These terms cover One Current and its companion app. They are short on purpose —
+      if anything here is unclear, write to us and we'll explain it like a person would.
+    </p>
+    <p class="updated">Last updated: August 2026</p>
+  </div>
+</div>
+
+<main>
+  <div class="wrap inner">
+    <div class="prose">
+
+      <h2>1. What the service is</h2>
+      <p>
+        <strong>One Current</strong> is a private map of the threads in your life — the
+        worries, decisions, and open loops that pull on your attention — drawn as branches
+        off one main line, on your own device.
+        <strong>One Current — Practice</strong> is the practitioner viewer: an app where a
+        psychologist or therapist can see exactly the threads a client chose to share with
+        them, and nothing else. Practice is free for clinicians.
+      </p>
+      <p>
+        By using either app or this website you agree to these terms. If you don't agree,
+        please don't use the service — no hard feelings.
+      </p>
+
+      <h2>2. Your account</h2>
+      <p>
+        The core app works without an account. If you create one — for backup, sharing, or
+        Pro — keep your credentials to yourself and tell us at
+        <a href="mailto:hello@onecurrentapp.com">hello@onecurrentapp.com</a> if you believe
+        someone else is using them. You must be old enough to consent to a contract like
+        this one in the place where you live.
+      </p>
+
+      <h2>3. One Current Pro</h2>
+      <p>Pro is a paid subscription. The prices are:</p>
+      <ul>
+        <li><strong>€6 per month</strong>, billed monthly,</li>
+        <li><strong>€30 per 6 months</strong>, billed every six months,</li>
+        <li><strong>€48 per year</strong>, billed yearly.</li>
+      </ul>
+      <p>
+        Subscriptions renew automatically at the end of each period until you cancel.
+        You can cancel anytime via <strong>Manage subscription</strong> in the app, which
+        opens the Stripe customer portal — cancellation takes effect at the end of the
+        period you already paid for, and you keep Pro until then. Payments are processed
+        by Stripe; your card details never touch our server. Prices include VAT where it
+        applies.
+      </p>
+
+      <h2>4. Your right of withdrawal (EU)</h2>
+      <p>
+        If you are a consumer in the European Union, you have the right to withdraw from a
+        subscription within <strong>14 days</strong> of purchase without giving a reason.
+        To exercise it, email
+        <a href="mailto:hello@onecurrentapp.com">hello@onecurrentapp.com</a> within those
+        14 days with an unambiguous statement that you withdraw — we'll refund the payment
+        using the same payment method. By starting the subscription immediately, you agree
+        that the service begins before the withdrawal period ends; if you withdraw after
+        having used Pro, we may deduct an amount proportionate to the days of service
+        already provided, as the law allows.
+      </p>
+
+      <h2>5. Acceptable use</h2>
+      <p>Use the service for what it is. In particular, don't:</p>
+      <ul>
+        <li>break, probe, or overload the service, or try to access accounts, backups, or shares that aren't yours;</li>
+        <li>use a share code you weren't given, or redeem someone's share without their knowledge;</li>
+        <li>resell the service or misrepresent yourself as a clinician in Practice to obtain someone's shared data;</li>
+        <li>use the service for anything unlawful.</li>
+      </ul>
+      <p>We may suspend or close accounts that do these things.</p>
+
+      <div class="honest">
+        <strong>One Current is not medical advice, and it is not a crisis service.</strong>
+        It is a tool for seeing your own attention clearly — it does not diagnose, treat,
+        or monitor any condition, and no part of it replaces a qualified professional.
+        Sharing with your psychologist supports a conversation; it is not a medical record.
+        If you are in crisis or thinking about harming yourself, contact local emergency
+        services or a crisis line now — the app cannot help you with that, and it will
+        never claim to.
+      </div>
+
+      <h2>6. Your content</h2>
+      <p>
+        Everything you write in One Current is yours. We claim no ownership of it and no
+        license to it beyond what is technically necessary to provide the features you
+        invoke — storing a backup you upload, or delivering a share you send. See the
+        <a href="privacy.html">privacy page</a> for exactly what the server holds and how
+        to delete it.
+      </p>
+
+      <h2>7. Liability</h2>
+      <p>
+        We provide the service with care, but as-is: to the extent the law allows, we are
+        not liable for indirect or consequential damages, or for loss of data you chose to
+        keep only on one device — the app gives you <strong>Export everything</strong> and
+        cloud backup precisely so a lost phone doesn't mean a lost history. Nothing in
+        these terms limits liability that cannot be limited by law, including liability
+        for intent, gross negligence, or harm to life and health, or your statutory rights
+        as a consumer.
+      </p>
+
+      <h2>8. Changes</h2>
+      <p>
+        If we change these terms in a way that matters, we'll say so on this page and, for
+        account holders, by email, before the change takes effect. Continuing to use the
+        service after that means you accept the new terms; if you don't, you can cancel
+        and delete everything at any time.
+      </p>
+
+      <h2>9. Who you're agreeing with</h2>
+      <div class="placeholder">
+        The service is provided by <strong>[LEGAL ENTITY NAME]</strong>,
+        <strong>[ADDRESS]</strong>. These terms are governed by the law of
+        <strong>[JURISDICTION]</strong>, without prejudice to mandatory consumer
+        protections of the country where you live.
+      </div>
+      <p>
+        Questions about any of this:
+        <a href="mailto:hello@onecurrentapp.com">hello@onecurrentapp.com</a>.
+      </p>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="small">Short terms for a small, honest service.</p>
+    <p class="legal">
+      One Current — a calm, private timeline of your life.<br />
+      <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="mailto:hello@onecurrentapp.com">hello@onecurrentapp.com</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
